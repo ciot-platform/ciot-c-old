@@ -117,7 +117,6 @@ typedef struct ciot_msg
 
 ciot_err_t ciot_msg_from_json(CJSON_PARAMETERS(ciot_msg_t));
 ciot_err_t ciot_msg_data_from_json(CJSON_PARAMETERS(ciot_msg_data_t), ciot_msg_type_t type);
-
 ciot_err_t ciot_msg_request_from_json(CJSON_PARAMETERS(ciot_msg_request_t));
 
 ciot_err_t ciot_msg_config_from_json(CJSON_PARAMETERS(ciot_msg_config_t));
