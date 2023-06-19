@@ -64,7 +64,7 @@ ciot_err_t ciot_system_get_status(ciot_system_status_t *status)
 ciot_err_t ciot_system_get_info(ciot_system_info_t *info)
 {
     ciot_system_info_t system = {
-        .type = CIOT_CONFIG_HARDWARE_TYPE,
+        .type = CIOT_CONFIG_DEVICE_TYPE,
         .os = CIOT_SYSTEM_OS_FREERTOS,
         .version = CIOT_CONFIG_VERSION,
         .date = CIOT_CONFIG_DATE,

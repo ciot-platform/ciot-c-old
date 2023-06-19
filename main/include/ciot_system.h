@@ -18,15 +18,15 @@
 #include "ciot_err.h"
 #include "ciot_json.h"
 
-typedef enum ciot_system_hardware_type
+typedef enum ciot_system_device_type
 {
-    CIOT_SYSTEM_HARDWARE_TYPE_UNKNOWN,
-    CIOT_SYSTEM_HARDWARE_TYPE_GENERIC,
-    CIOT_SYSTEM_HARDWARE_TYPE_SENSOR,
-    CIOT_SYSTEM_HARDWARE_TYPE_GATEWAY,
-    CIOT_SYSTEM_HARDWARE_TYPE_DATALOGGER,
-    CIOT_SYSTEM_HARDWARE_TYPE_HMI,
-} ciot_system_hardware_type_t;
+    CIOT_SYSTEM_DEVICE_TYPE_UNKNOWN,
+    CIOT_SYSTEM_DEVICE_TYPE_GENERIC,
+    CIOT_SYSTEM_DEVICE_TYPE_SENSOR,
+    CIOT_SYSTEM_DEVICE_TYPE_GATEWAY,
+    CIOT_SYSTEM_DEVICE_TYPE_DATALOGGER,
+    CIOT_SYSTEM_DEVICE_TYPE_HMI,
+} ciot_system_device_type_t;
 
 typedef enum ciot_system_os
 {
@@ -73,7 +73,7 @@ typedef struct ciot_system_config
 
 typedef struct ciot_system_info
 {
-    ciot_system_hardware_type_t type;
+    ciot_system_device_type_t type;
     ciot_system_os_t os;
     uint8_t version[4];
     uint8_t date[3];
