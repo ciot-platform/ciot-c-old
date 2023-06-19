@@ -26,8 +26,6 @@
     #define CIOT_CONFIG_OS CIOT_SYSTEM_OS_UNKNOWN
 #endif
 
-#define CIOT_CONFIG_VERSION { 0, 0, 0, 1 }
-#define CIOT_CONFIG_DATE { 19, 06, 23 }
 #define CIOT_CONFIG_BOARD "Generic IoT Board"
 #define CIOT_CONFIG_MCU "Unknown"
 
