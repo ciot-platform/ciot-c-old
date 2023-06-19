@@ -20,7 +20,6 @@ void app_main(void)
         .ap = {
             .ssid = "CIOT APP",
             .password = "administrator",
-            .tcp.ip.dhcp = CIOT_TCP_DHCP_CONFIG_SERVER,
         },
         .http_server = {
             .port = 80,

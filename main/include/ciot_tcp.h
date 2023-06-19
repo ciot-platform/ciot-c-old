@@ -30,6 +30,7 @@ typedef enum ciot_tcp_dhcp_status {
 } ciot_tcp_dhcp_status_t;
 
 typedef enum ciot_tcp_dhcp_config {
+    CIOT_TCP_DHCP_CONFIG_NO_CHANGE,
     CIOT_TCP_DHCP_CONFIG_CLIENT,
     CIOT_TCP_DHCP_CONFIG_SERVER,
     CIOT_TCP_DHCP_CONFIG_DISABLED,
