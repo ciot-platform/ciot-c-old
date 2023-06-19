@@ -14,4 +14,4 @@ idf_component_register(SRCS
                         "idf/ciot_tcp.c" 
                         "idf/ciot_wifi.c" 
                         "main.c"
-                    INCLUDE_DIRS "." "include")
+                    INCLUDE_DIRS "." "include" "idf")
