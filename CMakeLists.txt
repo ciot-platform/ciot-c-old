@@ -18,14 +18,16 @@ else()
     lib/cJSON/cJSON.c
     main/common/ciot_app.c
     main/common/ciot_msg_dto.c 
+    main/common/ciot_ntp_dto.c
+    main/common/ciot_settings.c
+    main/common/ciot_system_dto.c
     main/common/ciot_tcp_dto.c 
     main/common/ciot_wifi_dto.c 
-    main/common/ciot_ntp_dto.c
-    main/host/ciot_nvs.c
+    main/host/ciot_http_server.c
+    main/host/ciot_ntp.c
+    main/host/ciot_storage.c
     main/host/ciot_tcp.c
     main/host/ciot_wifi.c
-    main/host/ciot_ntp.c
-    main/host/ciot_http_server.c
     main/main.c
   )
 endif()
