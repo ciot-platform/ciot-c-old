@@ -31,7 +31,7 @@ static void ciot_ntp_sync_notification_cb(struct timeval *tv);
 
 ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf)
 {
-    ESP_LOGI(TAG, "NTP Start: <%s><%s><%s>", conf->server1, conf->server2, conf->server3);
+    ESP_LOGI(TAG, "config: <%s><%s><%s>", conf->server1, conf->server2, conf->server3);
 
     memcpy(&ntp.config, conf, sizeof(ntp.config));
 

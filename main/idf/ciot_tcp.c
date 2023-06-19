@@ -47,6 +47,9 @@ static ciot_err_t ciot_tcp_set_dhcp_config(void *interface, ciot_tcp_dhcp_config
 
     switch (dhcp)
     {
+    case CIOT_TCP_DHCP_CONFIG_NO_CHANGE:
+        ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_NO_CHANGE");
+        return CIOT_ERR_OK;
     case CIOT_TCP_DHCP_CONFIG_CLIENT:
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_CLIENT");
         if (dhcps == ESP_NETIF_DHCP_STARTED)
@@ -101,7 +104,7 @@ static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *
 {
     if(ip->dhcp == CIOT_TCP_DHCP_CONFIG_DISABLED)
     {
-        ESP_LOGI(TAG, "IP Config: ip<%d.%d.%d.%d>gw<%d.%d.%d.%d>mask<%d.%d.%d.%d>dns<%d.%d.%d.%d>",
+        ESP_LOGI(TAG, "config:ip: ip:%d.%d.%d.%d gw:%d.%d.%d.%d mask:%d.%d.%d.%d dns:%d.%d.%d.%d",
                 ip->address[0], ip->address[1], ip->address[2], ip->address[3],
                 ip->gateway[0], ip->gateway[1], ip->gateway[2], ip->gateway[3],
                 ip->mask[0], ip->mask[1], ip->mask[2], ip->mask[3],
