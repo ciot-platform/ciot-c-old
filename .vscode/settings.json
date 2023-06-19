@@ -59,6 +59,7 @@
         "esp_err.h": "c",
         "spi_flash_mmap.h": "c",
         "esp_spi_flash.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "stdlib.h": "c"
     }
 }
