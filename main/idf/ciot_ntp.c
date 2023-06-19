@@ -16,6 +16,7 @@
 #include "esp_log.h"
 
 #include "ciot_ntp.h"
+#include "ciot_config.h"
 
 typedef struct ciot_ntp
 {
@@ -62,7 +63,7 @@ ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf)
 
     if (ntp.config.timezone[0] == '\0')
     {
-        sprintf(ntp.config.timezone, "<-03>3");
+        sprintf(ntp.config.timezone, CIOT_CONFIG_DEFAULT_TIMEZONE);
     }
 
     sntp_setoperatingmode(ntp.config.op_mode);
