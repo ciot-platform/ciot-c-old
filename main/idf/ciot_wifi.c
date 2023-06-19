@@ -17,7 +17,13 @@
 #include "esp_log.h"
 #include "lwip/ip4_addr.h"
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
+#include "freertos/task.h"
+
 #include "ciot_wifi.h"
+
+#define CIOT_WIFI_EVENT_BIT_DONE BIT0
 
 typedef struct ciot_wifi
 {
@@ -28,6 +34,7 @@ typedef struct ciot_wifi
 } ciot_wifi_t;
 
 static ciot_wifi_t wifi[2];
+static EventGroupHandle_t event_group;
 static const char *TAG = "ciot_wifi";
 
 static void ciot_wifi_init(void);
@@ -36,7 +43,7 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
 
 ciot_err_t ciot_wifi_set_config(ciot_wifi_type_t type, ciot_wifi_config_t *conf)
 {
-    ESP_LOGI(TAG, "WiFi Start: type<%d>ssid<%s>password<%s>", type, conf->ssid, conf->password);
+    ESP_LOGI(TAG, "config: type:%d ssid:%s password:%s", type, conf->ssid, conf->password);
     wifi_interface_t wifi_interface = type;
     wifi_config_t wifi_conf = {0};
     wifi_mode_t wifi_mode = ciot_wifi_get_mode(wifi_interface);
@@ -84,6 +91,12 @@ ciot_err_t ciot_wifi_get_info(ciot_wifi_type_t type, ciot_wifi_info_t *info)
     return CIOT_ERR_OK;
 }
 
+ciot_err_t ciot_wifi_wait_connection(int timeout)
+{
+    xEventGroupWaitBits(event_group, CIOT_WIFI_EVENT_BIT_DONE, pdTRUE, pdFALSE, timeout / portTICK_PERIOD_MS);
+    return CIOT_ERR_OK;
+}
+
 static void ciot_wifi_init(void)
 {
     static bool init = false;
@@ -102,6 +115,8 @@ static void ciot_wifi_init(void)
         ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, &ciot_wifi_event_handler, NULL));
         ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
         ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
+
+        event_group = xEventGroupCreate();
 
         init = true;
     }
@@ -143,6 +158,7 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
             ESP_LOGI(TAG, "WIFI_EVENT_AP_STACONNECTED");
             wifi[CIOT_WIFI_TYPE_AP].status.tcp.connected = true;
             wifi[CIOT_WIFI_TYPE_STA].status.tcp.connection++;
+            xEventGroupSetBits(event_group, CIOT_WIFI_EVENT_BIT_DONE);
             break;
         case WIFI_EVENT_AP_STADISCONNECTED:
             ESP_LOGI(TAG, "WIFI_EVENT_AP_STADISCONNECTED");
