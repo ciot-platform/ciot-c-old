@@ -17,9 +17,11 @@ ciot_err_t ciot_ntp_config_from_json(CJSON_PARAMETERS(ciot_ntp_config_t))
     CJSON_GET_NUMBER(op_mode);
     CJSON_GET_NUMBER(sync_mode);
     CJSON_GET_NUMBER(sync_interval);
+    CJSON_GET_CHAR_ARRAY(timezone);
     CJSON_GET_CHAR_ARRAY(server1);
     CJSON_GET_CHAR_ARRAY(server2);
     CJSON_GET_CHAR_ARRAY(server3);
+    CJSON_GET_NUMBER(timeout);
     return CIOT_ERR_OK;
 }
 
@@ -29,9 +31,11 @@ ciot_err_t ciot_ntp_config_to_json(CJSON_PARAMETERS(ciot_ntp_config_t))
     CJSON_ADD_NUMBER(op_mode);
     CJSON_ADD_NUMBER(sync_mode);
     CJSON_ADD_NUMBER(sync_interval);
+    CJSON_ADD_CHAR_ARRAY(timezone);
     CJSON_ADD_CHAR_ARRAY(server1);
     CJSON_ADD_CHAR_ARRAY(server2);
     CJSON_ADD_CHAR_ARRAY(server3);
+    CJSON_ADD_NUMBER(timeout);
     return CIOT_ERR_OK;
 }
 
