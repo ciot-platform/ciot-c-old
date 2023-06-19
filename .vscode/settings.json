@@ -60,6 +60,8 @@
         "spi_flash_mmap.h": "c",
         "esp_spi_flash.h": "c",
         "freertos.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "ciot_app.h": "c",
+        "condition_variable": "c"
     }
 }
