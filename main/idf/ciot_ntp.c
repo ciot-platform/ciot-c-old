@@ -15,14 +15,21 @@
 #include "esp_sntp.h"
 #include "esp_log.h"
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
+#include "freertos/task.h"
+
 #include "ciot_ntp.h"
 #include "ciot_config.h"
+
+#define CIOT_NTP_EVENT_BIT_DONE BIT0
 
 typedef struct ciot_ntp
 {
     ciot_ntp_config_t config;
     ciot_ntp_info_t info;
     ciot_ntp_status_t status;
+    EventGroupHandle_t event_group;
 } ciot_ntp_t;
 
 static ciot_ntp_t ntp;
@@ -32,13 +39,17 @@ static void ciot_ntp_sync_notification_cb(struct timeval *tv);
 
 ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf)
 {
-    ESP_LOGI(TAG, "config: <%s><%s><%s>", conf->server1, conf->server2, conf->server3);
+    ESP_LOGI(TAG, "config: servers:<%s><%s><%s> timeout:%d", conf->server1, conf->server2, conf->server3, conf->timeout);
 
     memcpy(&ntp.config, conf, sizeof(ntp.config));
 
     if(ntp.status.init)
     {
         sntp_stop();
+    }
+    else
+    {
+        ntp.event_group = xEventGroupCreate();
     }
 
     if(ntp.config.sync_interval == 0)
@@ -77,6 +88,12 @@ ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf)
     setenv("TZ", ntp.config.timezone, 1);
     tzset();
 
+    if(conf->timeout != 0)
+    {
+        xEventGroupWaitBits(ntp.event_group, CIOT_NTP_EVENT_BIT_DONE, pdTRUE, pdFALSE, conf->timeout / portTICK_PERIOD_MS);
+        return ntp.status.sync ? CIOT_ERR_OK : CIOT_ERR_FAIL;
+    }
+
     return CIOT_ERR_OK;
 }
 
@@ -105,4 +122,5 @@ static void ciot_ntp_sync_notification_cb(struct timeval *tv)
     ntp.status.sync = true;
     ntp.info.sync_count++;
     ntp.info.last_sync = time(NULL);
+    xEventGroupSetBits(ntp.event_group, CIOT_NTP_EVENT_BIT_DONE);
 }
