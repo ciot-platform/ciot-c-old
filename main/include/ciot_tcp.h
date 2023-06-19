@@ -36,6 +36,14 @@ typedef enum ciot_tcp_dhcp_config {
     CIOT_TCP_DHCP_CONFIG_DISABLED,
 } ciot_tcp_dhcp_config_t;
 
+typedef enum ciot_tcp_state {
+    CIOT_TCP_STATE_ERROR=-1,
+    CIOT_TCP_STATE_STOPPED,
+    CIOT_TCP_STATE_STARTED,
+    CIOT_TCP_STATE_CONNECTING,
+    CIOT_TCP_STATE_CONNECTED,
+} ciot_tcp_state_t; 
+
 typedef struct ciot_tcp_ip_config
 {
     ciot_tcp_dhcp_config_t dhcp;
@@ -64,8 +72,7 @@ typedef struct ciot_tcp_info
 
 typedef struct ciot_tcp_status
 {
-    bool started;
-    bool connected;
+    ciot_tcp_state_t state;
     uint8_t connection;
     ciot_tcp_dhcp_info_t dhcp;
 } ciot_tcp_status_t;
