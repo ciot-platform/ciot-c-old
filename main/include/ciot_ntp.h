@@ -35,6 +35,7 @@ typedef struct ciot_ntp_config
     char server1[48];
     char server2[48];
     char server3[48];
+    int timeout;
 } ciot_ntp_config_t;
 
 typedef struct ciot_ntp_info
