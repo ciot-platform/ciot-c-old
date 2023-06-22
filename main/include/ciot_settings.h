@@ -12,6 +12,9 @@
 #include "ciot_ntp.h"
 #include "ciot_wifi.h"
 
+#define CIOT_SETTINGS_WIFI_FILENAME "wifi.dat"
+#define CIOT_SETTINGS_NTP_FILENAME "ntp.dat"
+
 typedef struct ciot_settings
 {
     ciot_wifi_config_t wifi;
