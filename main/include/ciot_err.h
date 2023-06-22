@@ -24,6 +24,8 @@ typedef enum ciot_err
     CIOT_ERR_INVALID_TYPE,
     CIOT_ERR_INVALID_INTERFACE,
     CIOT_ERR_INVALID_REQUEST,
+    CIOT_ERR_MEMORY_ALLOCATION,
+    CIOT_ERR_NULL_REFERENCE,
 } ciot_err_t;
 
 #endif  //!__CIOT_ERR__H__
