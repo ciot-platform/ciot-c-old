@@ -41,18 +41,18 @@ static void ciot_wifi_init(void);
 static wifi_mode_t ciot_wifi_get_mode(wifi_interface_t interface);
 static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 
-ciot_err_t ciot_wifi_set_config(ciot_wifi_type_t type, ciot_wifi_config_t *conf)
+ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf)
 {
-    ESP_LOGI(TAG, "config: type:%d ssid:<%s> password:<%s> timeout:%d", type, conf->ssid, conf->password, conf->timeout);
-    wifi_interface_t wifi_interface = type;
+    ESP_LOGI(TAG, "config: type:%d ssid:<%s> password:<%s> timeout:%d", conf->type, conf->ssid, conf->password, conf->timeout);
+    wifi_interface_t wifi_interface = conf->type;
     wifi_config_t wifi_conf = {0};
     wifi_mode_t wifi_mode = ciot_wifi_get_mode(wifi_interface);
 
     memcpy(&wifi_conf, conf, sizeof(*conf));
-    memcpy(&wifi[type].config, conf, sizeof(wifi[type].config));
+    memcpy(&wifi[conf->type].config, conf, sizeof(wifi[conf->type].config));
     ciot_wifi_init();
 
-    if (type == CIOT_WIFI_TYPE_AP)
+    if (conf->type == CIOT_WIFI_TYPE_AP)
     {
         wifi_conf.ap.authmode = WIFI_AUTH_WPA_WPA2_PSK;
         wifi_conf.ap.max_connection = 1;
@@ -67,7 +67,7 @@ ciot_err_t ciot_wifi_set_config(ciot_wifi_type_t type, ciot_wifi_config_t *conf)
     ESP_ERROR_CHECK(esp_wifi_set_config(wifi_interface, &wifi_conf));
     ESP_ERROR_CHECK(esp_wifi_start());
 
-    if (type == CIOT_WIFI_TYPE_STA && conf->timeout != 0)
+    if (conf->type == CIOT_WIFI_TYPE_STA && conf->timeout != 0)
     {
         if(wifi[CIOT_WIFI_TYPE_STA].status.tcp.state == CIOT_TCP_STATE_STARTED)
         {
