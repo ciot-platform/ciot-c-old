@@ -12,22 +12,51 @@
 #include "ciot_settings.h"
 #include "ciot_storage.h"
 
-#define CIOT_SETTINGS_FILENAME "ciot.dat"
-
 ciot_err_t ciot_settings_save(void)
 {
+    ciot_err_t err = CIOT_ERR_OK;
     ciot_settings_t settings;
+
     ciot_wifi_get_config(CIOT_WIFI_TYPE_STA, &settings.wifi);
     ciot_ntp_get_config(&settings.ntp);
-    return ciot_storage_save_data(&settings, sizeof(settings), CIOT_SETTINGS_FILENAME);
+
+    err = ciot_storage_save_data(&settings.wifi, sizeof(settings.wifi), CIOT_SETTINGS_WIFI_FILENAME);
+    if(err)
+        return err;
+
+    err = ciot_storage_save_data(&settings.ntp, sizeof(settings.ntp), CIOT_SETTINGS_NTP_FILENAME);
+    if(err)
+        return err;
+    
+    return err;
 }
 
 ciot_err_t ciot_settings_load(ciot_settings_t *settings)
 {
-    return ciot_storage_load_data(settings, sizeof(*settings), CIOT_SETTINGS_FILENAME);
+    ciot_err_t err = CIOT_ERR_OK;
+    
+    err = ciot_storage_load_data(&settings->wifi, sizeof(settings->wifi), CIOT_SETTINGS_WIFI_FILENAME);
+    if(err)
+        return err;
+
+    err = ciot_storage_load_data(&settings->ntp, sizeof(settings->ntp), CIOT_SETTINGS_NTP_FILENAME);
+    if(err)
+        return err;
+
+    return err;
 }
 
 ciot_err_t ciot_settings_clear(void)
 {
-    return ciot_storage_remove_data(CIOT_SETTINGS_FILENAME);
+    ciot_err_t err = CIOT_ERR_OK;
+
+    err = ciot_storage_remove_data(CIOT_SETTINGS_WIFI_FILENAME);
+    if(err)
+        return err;
+    
+    err = ciot_storage_remove_data(CIOT_SETTINGS_NTP_FILENAME);
+    if(err)
+        return err;
+
+    return err;
 }
