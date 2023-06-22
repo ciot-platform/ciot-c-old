@@ -18,6 +18,7 @@ void app_main(void)
 {
     ciot_app_config_t app = {
         .ap = {
+            .type = CIOT_WIFI_TYPE_AP,
             .ssid = "CIOT APP",
             .password = "administrator",
         },
