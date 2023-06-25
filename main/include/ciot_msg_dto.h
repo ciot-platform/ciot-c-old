@@ -33,6 +33,7 @@ typedef enum ciot_msg_request_type
     CIOT_MSG_REQUEST_GET_CONFIG,
     CIOT_MSG_REQUEST_GET_INFO,
     CIOT_MSG_REQUEST_GET_STATUS,
+    CIOT_MSG_REQUEST_CUSTOM,
 } ciot_msg_request_type_t;
 
 typedef enum ciot_msg_interface

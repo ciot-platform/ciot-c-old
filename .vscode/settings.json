@@ -62,6 +62,8 @@
         "freertos.h": "c",
         "stdlib.h": "c",
         "ciot_app.h": "c",
-        "condition_variable": "c"
+        "condition_variable": "c",
+        "ciot_config.h": "c",
+        "ciot_default_config.h": "c"
     }
 }

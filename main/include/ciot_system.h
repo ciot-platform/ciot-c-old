@@ -61,7 +61,7 @@ typedef enum ciot_system_feature
 
 typedef enum ciot_system_request
 {
-    CIOT_SYSTEM_REQUEST_RESTART=4,
+    CIOT_SYSTEM_REQUEST_RESTART=CIOT_MSG_REQUEST_CUSTOM,
     CIOT_SYSTEM_REQUEST_SAVE_SETTINGS,
     CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS,
 } ciot_system_request_t;

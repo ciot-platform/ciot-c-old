@@ -1,38 +1,37 @@
 /**
- * @file ciot_default_config.h
+ * @file ciot_custom_config.h
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
- * @date 2023-06-19
+ * @date 2023-06-21
  * 
  * @copyright Copyright (c) 2023
  * 
  */
 
-#ifndef __CIOT_DEFAULT_CONFIG__H__
-#define __CIOT_DEFAULT_CONFIG__H__
+#ifndef __CIOT_CUSTOM_CONFIG__H__
+#define __CIOT_CUSTOM_CONFIG__H__
 
 #include "ciot_system.h"
 
+#define CIOT_CONFIG_WIFI_AP_FILENAME "wifi_ap.dat"
+#define CIOT_CONFIG_WIFI_STA_FILENAME "wifi_sta.dat"
+#define CIOT_CONFIG_NTP_FILENAME "ntp.dat"
+
+#define CIOT_CONFIG_VERSION { 0, 0, 0, 1 }
+#define CIOT_CONFIG_DATE { 19, 06, 23 }
+#define CIOT_CONFIG_DEFAULT_TIMEZONE "<-03>3"
+
 #define CIOT_CONFIG_DEVICE_TYPE CIOT_SYSTEM_DEVICE_TYPE_GENERIC
+#define CIOT_CONFIG_OS CIOT_SYSTEM_OS_FREERTOS
+#define CIOT_CONFIG_BOARD "ESP32 Devkit"
+#define CIOT_CONFIG_MCU "ESP32"
 
-#if defined(_WIN32) || defined(_WIN64)
-    #define CIOT_CONFIG_OS CIOT_SYSTEM_OS_WINDOWS
-#elif defined(__linux__)
-    #define CIOT_CONFIG_OS CIOT_SYSTEM_OS_LINUX
-#elif defined(__APPLE__)
-    #define CIOT_CONFIG_OS CIOT_SYSTEM_OS_MAC
-#else
-    #define CIOT_CONFIG_OS CIOT_SYSTEM_OS_UNKNOWN
-#endif
-
-#define CIOT_CONFIG_BOARD "Generic IoT Board"
-#define CIOT_CONFIG_MCU "Unknown"
-
-#define CIOT_CONFIG_FEATURE_SPI 0
+#define CIOT_CONFIG_FEATURE_I2C 1
+#define CIOT_CONFIG_FEATURE_SPI 1
 #define CIOT_CONFIG_FEATURE_UART 1
-#define CIOT_CONFIG_FEATURE_USB 1
-#define CIOT_CONFIG_FEATURE_ETHERNET 1
+#define CIOT_CONFIG_FEATURE_USB 0
+#define CIOT_CONFIG_FEATURE_ETHERNET 0
 #define CIOT_CONFIG_FEATURE_WIFI 1
 #define CIOT_CONFIG_FEATURE_BLE 1
 #define CIOT_CONFIG_FEATURE_ZIGBEE 0
@@ -41,10 +40,10 @@
 #define CIOT_CONFIG_FEATURE_RS485 0
 #define CIOT_CONFIG_FEATURE_CAN 0
 #define CIOT_CONFIG_FEATURE_EEPROM 0
-#define CIOT_CONFIG_FEATURE_FLASH 0
+#define CIOT_CONFIG_FEATURE_FLASH 1
 #define CIOT_CONFIG_FEATURE_SDCARD 0
-#define CIOT_CONFIG_FEATURE_HARDDISK 1
-#define CIOT_CONFIG_FEATURE_DISPLAY 1
+#define CIOT_CONFIG_FEATURE_HARDDISK 0
+#define CIOT_CONFIG_FEATURE_DISPLAY 0
 
 #define CIOT_CONFIG_FEATURES                                             \
     (CIOT_CONFIG_FEATURE_I2C << CIOT_SYSTEM_FEATURE_I2C) |               \
@@ -65,5 +64,4 @@
         (CIOT_CONFIG_FEATURE_HARDDISK << CIOT_SYSTEM_FEATURE_HARDDISK) | \
         (CIOT_CONFIG_FEATURE_DISPLAY << CIOT_SYSTEM_FEATURE_DISPLAY)
 
-
-#endif  //!__CIOT_DEFAULT_CONFIG__H__
+#endif  //!__CIOT_CUSTOM_CONFIG__H__

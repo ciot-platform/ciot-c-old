@@ -14,7 +14,7 @@
 ciot_err_t ciot_wifi_config_from_json(CJSON_PARAMETERS(ciot_wifi_config_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_NUMBER(type);
+    CJSON_GET_NUMBER(mode);
     CJSON_GET_CHAR_ARRAY(ssid);
     CJSON_GET_CHAR_ARRAY(password);
     CJSON_GET_NUMBER(timeout);
@@ -25,7 +25,7 @@ ciot_err_t ciot_wifi_config_from_json(CJSON_PARAMETERS(ciot_wifi_config_t))
 ciot_err_t ciot_wifi_config_to_json(CJSON_PARAMETERS(ciot_wifi_config_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(type);
+    CJSON_ADD_NUMBER(mode);
     CJSON_ADD_CHAR_ARRAY(ssid);
     CJSON_ADD_CHAR_ARRAY(password);
     CJSON_ADD_NUMBER(timeout);

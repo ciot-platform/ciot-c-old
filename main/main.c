@@ -12,14 +12,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "ciot_custom_config.h"
 #include "ciot_app.h"
 
 void app_main(void)
 {
     ciot_app_config_t app = {
         .ap = {
-            .type = CIOT_WIFI_TYPE_AP,
-            .ssid = "CIOT APP",
+            .mode = CIOT_WIFI_MODE_AP,
+            .ssid = "CIOT AP",
             .password = "administrator",
         },
         .http_server = {

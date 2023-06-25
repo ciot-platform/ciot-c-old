@@ -16,18 +16,18 @@
 #include "ciot_tcp.h"
 #include "ciot_json.h"
 
-typedef enum ciot_wifi_type
+typedef enum ciot_wifi_mode
 {
-    CIOT_WIFI_TYPE_STA,
-    CIOT_WIFI_TYPE_AP,
-} ciot_wifi_type_t;
+    CIOT_WIFI_MODE_STA,
+    CIOT_WIFI_MODE_AP,
+} ciot_wifi_mode_t;
 
 typedef struct ciot_wifi_config
 {
-    ciot_wifi_type_t type;
     char ssid[32];
     char password[64];
     int timeout;
+    ciot_wifi_mode_t mode;
     ciot_tcp_config_t tcp;
 } ciot_wifi_config_t;
 
@@ -42,9 +42,9 @@ typedef struct ciot_wifi_status
 } ciot_wifi_status_t;
 
 ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf);
-ciot_err_t ciot_wifi_get_config(ciot_wifi_type_t type, ciot_wifi_config_t *config);
-ciot_err_t ciot_wifi_get_status(ciot_wifi_type_t type, ciot_wifi_status_t *status);
-ciot_err_t ciot_wifi_get_info(ciot_wifi_type_t type, ciot_wifi_info_t *info);
+ciot_err_t ciot_wifi_get_config(ciot_wifi_mode_t type, ciot_wifi_config_t *config);
+ciot_err_t ciot_wifi_get_status(ciot_wifi_mode_t type, ciot_wifi_status_t *status);
+ciot_err_t ciot_wifi_get_info(ciot_wifi_mode_t type, ciot_wifi_info_t *info);
 
 ciot_err_t ciot_wifi_config_from_json(CJSON_PARAMETERS(ciot_wifi_config_t));
 ciot_err_t ciot_wifi_config_to_json(CJSON_PARAMETERS(ciot_wifi_config_t));
