@@ -88,10 +88,25 @@ An more completed API documentation will be elaborated after some project progre
 
  - [x] wifi interface (idf)
  - [x] ntp interface (idf)
- - [ ] http server (idf, linux, windows)
+ - [x] http server (idf)
+ - [ ] http server (windows)
+ - [ ] http server (linux)
 
-### v0.2.0: Handle uart, http client, and mqtt interfaces, accepting raw and json http requests.
+### v0.2.0: Handle mqtt interface, accepting raw and json http requests.
 
- - [ ] uart interface (idf, linux, windows)
- - [ ] mqtt interface (idf, linux, windows)
- - [ ] http client (idf, linuxx, windows)
+ - [ ] mqtt interface (idf)
+ - [ ] mqtt interface (windows)
+ - [ ] mqtt interface (linux)
+
+### v0.3.0: Handle uart interface outside ciot API.
+
+ - [ ] uart interface (idf)
+ - [ ] uart interface (windows)
+ - [ ] uart interface (linux)
+
+### v0.4.0: Handle uart with ciot API.
+
+ - [ ] uart interface (idf)
+ - [ ] uart interface (windows)
+ - [ ] uart interface (linux)
+ 

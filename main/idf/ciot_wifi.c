@@ -41,9 +41,9 @@ static const char *TAG = "ciot_wifi";
 
 static void ciot_wifi_init(void);
 static wifi_mode_t ciot_wifi_get_mode(wifi_interface_t interface);
-static ciot_err_t ciot_wifi_scan();
+static ciot_err_t ciot_wifi_scan(ciot_wifi_scan_result_t *scan_result);
 static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
-static void ciot_wifi_event_scan_done();
+static ciot_err_t ciot_wifi_get_scan_result(ciot_wifi_scan_result_t *scan_result);
 
 ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf)
 {
@@ -132,17 +132,13 @@ ciot_err_t ciot_wifi_get_info(ciot_wifi_interface_t interface, ciot_wifi_info_t 
     return CIOT_ERR_OK;
 }
 
-ciot_err_t ciot_wifi_process_request(ciot_wifi_request_t request)
+ciot_err_t ciot_wifi_process_request(ciot_wifi_request_t request, ciot_wifi_scan_result_t *scan_result)
 {
     switch (request)
     {
     case CIOT_WIFI_REQUEST_SCAN:
-        return ciot_wifi_scan();
+        return ciot_wifi_scan(scan_result);
     default:    
-    case CIOT_WIFI_REQUEST_SCAN_CLEAR:
-        wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.size = 0;
-        free(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result);
-        wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result = NULL;
         return CIOT_ERR_INVALID_REQUEST;
     }
 }
@@ -185,7 +181,7 @@ static wifi_mode_t ciot_wifi_get_mode(wifi_interface_t interface)
     }
 }
 
-static ciot_err_t ciot_wifi_scan()
+static ciot_err_t ciot_wifi_scan(ciot_wifi_scan_result_t *scan_result)
 {
     if(wifi[CIOT_WIFI_IF_STA].status.data.tcp.state <= CIOT_TCP_STATE_STOPPED)
     {
@@ -193,11 +189,14 @@ static ciot_err_t ciot_wifi_scan()
     }
     else
     {
-        wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.state = CIOT_WIFI_SCAN_STATE_SCANNING;
+        wifi[CIOT_WIFI_IF_AP].status.data.sta.scan = CIOT_WIFI_SCAN_STATE_SCANNING;
         esp_err_t err = esp_wifi_scan_start(NULL, false);
         if(err != CIOT_ERR_OK)
             return err;
         xEventGroupWaitBits(event_group, CIOT_WIFI_EVENT_BIT_SCAN_DONE, pdTRUE, pdFALSE, CIOT_WIFI_SCAN_TIMEOUT / portTICK_PERIOD_MS);
+        err = ciot_wifi_get_scan_result(scan_result);
+        if(err != CIOT_ERR_OK)
+            return err;
     }
     return CIOT_ERR_OK;
 }
@@ -210,7 +209,8 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
         {
         case WIFI_EVENT_SCAN_DONE:
             ESP_LOGI(TAG, "WIFI_EVENT_SCAN_DONE");
-            ciot_wifi_event_scan_done();
+            xEventGroupSetBits(event_group, CIOT_WIFI_EVENT_BIT_SCAN_DONE);
+            wifi[CIOT_WIFI_IF_AP].status.data.sta.scan = CIOT_WIFI_SCAN_STATE_SCANNED;
             break;
         case WIFI_EVENT_AP_START:
             ESP_LOGI(TAG, "WIFI_EVENT_AP_START");
@@ -299,56 +299,49 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
     }
 }
 
-static void ciot_wifi_event_scan_done()
+static ciot_err_t ciot_wifi_get_scan_result(ciot_wifi_scan_result_t *scan_result)
 {
     wifi_ap_record_t *wifi_ap_record;
+    uint16_t size = 0;
 
-    wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.state = CIOT_WIFI_SCAN_STATE_SCANNED;
-
-    esp_err_t err = esp_wifi_scan_get_ap_num(&wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.size);
+    esp_err_t err = esp_wifi_scan_get_ap_num(&size);
     if(err != ESP_OK)
     {
-        wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.state = CIOT_WIFI_SCAN_STATE_ERROR;
-        return;
+        scan_result->state = CIOT_WIFI_SCAN_STATE_ERROR;
+        return err;
     }
 
-    if(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.size > 0)
+    if(size > 0)
     {
-        uint16_t list_size = wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.size;
-        wifi_ap_record = calloc(list_size, sizeof(wifi_ap_record_t));
+        size_t max_size = (sizeof(scan_result->result) / sizeof(ciot_wifi_ap_info_t));
+        scan_result->size = size > max_size ? max_size : size;
+        wifi_ap_record = calloc(scan_result->size, sizeof(wifi_ap_record_t));
         if(wifi_ap_record != NULL)
         {
-            err = esp_wifi_scan_get_ap_records(&list_size, wifi_ap_record);
+            err = esp_wifi_scan_get_ap_records(&scan_result->size, wifi_ap_record);
             if(err == ESP_OK)
             {
-                if(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result != NULL)
+                if(scan_result->result != NULL)
                 {
-                    free(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result);
-                }
-                wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result = calloc(list_size, sizeof(ciot_wifi_ap_info_t));
-                if(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result != NULL)
-                {
-                    wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.size = list_size;
-                    for (size_t i = 0; i < list_size; i++)
+                    for (size_t i = 0; i < scan_result->size; i++)
                     {
-                        memcpy(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result[i].bssid, wifi_ap_record[i].bssid, 6);
-                        memcpy(wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result[i].ssid, wifi_ap_record[i].ssid, 32);
-                        wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result[i].authmode = wifi_ap_record[i].authmode;
-                        wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.result[i].rssi = wifi_ap_record[i].rssi;
+                        memcpy(scan_result->result[i].bssid, wifi_ap_record[i].bssid, 6);
+                        memcpy(scan_result->result[i].ssid, wifi_ap_record[i].ssid, 32);
+                        scan_result->result[i].authmode = wifi_ap_record[i].authmode;
+                        scan_result->result[i].rssi = wifi_ap_record[i].rssi;
                     }
                 }
                 else
                 {
-                    wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.size = 0;
-                    wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.state = CIOT_WIFI_SCAN_STATE_ERROR;
+                    scan_result->state = CIOT_WIFI_SCAN_STATE_ERROR;
                 }
             }
         }
         else
         {
-            wifi[CIOT_WIFI_IF_STA].status.data.sta.scan.state = CIOT_WIFI_SCAN_STATE_ERROR;
+            scan_result->state = CIOT_WIFI_SCAN_STATE_ERROR;
         }
         free(wifi_ap_record);
     }
-    xEventGroupSetBits(event_group, CIOT_WIFI_EVENT_BIT_SCAN_DONE);
+    return err;
 }

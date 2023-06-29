@@ -91,15 +91,16 @@ typedef struct ciot_msg_status
 
 typedef union ciot_msg_response_data
 {
-    ciot_msg_config_t config;
-    ciot_msg_info_t info;
-    ciot_msg_status_t status;
+    ciot_msg_config_data_t config;
+    ciot_msg_info_data_t info;
+    ciot_msg_status_data_t status;
+    ciot_wifi_scan_result_t wifi;
 } ciot_msg_response_data_t;
 
 typedef struct ciot_msg_response
 {
     ciot_err_t err_code;
-    ciot_msg_request_type_t request;
+    ciot_msg_request_t request;
     ciot_msg_response_data_t data;
 } ciot_msg_response_t;
 
@@ -124,7 +125,7 @@ ciot_err_t ciot_msg_config_from_json(CJSON_PARAMETERS(ciot_msg_config_t));
 ciot_err_t ciot_msg_config_data_from_json(CJSON_PARAMETERS(ciot_msg_config_data_t), ciot_msg_interface_t interface);
 
 ciot_err_t ciot_msg_response_to_json(CJSON_PARAMETERS(ciot_msg_response_t));
-ciot_err_t ciot_msg_response_data_to_json(CJSON_PARAMETERS(ciot_msg_response_data_t), ciot_msg_request_type_t request);
+ciot_err_t ciot_msg_response_data_to_json(CJSON_PARAMETERS(ciot_msg_response_data_t), ciot_msg_request_t request);
 
 ciot_err_t ciot_msg_info_to_json(CJSON_PARAMETERS(ciot_msg_info_t));
 ciot_err_t ciot_msg_info_data_to_json(CJSON_PARAMETERS(ciot_msg_info_data_t), ciot_msg_interface_t interface);

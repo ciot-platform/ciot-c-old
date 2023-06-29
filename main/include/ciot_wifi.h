@@ -33,7 +33,6 @@ typedef enum ciot_wifi_scan_state
 typedef enum ciot_wifi_request
 {
     CIOT_WIFI_REQUEST_SCAN=4,
-    CIOT_WIFI_REQUEST_SCAN_CLEAR,
 } ciot_wifi_request_t;
 
 typedef struct ciot_wifi_config
@@ -58,12 +57,12 @@ typedef struct ciot_wifi_ap_info
     uint8_t authmode;
 } ciot_wifi_ap_info_t;
 
-typedef struct ciot_wifi_scan_status
+typedef struct ciot_wifi_scan_result
 {
     ciot_wifi_scan_state_t state;
-    uint16_t size;
-    ciot_wifi_ap_info_t *result;
-} ciot_wifi_scan_status_t;
+    size_t size;
+    ciot_wifi_ap_info_t result[10];
+} ciot_wifi_scan_result_t;
 
 typedef struct ciot_wifi_ap_status
 {
@@ -74,7 +73,7 @@ typedef struct ciot_wifi_sta_status
 {
     ciot_tcp_status_t tcp;
     ciot_wifi_ap_info_t ap;
-    ciot_wifi_scan_status_t scan;
+    ciot_wifi_scan_state_t scan;
 } ciot_wifi_sta_status_t;
 
 typedef union ciot_wifi_status_data
@@ -94,7 +93,7 @@ ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf);
 ciot_err_t ciot_wifi_get_config(ciot_wifi_interface_t type, ciot_wifi_config_t *config);
 ciot_err_t ciot_wifi_get_status(ciot_wifi_interface_t type, ciot_wifi_status_t *status);
 ciot_err_t ciot_wifi_get_info(ciot_wifi_interface_t type, ciot_wifi_info_t *info);
-ciot_err_t ciot_wifi_process_request(ciot_wifi_request_t request);
+ciot_err_t ciot_wifi_process_request(ciot_wifi_request_t request, ciot_wifi_scan_result_t *scan_result);
 
 ciot_err_t ciot_wifi_config_from_json(CJSON_PARAMETERS(ciot_wifi_config_t));
 ciot_err_t ciot_wifi_config_to_json(CJSON_PARAMETERS(ciot_wifi_config_t));
@@ -102,5 +101,6 @@ ciot_err_t ciot_wifi_info_from_json(CJSON_PARAMETERS(ciot_wifi_info_t));
 ciot_err_t ciot_wifi_info_to_json(CJSON_PARAMETERS(ciot_wifi_info_t));
 ciot_err_t ciot_wifi_status_from_json(CJSON_PARAMETERS(ciot_wifi_status_t));
 ciot_err_t ciot_wifi_status_to_json(CJSON_PARAMETERS(ciot_wifi_status_t));
+ciot_err_t ciot_wifi_scan_result_to_json(CJSON_PARAMETERS(ciot_wifi_scan_result_t));
 
 #endif  //!__CIOT_WIFI__H__

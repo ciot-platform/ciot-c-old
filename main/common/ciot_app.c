@@ -81,7 +81,7 @@ ciot_err_t ciot_app_get_msg_response(ciot_msg_response_t *response)
 
 static ciot_err_t ciot_app_request_handle(ciot_msg_request_t *request)
 {
-    this.result.request = request->request;
+    this.result.request = *request;
     switch (request->request)
     {
     case CIOT_MSG_REQUEST_GET_CONFIG:
@@ -112,15 +112,14 @@ static ciot_err_t ciot_app_config_handle(ciot_msg_config_t *config)
 
 static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface)
 {
-    this.result.data.config.interface = interface;
     switch (interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_get_config(CIOT_WIFI_IF_STA, &this.result.data.config.data.wifi);
+        return ciot_wifi_get_config(CIOT_WIFI_IF_STA, &this.result.data.config.wifi);
     case CIOT_MSG_IF_SYSTEM:
-        return ciot_system_get_config(&this.result.data.config.data.system);
+        return ciot_system_get_config(&this.result.data.config.system);
     case CIOT_MSG_IF_NTP:
-        return ciot_ntp_get_config(&this.result.data.config.data.ntp);
+        return ciot_ntp_get_config(&this.result.data.config.ntp);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -128,15 +127,14 @@ static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface)
 
 static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface)
 {
-    this.result.data.info.interface = interface;
     switch (interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_get_info(CIOT_WIFI_IF_STA, &this.result.data.info.data.wifi);
+        return ciot_wifi_get_info(CIOT_WIFI_IF_STA, &this.result.data.info.wifi);
     case CIOT_MSG_IF_SYSTEM:
-        return ciot_system_get_info(&this.result.data.info.data.system);
+        return ciot_system_get_info(&this.result.data.info.system);
     case CIOT_MSG_IF_NTP:
-        return ciot_ntp_get_info(&this.result.data.info.data.ntp);
+        return ciot_ntp_get_info(&this.result.data.info.ntp);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -144,15 +142,14 @@ static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface)
 
 static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface)
 {
-    this.result.data.status.interface = interface;
     switch (interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_get_status(CIOT_WIFI_IF_STA, &this.result.data.status.data.wifi);
+        return ciot_wifi_get_status(CIOT_WIFI_IF_STA, &this.result.data.status.wifi);
     case CIOT_MSG_IF_SYSTEM:
-        return ciot_system_get_status(&this.result.data.status.data.system);
+        return ciot_system_get_status(&this.result.data.status.system);
     case CIOT_MSG_IF_NTP:
-        return ciot_ntp_get_status(&this.result.data.status.data.ntp);
+        return ciot_ntp_get_status(&this.result.data.status.ntp);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -163,7 +160,7 @@ static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request)
     switch (request->interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_process_request(request->request);    
+        return ciot_wifi_process_request(request->request, &this.result.data.wifi);    
     case CIOT_MSG_IF_SYSTEM:
         return ciot_system_process_request(request->request);
     case CIOT_MSG_IF_NTP:
