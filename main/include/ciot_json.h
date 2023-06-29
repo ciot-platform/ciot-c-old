@@ -214,6 +214,33 @@ extern "C"
 
 #define CJSON_ADD_OBJ_TO_ROOT(obj, handler) handler(json, &ptr->obj);
 
+#define CJSON_ADD_OBJ_PTR(obj, handler)                       \
+    if (handler != NULL)                                      \
+    {                                                         \
+        if (ptr->size > 0)                                    \
+        {                                                     \
+            cJSON *array = cJSON_CreateArray();               \
+            for (size_t i = 0; i < ptr->size; i++)            \
+            {                                                 \
+                cJSON *item = cJSON_CreateObject();           \
+                ciot_err_t err = handler(item, &ptr->obj[i]); \
+                if (err == CIOT_ERR_OK)                       \
+                {                                             \
+                    cJSON_AddItemToArray(array, item);        \
+                }                                             \
+                else                                          \
+                {                                             \
+                    return err;                               \
+                }                                             \
+            }                                                 \
+            cJSON_AddItemToObject(json, #obj, array);         \
+        }                                                     \
+    }                                                         \
+    else                                                      \
+    {                                                         \
+        return CIOT_ERR_INVALID_ARG;                          \
+    }
+
 #define CJSON_ADD_OBJ_IN_UNION(obj, handler, received_type, expected_type) \
     if (received_type == expected_type)                                    \
     {                                                                      \
@@ -243,16 +270,16 @@ extern "C"
         return CIOT_ERR_INVALID_ARG;                  \
     }
 
-#define CJSON_ADD_UNION_TO_ROOT(obj, handler, type)   \
-    if (handler != NULL)                              \
-    {                                                 \
+#define CJSON_ADD_UNION_TO_ROOT(obj, handler, type)    \
+    if (handler != NULL)                               \
+    {                                                  \
         int err = handler(json, &ptr->obj, ptr->type); \
-        if (err != CIOT_ERR_OK)                       \
-            return err;                               \
-    }                                                 \
-    else                                              \
-    {                                                 \
-        return CIOT_ERR_INVALID_ARG;                  \
+        if (err != CIOT_ERR_OK)                        \
+            return err;                                \
+    }                                                  \
+    else                                               \
+    {                                                  \
+        return CIOT_ERR_INVALID_ARG;                   \
     }
 
 #ifdef __cplusplus

@@ -41,7 +41,7 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     }
     else
     {
-        err += ciot_wifi_set_config(&conf->ap);
+        err += ciot_wifi_set_config(&conf->wifi);
     }
 
     err += ciot_http_server_start(&conf->http_server);
@@ -116,7 +116,7 @@ static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface)
     switch (interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_get_config(CIOT_WIFI_MODE_STA, &this.result.data.config.data.wifi);
+        return ciot_wifi_get_config(CIOT_WIFI_IF_STA, &this.result.data.config.data.wifi);
     case CIOT_MSG_IF_SYSTEM:
         return ciot_system_get_config(&this.result.data.config.data.system);
     case CIOT_MSG_IF_NTP:
@@ -132,7 +132,7 @@ static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface)
     switch (interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_get_info(CIOT_WIFI_MODE_STA, &this.result.data.info.data.wifi);
+        return ciot_wifi_get_info(CIOT_WIFI_IF_STA, &this.result.data.info.data.wifi);
     case CIOT_MSG_IF_SYSTEM:
         return ciot_system_get_info(&this.result.data.info.data.system);
     case CIOT_MSG_IF_NTP:
@@ -148,7 +148,7 @@ static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface)
     switch (interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_get_status(CIOT_WIFI_MODE_STA, &this.result.data.status.data.wifi);
+        return ciot_wifi_get_status(CIOT_WIFI_IF_STA, &this.result.data.status.data.wifi);
     case CIOT_MSG_IF_SYSTEM:
         return ciot_system_get_status(&this.result.data.status.data.system);
     case CIOT_MSG_IF_NTP:
@@ -163,7 +163,7 @@ static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request)
     switch (request->interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return CIOT_ERR_INVALID_REQUEST;        
+        return ciot_wifi_process_request(request->request);    
     case CIOT_MSG_IF_SYSTEM:
         return ciot_system_process_request(request->request);
     case CIOT_MSG_IF_NTP:

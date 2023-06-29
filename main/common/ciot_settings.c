@@ -18,8 +18,8 @@ ciot_err_t ciot_settings_save(void)
     ciot_err_t err = CIOT_ERR_OK;
     ciot_settings_t settings;
 
-    ciot_wifi_get_config(CIOT_WIFI_MODE_AP, &settings.wifi_ap);
-    ciot_wifi_get_config(CIOT_WIFI_MODE_STA, &settings.wifi_sta);
+    ciot_wifi_get_config(CIOT_WIFI_IF_AP, &settings.wifi_ap);
+    ciot_wifi_get_config(CIOT_WIFI_IF_STA, &settings.wifi_sta);
     ciot_ntp_get_config(&settings.ntp);
 
     err = ciot_storage_save_data(&settings.wifi_ap, sizeof(settings.wifi_ap), CIOT_CONFIG_WIFI_AP_FILENAME);

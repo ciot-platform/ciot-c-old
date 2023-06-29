@@ -117,6 +117,7 @@ static esp_err_t ciot_http_server_on_post(httpd_req_t *req)
             {
                 err = httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, json_str);
             }
+            cJSON_Delete(json);
             free(json_str);
             return err;
         }

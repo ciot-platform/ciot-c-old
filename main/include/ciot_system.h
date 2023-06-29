@@ -61,7 +61,7 @@ typedef enum ciot_system_feature
 
 typedef enum ciot_system_request
 {
-    CIOT_SYSTEM_REQUEST_RESTART=CIOT_MSG_REQUEST_CUSTOM,
+    CIOT_SYSTEM_REQUEST_RESTART=4,
     CIOT_SYSTEM_REQUEST_SAVE_SETTINGS,
     CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS,
 } ciot_system_request_t;
@@ -75,7 +75,7 @@ typedef struct ciot_system_info
 {
     ciot_system_device_type_t type;
     ciot_system_os_t os;
-    uint8_t version[4];
+    uint8_t version[5];
     uint8_t date[3];
     char board[16];
     char mcu[16];

@@ -19,7 +19,7 @@
 
 typedef struct ciot_app_config
 {
-    ciot_wifi_config_t ap;
+    ciot_wifi_config_t wifi;
     ciot_http_server_config_t http_server;
 } ciot_app_config_t;
 
