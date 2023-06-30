@@ -84,7 +84,7 @@ static ciot_err_t ciot_wifi_ap_status_to_json(CJSON_PARAMETERS(ciot_wifi_ap_stat
 static ciot_err_t ciot_wifi_sta_status_to_json(CJSON_PARAMETERS(ciot_wifi_sta_status_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_OBJ(ap, ciot_wifi_ap_info_to_json);
+    CJSON_ADD_OBJ(sta, ciot_wifi_ap_info_to_json);
     CJSON_ADD_OBJ(tcp, ciot_tcp_status_to_json);
     CJSON_ADD_NUMBER(scan);
     return CIOT_ERR_OK;

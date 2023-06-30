@@ -61,13 +61,16 @@ ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg)
         err = ciot_app_request_handle(&msg->data.request);
         break;
     case CIOT_MSG_TYPE_CONFIG:
+        this.result.request.request = CIOT_MSG_REQUEST_NONE;
         err = ciot_app_config_handle(&msg->data.config);
         break;
     default:
+        this.result.request.request = CIOT_MSG_REQUEST_NONE;
         err = CIOT_ERR_INVALID_TYPE;
         break;
     }
 
+    this.result.type = CIOT_MSG_TYPE_RESPONSE;
     this.result.err_code = err;
 
     return err;

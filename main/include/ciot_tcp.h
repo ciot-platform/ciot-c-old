@@ -67,7 +67,6 @@ typedef struct ciot_tcp_dhcp_info
 typedef struct ciot_tcp_info
 {
     uint8_t mac[6];
-    uint8_t ip[4];
 } ciot_tcp_info_t;
 
 typedef struct ciot_tcp_status
@@ -75,6 +74,7 @@ typedef struct ciot_tcp_status
     ciot_tcp_state_t state;
     uint8_t connection;
     ciot_tcp_dhcp_info_t dhcp;
+    uint8_t ip[4];
 } ciot_tcp_status_t;
 
 ciot_err_t ciot_tcp_set_config(void *interface, ciot_tcp_config_t *tcp);

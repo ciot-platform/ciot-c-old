@@ -99,6 +99,7 @@ typedef union ciot_msg_response_data
 
 typedef struct ciot_msg_response
 {
+    ciot_msg_type_t type;
     ciot_err_t err_code;
     ciot_msg_request_t request;
     ciot_msg_response_data_t data;

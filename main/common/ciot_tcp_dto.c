@@ -37,7 +37,6 @@ ciot_err_t ciot_tcp_info_from_json(CJSON_PARAMETERS(ciot_tcp_info_t))
 {
     CJSON_CHECK_PARAMETERS();
     CJSON_GET_NUMBER_ARRAY(mac);
-    CJSON_GET_NUMBER_ARRAY(ip);
     return CIOT_ERR_OK;
 }
 
@@ -45,7 +44,6 @@ ciot_err_t ciot_tcp_info_to_json(CJSON_PARAMETERS(ciot_tcp_info_t))
 {
     CJSON_CHECK_PARAMETERS();
     CJSON_ADD_NUMBER_ARRAY(mac);
-    CJSON_ADD_NUMBER_ARRAY(ip);
     return CIOT_ERR_OK;
 }
 
@@ -54,6 +52,7 @@ ciot_err_t ciot_tcp_status_from_json(CJSON_PARAMETERS(ciot_tcp_status_t))
     CJSON_CHECK_PARAMETERS();
     CJSON_GET_NUMBER(state);
     CJSON_GET_NUMBER(connection);
+    CJSON_GET_NUMBER_ARRAY(ip);
     CJSON_GET_OBJ(dhcp, ciot_tcp_dhcp_info_from_json);
     return CIOT_ERR_OK;
 }
@@ -63,6 +62,7 @@ ciot_err_t ciot_tcp_status_to_json(CJSON_PARAMETERS(ciot_tcp_status_t))
     CJSON_CHECK_PARAMETERS();
     CJSON_ADD_NUMBER(state);
     CJSON_ADD_NUMBER(connection);
+    CJSON_ADD_NUMBER_ARRAY(ip);
     CJSON_ADD_OBJ(dhcp, ciot_tcp_dhcp_info_to_json);
     return CIOT_ERR_OK;
 }

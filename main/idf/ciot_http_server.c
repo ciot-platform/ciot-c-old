@@ -15,6 +15,9 @@
 #include "ciot_http_server.h"
 #include "ciot_app.h"
 
+#define CIOT_HTTP_SERVER_ERROR_MASK "{\"error_code\":%d}"
+#define CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG "{\"error_code\":%d, \"message\":\"%s\"}"
+
 typedef struct ciot_http_server
 {
     httpd_handle_t handle;
@@ -91,13 +94,15 @@ static esp_err_t ciot_http_server_on_post(httpd_req_t *req)
         }
         else
         {
-            return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Content-Type not supported");
+            char err_msg[64];
+            sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG, err, "Content-Type not supported");
+            return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, err_msg);
         }
 
         if(err != ESP_OK)
         {
-            char err_msg[16];
-            sprintf(err_msg, "ERROR %x", err);
+            char err_msg[28];
+            sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
             return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, err_msg);
         }
 
@@ -123,14 +128,16 @@ static esp_err_t ciot_http_server_on_post(httpd_req_t *req)
         }
         else
         {
-            char err_msg[16];
-            sprintf(err_msg, "ERROR %x", err);
+            char err_msg[28];
+            sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, CIOT_ERR_INVALID_REQUEST);
             return httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, err_msg);
         }
 
     }
     else
     {
-        return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Missing Content-Type");
+        char err_msg[64];
+        sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG, err, "Missing Content-Type");
+        return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, err_msg);
     }
 }

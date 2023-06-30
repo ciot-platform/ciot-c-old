@@ -28,6 +28,7 @@ void app_main(void)
             .endpoint = "/v1/ciot"
         }
     };
+    
     ciot_app_start(&app);
 }
 

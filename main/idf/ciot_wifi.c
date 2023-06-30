@@ -52,7 +52,8 @@ ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf)
     wifi_config_t wifi_conf = {0};
     wifi_mode_t wifi_mode = ciot_wifi_get_mode(wifi_interface);
 
-    memcpy(&wifi_conf, conf, sizeof(*conf));
+    memcpy(wifi_conf.ap.ssid, conf->ssid, sizeof(wifi_conf.ap.ssid));
+    memcpy(wifi_conf.ap.password, conf->password, sizeof(wifi_conf.ap.password));
     memcpy(&wifi[conf->mode].config, conf, sizeof(wifi[conf->mode].config));
     ciot_wifi_init();
 
@@ -110,10 +111,10 @@ ciot_err_t ciot_wifi_get_status(ciot_wifi_interface_t interface, ciot_wifi_statu
         if(err)
             return err;
 
-        wifi[interface].status.data.sta.ap.authmode = ap.authmode;
-        wifi[interface].status.data.sta.ap.rssi = ap.rssi;
-        memcpy(wifi[interface].status.data.sta.ap.bssid, ap.bssid, 6);
-        memcpy(wifi[interface].status.data.sta.ap.ssid, ap.ssid, 32);
+        wifi[interface].status.data.sta.sta.authmode = ap.authmode;
+        wifi[interface].status.data.sta.sta.rssi = ap.rssi;
+        memcpy(wifi[interface].status.data.sta.sta.bssid, ap.bssid, 6);
+        memcpy(wifi[interface].status.data.sta.sta.ssid, ap.ssid, 32);
     }
 
     *status = wifi[interface].status;
@@ -185,20 +186,20 @@ static ciot_err_t ciot_wifi_scan(ciot_wifi_scan_result_t *scan_result)
 {
     if(wifi[CIOT_WIFI_IF_STA].status.data.tcp.state <= CIOT_TCP_STATE_STOPPED)
     {
-        return CIOT_ERR_INVALID_STATE;
-    }
-    else
-    {
-        wifi[CIOT_WIFI_IF_AP].status.data.sta.scan = CIOT_WIFI_SCAN_STATE_SCANNING;
-        esp_err_t err = esp_wifi_scan_start(NULL, false);
-        if(err != CIOT_ERR_OK)
-            return err;
-        xEventGroupWaitBits(event_group, CIOT_WIFI_EVENT_BIT_SCAN_DONE, pdTRUE, pdFALSE, CIOT_WIFI_SCAN_TIMEOUT / portTICK_PERIOD_MS);
-        err = ciot_wifi_get_scan_result(scan_result);
+        ciot_wifi_init();
+        esp_err_t err = esp_wifi_start();
         if(err != CIOT_ERR_OK)
             return err;
     }
-    return CIOT_ERR_OK;
+    
+    esp_err_t err = esp_wifi_scan_start(NULL, false);
+    if(err != CIOT_ERR_OK)
+        return err;
+    
+    wifi[CIOT_WIFI_IF_AP].status.data.sta.scan = CIOT_WIFI_SCAN_STATE_SCANNING;
+    xEventGroupWaitBits(event_group, CIOT_WIFI_EVENT_BIT_SCAN_DONE, pdTRUE, pdFALSE, CIOT_WIFI_SCAN_TIMEOUT / portTICK_PERIOD_MS);
+    
+    return ciot_wifi_get_scan_result(scan_result);
 }
 
 static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
@@ -245,7 +246,7 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
             ESP_LOGI(TAG, "WIFI_EVENT_STA_CONNECTED");
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.state = CIOT_TCP_STATE_CONNECTED;
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.connection++;
-            ciot_tcp_set_config(wifi[CIOT_WIFI_IF_STA].netif, &wifi[CIOT_WIFI_IF_STA].config.tcp);
+            ESP_ERROR_CHECK_WITHOUT_ABORT(ciot_tcp_set_config(wifi[CIOT_WIFI_IF_STA].netif, &wifi[CIOT_WIFI_IF_STA].config.tcp));
             xEventGroupSetBits(event_group, CIOT_WIFI_EVENT_BIT_CONFIG_DONE);
             break;
         case WIFI_EVENT_STA_DISCONNECTED:
@@ -265,10 +266,10 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
         {
             ESP_LOGI(TAG, "IP_EVENT_STA_GOT_IP");
             ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
-            wifi[CIOT_WIFI_IF_STA].info.tcp.ip[0] = ip4_addr1(&event->ip_info.ip);
-            wifi[CIOT_WIFI_IF_STA].info.tcp.ip[1] = ip4_addr2(&event->ip_info.ip);
-            wifi[CIOT_WIFI_IF_STA].info.tcp.ip[2] = ip4_addr3(&event->ip_info.ip);
-            wifi[CIOT_WIFI_IF_STA].info.tcp.ip[3] = ip4_addr4(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_STA].status.data.tcp.ip[0] = ip4_addr1(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_STA].status.data.tcp.ip[1] = ip4_addr2(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_STA].status.data.tcp.ip[2] = ip4_addr3(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_STA].status.data.tcp.ip[3] = ip4_addr4(&event->ip_info.ip);
 
             esp_netif_dhcp_status_t status;
             esp_netif_dhcpc_get_status(wifi[CIOT_WIFI_IF_STA].netif, &status);
@@ -281,10 +282,10 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
         {
             ESP_LOGI(TAG, "IP_EVENT_AP_STAIPASSIGNED");
             ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
-            wifi[CIOT_WIFI_IF_AP].info.tcp.ip[0] = ip4_addr1(&event->ip_info.ip);
-            wifi[CIOT_WIFI_IF_AP].info.tcp.ip[1] = ip4_addr2(&event->ip_info.ip);
-            wifi[CIOT_WIFI_IF_AP].info.tcp.ip[2] = ip4_addr3(&event->ip_info.ip);
-            wifi[CIOT_WIFI_IF_AP].info.tcp.ip[3] = ip4_addr4(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_AP].status.data.tcp.ip[0] = ip4_addr1(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_AP].status.data.tcp.ip[1] = ip4_addr2(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_AP].status.data.tcp.ip[2] = ip4_addr3(&event->ip_info.ip);
+            wifi[CIOT_WIFI_IF_AP].status.data.tcp.ip[3] = ip4_addr4(&event->ip_info.ip);
 
             esp_netif_dhcp_status_t status;
             esp_netif_dhcpc_get_status(wifi[CIOT_WIFI_IF_AP].netif, &status);
@@ -313,7 +314,7 @@ static ciot_err_t ciot_wifi_get_scan_result(ciot_wifi_scan_result_t *scan_result
 
     if(size > 0)
     {
-        size_t max_size = (sizeof(scan_result->result) / sizeof(ciot_wifi_ap_info_t));
+        uint16_t max_size = (sizeof(scan_result->result) / sizeof(ciot_wifi_ap_info_t));
         scan_result->size = size > max_size ? max_size : size;
         wifi_ap_record = calloc(scan_result->size, sizeof(wifi_ap_record_t));
         if(wifi_ap_record != NULL)

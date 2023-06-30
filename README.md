@@ -15,72 +15,170 @@ Table of contents:
 
 # API
 
-The CIOT API can receive "messages" to interact with your own "interfaces". We have some message types, and each message type have it own particularities. All CIOT device features are called "interfaces". So, to send an configuration message to wifi interface for example, the message needs to declare type as CIOT_MSG_TYPE_CONFIG, and specify target interface as CIOT_MSG_IF_WIFI. These definitions are enumerations and can be represented by a unsigned integer number.
-
-## Interfaces
-
-An interface its an representation of a device feature. That can be a hardware or software feature. All hardware interfaces will be enumerated from id=1, to id=63. And all software interfaces will be enumarated from id=64 to id=255. So, with only one byte we can reference any device feature, and we can knwow if it's an hardware feature or a software feature. 
+The CIOT API have an unic endpoint. It was done this way to allow porting the API to simpler protocols like uart or modbus. The follow sample code shows how to start an http server on a host machine, and serves APIin "/v1/ciot" endpoint at 80 port.
 
 ```c
-typedef enum ciot_msg_interface
+#include "ciot_app.h"
+
+void app_main(void)
 {
-    CIOT_MSG_IF_UNKNOWN = 0,
-    CIOT_MSG_IF_WIFI = 1,
-    CIOT_MSG_IF_ETHERNET = 2,
-    CIOT_MSG_IF_UART = 2,
-    CIOT_MSG_IF_
-    CIOT_MSG_IF_SYSTEM = 64,
-    CIOT_MSG_IF_NTP = 65,
-} ciot_msg_interface_t;
-
-```
-
-## Message Types
-
-The CIOT API support three types of messages:
-
-### Request:
-
-An request message can be used to get an specific resource from an interface. All interfaces must implements methods to get these resources. And we have three types of resources in each interface:
-
- - Get Config: get interface active configuration
- - Get Information: get interface information. Information is all static data about interface.
- - Get Status: get interface status. Status is all dynamic data about interface.
- - Action: send an action request to an interface.
-
-```c
-typedef enum ciot_msg_request_type
-{
-    CIOT_MSG_REQUEST_NONE,
-    CIOT_MSG_REQUEST_GET_CONFIG,
-    CIOT_MSG_REQUEST_GET_INFO,
-    CIOT_MSG_REQUEST_GET_STATUS,
-} ciot_msg_request_type_t;
-
-```
-
-### Config:
-
-An config message, it's an message to set the selected interface configuration. These message type can be used to configure the wifi station interface for example, sending an ssid and password to connect device to an known wifi access point. Each interface, have an specific configuration struct. So, to use an interface, it's recommended to read your own documentation.
-
-### Response:
-
-CIOT API will send an response after receives an message from other device. Each message type received by API will generate an different response data. If client sends an request, reponse can contains de requested resource content. If client sends an configuration, response will indicate sucess or error. 
-
-Message example:
-
-```json
-{
-    "type": 2,                  // Message Type: Config
-    "interface":                // Message Interface: WiFi
-    "ssid": "MY-SSID",          // WiFi SSID
-    "password": "MY-PASSWORD",  // WiFi Password
-    "mode": 0,                  // WiFi Mode: Station
-    "timeout": 10000            // Connection Timeout
+    ciot_app_config_t app = {
+        .http_server = {
+            .port = 80,
+            .endpoint = "/v1/ciot"
+        }
+    };
+    ciot_app_start(&app);
 }
 ```
 
-An more completed API documentation will be elaborated after some project progress.
+## WiFi
+
+### Get Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+	"type": 1,          /// Message Type   1:request
+	"request": 1,       /// Request Type   1:getConfiguration
+	"interface": 1      /// Interface Type 1:wifi
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+    "type": 2,                          /// Message Type   2:Response
+	"err_code": 0,                      /// Error Code     0:noError
+	"request": 1,                       /// Request Type   1:getConfiguration
+	"interface": 1,                     /// Interface Type 1:wifi
+	"mode": 0,                          /// Wifi Mode      0:station, 1:accessPoint
+	"ssid": "CABO CANAVERAL",           /// Wifi SSID
+	"password": "16192020",             /// Wifi password
+	"ip": {                             /// IP Configuration (Optional)
+		"dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
+		"address": [192,168,1,16],      /// Device Address
+		"gateway": [192,168,1,254],     /// Network Gateway
+		"mask": [255,255,255,0],        /// Network Mask
+		"dns": [192,168,1,254]          /// Netwokr DNS
+	},
+	"timeout": 10000                    /// Connection timeout
+}
+```
+
+### Get Information
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+	"type": 1,          /// Message Type   1:request
+	"request": 2,       /// Request Type   2:getInformation
+	"interface": 1      /// Interface Type 1:wifi
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+    "type": 2,                          /// Message Type   2:Response
+	"err_code": 0,                      /// Error Code     0:noError
+	"request": 2,                       /// Request Type   2:getInformation
+	"interface": 1,                     /// Interface Type 1:wifi
+	"mac": [168,66,227,90,20,224],      /// Device MAC
+}
+```
+
+### Get Status
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+	"type": 1,          /// Message Type   1:request
+	"request": 3,       /// Request Type   3:getStatus
+	"interface": 1      /// Interface Type 1:wifi
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+    "type": 2,                          	/// Message Type   2:response
+	"err_code": 0,                      	/// Error Code     0:noError
+	"request": 3,                       	/// Request Type   3:getStatus
+	"interface": 1,                     	/// Interface Type 1:wifi
+	"sta": {								/// Connected Station Status
+		"ssid": "CABO CANAVERAL",			/// STA SSID
+		"rssi": -51,						/// STA rssi
+		"authmode": 3,						/// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
+		"bssid": [16,71,56,232,157,249]		/// STA bssid (MAC)
+	},
+	"tcp": {								/// Connected TCP Status
+		"state": 3,							/// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
+		"connection": 2,					/// TCP Connections Counter
+		"ip": [192,168,1,16],				/// TCP IP Address
+		"dhcp": {							/// TCP DHCP Status
+			"client": 2,					/// TCP DHCP Client Status => 0:init, 1:started, 2:stopped
+			"server": 2						/// TCP DHCP Server Status => 0:init, 1:started, 2:stopped
+		}
+	},
+	"scan": 0								/// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
+}
+```
+
+### Set Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+	"type": 2,							/// Message Type  	2:setConfiguration
+	"interface": 1,						/// Interface Type 	1:wifi
+	"ssid": "CABO CANAVERAL",			/// Wifi SSID
+	"password": "16192020",				/// Wifi Password
+	"mode": 0,							/// Wifi Mode 		0:station, 1:accessPoint
+	"ip": {                             /// IP Configuration (Optional)
+		"dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
+		"address": [192,168,1,16],      /// Device Address
+		"gateway": [192,168,1,254],     /// Network Gateway
+		"mask": [255,255,255,0],        /// Network Mask
+		"dns": [192,168,1,254]          /// Netwokr DNS
+	},
+	"timeout": 10000                    /// Connection timeout
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 3,				/// Message Type    3:setConfiguration	
+	"err_code": 0,			/// Error Code      0:noError
+	"request": 0,			/// Request Type    0:none
+	"interface": 1,			/// Interface Type 	1:wifi
+}
+```
 
 ## Roadmap:
 

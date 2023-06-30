@@ -24,11 +24,11 @@ static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *
 
 ciot_err_t ciot_tcp_set_config(void *interface, ciot_tcp_config_t *tcp)
 {
-    esp_err_t err = ciot_tcp_set_ip_config(interface, &tcp->ip);
+    esp_err_t err = ciot_tcp_set_dhcp_config(interface, tcp->ip.dhcp);
     if (err)
         return err;
 
-    err = ciot_tcp_set_dhcp_config(interface, tcp->ip.dhcp);
+    err = ciot_tcp_set_ip_config(interface, &tcp->ip);
     if (err)
         return err;
 
@@ -52,7 +52,7 @@ static ciot_err_t ciot_tcp_set_dhcp_config(void *interface, ciot_tcp_dhcp_config
         return CIOT_ERR_OK;
     case CIOT_TCP_DHCP_CONFIG_CLIENT:
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_CLIENT");
-        if (dhcps == ESP_NETIF_DHCP_STARTED)
+        if (dhcps != ESP_NETIF_DHCP_STOPPED)
         {
             err = esp_netif_dhcps_stop(netif);
             if (err)
@@ -67,7 +67,7 @@ static ciot_err_t ciot_tcp_set_dhcp_config(void *interface, ciot_tcp_dhcp_config
         return err;
     case CIOT_TCP_DHCP_CONFIG_SERVER:
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_SERVER");
-        if (dhcpc == ESP_NETIF_DHCP_STARTED)
+        if (dhcpc != ESP_NETIF_DHCP_STOPPED)
         {
             err = esp_netif_dhcpc_stop(netif);
             if (err)
@@ -82,13 +82,13 @@ static ciot_err_t ciot_tcp_set_dhcp_config(void *interface, ciot_tcp_dhcp_config
         return err;
     case CIOT_TCP_DHCP_CONFIG_DISABLED:
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_DISABLED");
-        if (dhcpc == ESP_NETIF_DHCP_STARTED)
+        if (dhcpc != ESP_NETIF_DHCP_STOPPED)
         {
             err = esp_netif_dhcpc_stop(netif);
             if (err)
                 return err;
         }
-        if (dhcps == ESP_NETIF_DHCP_STARTED)
+        if (dhcps != ESP_NETIF_DHCP_STOPPED)
         {
             err = esp_netif_dhcps_stop(netif);
             if (err)

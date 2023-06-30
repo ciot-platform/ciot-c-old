@@ -60,7 +60,7 @@ typedef struct ciot_wifi_ap_info
 typedef struct ciot_wifi_scan_result
 {
     ciot_wifi_scan_state_t state;
-    size_t size;
+    uint16_t size;
     ciot_wifi_ap_info_t result[10];
 } ciot_wifi_scan_result_t;
 
@@ -72,7 +72,7 @@ typedef struct ciot_wifi_ap_status
 typedef struct ciot_wifi_sta_status
 {
     ciot_tcp_status_t tcp;
-    ciot_wifi_ap_info_t ap;
+    ciot_wifi_ap_info_t sta;
     ciot_wifi_scan_state_t scan;
 } ciot_wifi_sta_status_t;
 
