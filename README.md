@@ -15,7 +15,7 @@ Table of contents:
 
 # API
 
-The CIOT API have an unic endpoint. It was done this way to allow porting the API to simpler protocols like uart or modbus. The follow sample code shows how to start an http server on a host machine, and serves APIin "/v1/ciot" endpoint at 80 port.
+The CIOT API have an unic endpoint. It's designed to facilitate the future API ports to simpler protocols like uart or modbus. The follow sample code shows how to start an http server on a host machine, and serves the API in "/v1/ciot" endpoint at 80 port.
 
 ```c
 #include "ciot_app.h"
