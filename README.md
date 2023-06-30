@@ -54,7 +54,7 @@ void app_main(void)
 
 ```json
 {
-    "type": 2,                          	/// Message Type   2:Response
+	"type": 2,                          	/// Message Type   2:Response
 	"err_code": 0,                      	/// Error Code     0:noError
 	"request": 1,                       	/// Request Type   1:getConfiguration
 	"interface": 1,                     	/// Interface Type 1:wifi
@@ -92,7 +92,7 @@ void app_main(void)
 
 ```json
 {
-    "type": 2,                          /// Message Type   2:Response
+    	"type": 2,                          /// Message Type   2:Response
 	"err_code": 0,                  /// Error Code     0:noError
 	"request": 2,                   /// Request Type   2:getInformation
 	"interface": 1,                 /// Interface Type 1:wifi
@@ -120,7 +120,7 @@ void app_main(void)
 
 ```json
 {
-    "type": 2,                          		/// Message Type   2:response
+    	"type": 2,                          		/// Message Type   2:response
 	"err_code": 0,                      		/// Error Code     0:noError
 	"request": 3,                       		/// Request Type   3:getStatus
 	"interface": 1,                     		/// Interface Type 1:wifi
