@@ -92,7 +92,7 @@ void app_main(void)
 
 ```json
 {
-    	"type": 2,                          /// Message Type   2:Response
+    	"type": 2,                      /// Message Type   2:Response
 	"err_code": 0,                  /// Error Code     0:noError
 	"request": 2,                   /// Request Type   2:getInformation
 	"interface": 1,                 /// Interface Type 1:wifi
