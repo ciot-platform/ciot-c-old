@@ -54,21 +54,21 @@ void app_main(void)
 
 ```json
 {
-    "type": 2,                          /// Message Type   2:Response
-	"err_code": 0,                      /// Error Code     0:noError
-	"request": 1,                       /// Request Type   1:getConfiguration
-	"interface": 1,                     /// Interface Type 1:wifi
-	"mode": 0,                          /// Wifi Mode      0:station, 1:accessPoint
-	"ssid": "CABO CANAVERAL",           /// Wifi SSID
-	"password": "16192020",             /// Wifi password
-	"ip": {                             /// IP Configuration (Optional)
+    "type": 2,                          	/// Message Type   2:Response
+	"err_code": 0,                      	/// Error Code     0:noError
+	"request": 1,                       	/// Request Type   1:getConfiguration
+	"interface": 1,                     	/// Interface Type 1:wifi
+	"mode": 0,                          	/// Wifi Mode      0:station, 1:accessPoint
+	"ssid": "CABO CANAVERAL",           	/// Wifi SSID
+	"password": "16192020",             	/// Wifi password
+	"ip": {                             	/// IP Configuration (Optional)
 		"dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
 		"address": [192,168,1,16],      /// Device Address
 		"gateway": [192,168,1,254],     /// Network Gateway
 		"mask": [255,255,255,0],        /// Network Mask
 		"dns": [192,168,1,254]          /// Netwokr DNS
 	},
-	"timeout": 10000                    /// Connection timeout
+	"timeout": 10000                    	/// Connection timeout
 }
 ```
 
@@ -93,10 +93,10 @@ void app_main(void)
 ```json
 {
     "type": 2,                          /// Message Type   2:Response
-	"err_code": 0,                      /// Error Code     0:noError
-	"request": 2,                       /// Request Type   2:getInformation
-	"interface": 1,                     /// Interface Type 1:wifi
-	"mac": [168,66,227,90,20,224],      /// Device MAC
+	"err_code": 0,                  /// Error Code     0:noError
+	"request": 2,                   /// Request Type   2:getInformation
+	"interface": 1,                 /// Interface Type 1:wifi
+	"mac": [168,66,227,90,20,224],  /// Device MAC
 }
 ```
 
@@ -120,26 +120,26 @@ void app_main(void)
 
 ```json
 {
-    "type": 2,                          	/// Message Type   2:response
-	"err_code": 0,                      	/// Error Code     0:noError
-	"request": 3,                       	/// Request Type   3:getStatus
-	"interface": 1,                     	/// Interface Type 1:wifi
-	"sta": {								/// Connected Station Status
-		"ssid": "CABO CANAVERAL",			/// STA SSID
-		"rssi": -51,						/// STA rssi
-		"authmode": 3,						/// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
+    "type": 2,                          		/// Message Type   2:response
+	"err_code": 0,                      		/// Error Code     0:noError
+	"request": 3,                       		/// Request Type   3:getStatus
+	"interface": 1,                     		/// Interface Type 1:wifi
+	"sta": {					/// Connected Station Status
+		"ssid": "CABO CANAVERAL",		/// STA SSID
+		"rssi": -51,				/// STA rssi
+		"authmode": 3,				/// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
 		"bssid": [16,71,56,232,157,249]		/// STA bssid (MAC)
 	},
-	"tcp": {								/// Connected TCP Status
-		"state": 3,							/// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
-		"connection": 2,					/// TCP Connections Counter
-		"ip": [192,168,1,16],				/// TCP IP Address
-		"dhcp": {							/// TCP DHCP Status
-			"client": 2,					/// TCP DHCP Client Status => 0:init, 1:started, 2:stopped
-			"server": 2						/// TCP DHCP Server Status => 0:init, 1:started, 2:stopped
+	"tcp": {					/// Connected TCP Status
+		"state": 3,				/// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
+		"connection": 2,			/// TCP Connections Counter
+		"ip": [192,168,1,16],			/// TCP IP Address
+		"dhcp": {				/// TCP DHCP Status
+			"client": 2,			/// TCP DHCP Client Status => 0:init, 1:started, 2:stopped
+			"server": 2			/// TCP DHCP Server Status => 0:init, 1:started, 2:stopped
 		}
 	},
-	"scan": 0								/// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
+	"scan": 0					/// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
 }
 ```
 
@@ -151,19 +151,19 @@ void app_main(void)
 
 ```json
 {
-	"type": 2,							/// Message Type  	2:setConfiguration
-	"interface": 1,						/// Interface Type 	1:wifi
-	"ssid": "CABO CANAVERAL",			/// Wifi SSID
-	"password": "16192020",				/// Wifi Password
-	"mode": 0,							/// Wifi Mode 		0:station, 1:accessPoint
-	"ip": {                             /// IP Configuration (Optional)
-		"dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
-		"address": [192,168,1,16],      /// Device Address
-		"gateway": [192,168,1,254],     /// Network Gateway
-		"mask": [255,255,255,0],        /// Network Mask
-		"dns": [192,168,1,254]          /// Netwokr DNS
+	"type": 2,				/// Message Type  	2:setConfiguration
+	"interface": 1,				/// Interface Type 	1:wifi
+	"ssid": "CABO CANAVERAL",		/// Wifi SSID
+	"password": "16192020",			/// Wifi Password
+	"mode": 0,				/// Wifi Mode 		0:station, 1:accessPoint
+	"ip": {                             	/// IP Configuration (Optional)
+		"dhcp": 3,                  	/// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
+		"address": [192,168,1,16],  	/// Device Address
+		"gateway": [192,168,1,254], 	/// Network Gateway
+		"mask": [255,255,255,0],    	/// Network Mask
+		"dns": [192,168,1,254]      	/// Netwokr DNS
 	},
-	"timeout": 10000                    /// Connection timeout
+	"timeout": 10000                   	/// Connection timeout
 }
 ```
 
@@ -173,10 +173,10 @@ void app_main(void)
 
 ```json
 {
-	"type": 3,				/// Message Type    3:setConfiguration	
-	"err_code": 0,			/// Error Code      0:noError
-	"request": 0,			/// Request Type    0:none
-	"interface": 1,			/// Interface Type 	1:wifi
+	"type": 3,		/// Message Type    3:setConfiguration	
+	"err_code": 0,		/// Error Code      0:noError
+	"request": 0,		/// Request Type    0:none
+	"interface": 1,		/// Interface Type 	1:wifi
 }
 ```
 
