@@ -7,29 +7,31 @@ CIOT is an complete IoT standard API implemented in ansi C, compatible with esp-
 Table of contents:
 
  - [API](#api)
-    - [Interfaces](#interfaces)
-    - [Message Types](#message-types)
-        - [Request](#request)
-        - [Config](#config)
-        - [Response](#response)
+    - [Wifi](#wifi)
+      - [Get Configuration](#get-configuration)
+      - [Get Information](#get-information)
+      - [Get Status](#get-status)
+      - [Scan](#scan)
+
 
 # API
 
-The CIOT API have an unic endpoint. It's designed to facilitate the future API ports to simpler protocols like uart or modbus. The follow sample code shows how to start an http server on a host machine, and serves the API in "/v1/ciot" endpoint at 80 port.
+The CIOT API have an unic endpoint. It was designed to allow portability with simpler protocols like uart or modbus. The follow sample code shows how to start an http server on a host machine, and serves the API in "/v1/ciot" endpoint at 80 port.
 
 ```c
 #include "ciot_app.h"
 
-void app_main(void)
+int main(int argc, char **argv)
 {
-    ciot_app_config_t app = {
-        .http_server = {
-            .port = 80,
-            .endpoint = "/v1/ciot"
-        }
-    };
-    ciot_app_start(&app);
+  ciot_app_config_t app = {
+    .http_server = {
+      .port = 80,
+      .endpoint = "/v1/ciot"
+    }
+  };
+  return ciot_app_start(&app);
 }
+
 ```
 
 ## WiFi
@@ -42,9 +44,9 @@ void app_main(void)
 
 ```json
 {
-	"type": 1,          /// Message Type   1:request
-	"request": 1,       /// Request Type   1:getConfiguration
-	"interface": 1      /// Interface Type 1:wifi
+  "type": 1,         /// Message Type   1:request
+  "interface": 1,    /// Interface Type 1:wifi
+  "request": 1       /// Request Type   1:getConfiguration
 }
 ```
 
@@ -54,21 +56,21 @@ void app_main(void)
 
 ```json
 {
-	"type": 2,                          	/// Message Type   2:Response
-	"err_code": 0,                      	/// Error Code     0:noError
-	"request": 1,                       	/// Request Type   1:getConfiguration
-	"interface": 1,                     	/// Interface Type 1:wifi
-	"mode": 0,                          	/// Wifi Mode      0:station, 1:accessPoint
-	"ssid": "CABO CANAVERAL",           	/// Wifi SSID
-	"password": "16192020",             	/// Wifi password
-	"ip": {                             	/// IP Configuration (Optional)
-		"dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
-		"address": [192,168,1,16],      /// Device Address
-		"gateway": [192,168,1,254],     /// Network Gateway
-		"mask": [255,255,255,0],        /// Network Mask
-		"dns": [192,168,1,254]          /// Netwokr DNS
-	},
-	"timeout": 10000                    	/// Connection timeout
+  "type": 2,                        /// Message Type   2:Response
+  "err_code": 0,                    /// Error Code     0:noError
+  "request": 1,                     /// Request Type   1:getConfiguration
+  "interface": 1,                   /// Interface Type 1:wifi
+  "mode": 0,                        /// Wifi Mode      0:station, 1:accessPoint
+  "ssid": "CABO CANAVERAL",         /// Wifi SSID
+  "password": "16192020",           /// Wifi password
+  "ip": {                           /// IP Configuration (Optional)
+    "dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
+    "address": [192,168,1,16],      /// Device Address
+    "gateway": [192,168,1,254],     /// Network Gateway
+    "mask": [255,255,255,0],        /// Network Mask
+    "dns": [192,168,1,254]          /// Netwokr DNS
+  },
+  "timeout": 10000                  /// Connection timeout
 }
 ```
 
@@ -80,9 +82,9 @@ void app_main(void)
 
 ```json
 {
-	"type": 1,          /// Message Type   1:request
-	"request": 2,       /// Request Type   2:getInformation
-	"interface": 1      /// Interface Type 1:wifi
+  "type": 1,         /// Message Type   1:request
+  "interface": 1,    /// Interface Type 1:wifi
+  "request": 2       /// Request Type   2:getInformation
 }
 ```
 
@@ -92,11 +94,11 @@ void app_main(void)
 
 ```json
 {
-    	"type": 2,                      /// Message Type   2:Response
-	"err_code": 0,                  /// Error Code     0:noError
-	"request": 2,                   /// Request Type   2:getInformation
-	"interface": 1,                 /// Interface Type 1:wifi
-	"mac": [168,66,227,90,20,224],  /// Device MAC
+  "type": 2,                      /// Message Type   2:Response
+  "err_code": 0,                  /// Error Code     0:noError
+  "request": 2,                   /// Request Type   2:getInformation
+  "interface": 1,                 /// Interface Type 1:wifi
+  "mac": [168,66,227,90,20,224],  /// Device MAC
 }
 ```
 
@@ -108,9 +110,9 @@ void app_main(void)
 
 ```json
 {
-	"type": 1,          /// Message Type   1:request
-	"request": 3,       /// Request Type   3:getStatus
-	"interface": 1      /// Interface Type 1:wifi
+  "type": 1,          /// Message Type   1:request
+  "request": 3,       /// Request Type   3:getStatus
+  "interface": 1      /// Interface Type 1:wifi
 }
 ```
 
@@ -120,26 +122,116 @@ void app_main(void)
 
 ```json
 {
-    	"type": 2,                          		/// Message Type   2:response
-	"err_code": 0,                      		/// Error Code     0:noError
-	"request": 3,                       		/// Request Type   3:getStatus
-	"interface": 1,                     		/// Interface Type 1:wifi
-	"sta": {					/// Connected Station Status
-		"ssid": "CABO CANAVERAL",		/// STA SSID
-		"rssi": -51,				/// STA rssi
-		"authmode": 3,				/// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
-		"bssid": [16,71,56,232,157,249]		/// STA bssid (MAC)
-	},
-	"tcp": {					/// Connected TCP Status
-		"state": 3,				/// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
-		"connection": 2,			/// TCP Connections Counter
-		"ip": [192,168,1,16],			/// TCP IP Address
-		"dhcp": {				/// TCP DHCP Status
-			"client": 2,			/// TCP DHCP Client Status => 0:init, 1:started, 2:stopped
-			"server": 2			/// TCP DHCP Server Status => 0:init, 1:started, 2:stopped
+  "type": 2,                          /// Message Type   2:response
+  "err_code": 0,                      /// Error Code     0:noError
+  "request": 3,                       /// Request Type   3:getStatus
+  "interface": 1,                     /// Interface Type 1:wifi
+  "sta": {                            /// Connected Station Status
+    "ssid": "CABO CANAVERAL",         /// STA SSID
+    "rssi": -51,                      /// STA rssi
+    "authmode": 3,                    /// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
+    "bssid": [16,71,56,232,157,249]   /// STA bssid (MAC)
+  },
+  "tcp": {                            /// Connected TCP Status
+    "state": 3,                       /// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
+    "connection": 2,                  /// TCP Connections Counter
+    "ip": [192,168,1,16],             /// TCP IP Address
+    "dhcp": {                         /// TCP DHCP Status
+      "client": 2,                    /// TCP DHCP Client Status => 0:init, 1:started, 2:stopped
+      "server": 2                     /// TCP DHCP Server Status => 0:init, 1:started, 2:stopped
+    }
+  },
+  "scan": 0                           /// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
+}
+```
+
+### Scan
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,        /// Message Type   1:request
+  "interface": 1,   /// Interface Type 1:wifi
+  "request": 4      /// Request Type   4:scan
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type   1:request
+	"err_code": 0,    /// Error Code     0:noError
+	"request": 4,     /// Interface Type 1:wifi
+	"interface": 1,   /// Request Type   4:scan
+	"state": 0,       /// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
+	"result": [
+		{
+			"ssid": "CABO CANAVERAL 3",
+			"rssi": -6,
+			"authmode": 4,
+			"bssid": [40,59,130,108,154,68]
+		},
+		{
+			"ssid": "CABO CANAVERAL 2",
+			"rssi": -23,
+			"authmode": 4,
+			"bssid": [128,143,232,41,30,97]
+		},
+		{
+			"ssid": "CABO CANAVERAL",
+			"rssi": -43,
+			"authmode": 3,
+			"bssid": [16,71,56,232,157,249]
+		},
+		{
+			"ssid": "OMELHOR",
+			"rssi": -69,
+			"authmode": 3,
+			"bssid": [144,117,188,70,37,9]
+		},
+		{
+			"ssid": "Solar-WiFi196W0039",
+			"rssi": -74,
+			"authmode": 3,
+			"bssid": [152,216,99,95,150,255]
+		},
+		{
+			"ssid": "Rosana Salgados 2.4G",
+			"rssi": -80,
+			"authmode": 3,
+			"bssid": [80,27,50,183,145,249]
+		},
+		{
+			"ssid": "Falcao 2g",
+			"rssi": -83,
+			"authmode": 4,
+			"bssid": [48,223,141,5,3,217]
+		},
+		{
+			"ssid": "Geraldo OI FIBRA 2g",
+			"rssi": -87,
+			"authmode": 3,
+			"bssid": [240,104,101,67,127,121]
+		},
+		{
+			"ssid": "Home network",
+			"rssi": -87,
+			"authmode": 3,
+			"bssid": [28,59,243,55,78,130]
+		},
+		{
+			"ssid": "JoaoMiguel",
+			"rssi": -90,
+			"authmode": 3,
+			"bssid": [160,28,141,45,249,128]
 		}
-	},
-	"scan": 0					/// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
+	]
 }
 ```
 
@@ -151,19 +243,19 @@ void app_main(void)
 
 ```json
 {
-	"type": 2,				/// Message Type  	2:setConfiguration
-	"interface": 1,				/// Interface Type 	1:wifi
-	"ssid": "CABO CANAVERAL",		/// Wifi SSID
-	"password": "16192020",			/// Wifi Password
-	"mode": 0,				/// Wifi Mode 		0:station, 1:accessPoint
-	"ip": {                             	/// IP Configuration (Optional)
-		"dhcp": 3,                  	/// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
-		"address": [192,168,1,16],  	/// Device Address
-		"gateway": [192,168,1,254], 	/// Network Gateway
-		"mask": [255,255,255,0],    	/// Network Mask
-		"dns": [192,168,1,254]      	/// Netwokr DNS
-	},
-	"timeout": 10000                   	/// Connection timeout
+  "type": 3,                      /// Message Type  	3:setConfiguration
+  "interface": 1,                 /// Interface Type 	1:wifi
+  "ssid": "CABO CANAVERAL",       /// Wifi SSID
+  "password": "16192020",         /// Wifi Password
+  "mode": 0,                      /// Wifi Mode => 0:station, 1:accessPoint
+  "ip": {                         /// IP Configuration (Optional)
+    "dhcp": 3,                    /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
+    "address": [192,168,1,16],    /// Device Address
+    "gateway": [192,168,1,254],   /// Network Gateway
+    "mask": [255,255,255,0],      /// Network Mask
+    "dns": [192,168,1,254]        /// Netwokr DNS
+  },
+  "timeout": 10000                /// Connection timeout
 }
 ```
 
@@ -173,10 +265,213 @@ void app_main(void)
 
 ```json
 {
-	"type": 3,		/// Message Type    3:setConfiguration	
-	"err_code": 0,		/// Error Code      0:noError
-	"request": 0,		/// Request Type    0:none
-	"interface": 1,		/// Interface Type 	1:wifi
+	"type": 2,      /// Message Type    2:response	
+	"err_code": 0,  /// Error Code      0:noError
+	"request": 0,   /// Request Type    0:none
+	"interface": 1, /// Interface Type 	1:wifi
+}
+```
+
+## System
+
+### Get Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,         /// Message Type   1:request
+  "interface": 64,   /// Interface Type 64:system
+  "request": 1       /// Request Type   1:getConfiguration
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type    2:response	
+	"err_code": 0,    /// Error Code      0:noError
+	"request": 1,     /// Request Type    1:getConfiguration
+	"interface": 64,  /// Interface Type 	64:system
+}
+```
+
+### Get Information
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,         /// Message Type   1:request
+  "interface": 64,   /// Interface Type 64:system
+  "request": 2       /// Request Type   2:getInformation
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,                /// Message Type   1:request
+	"err_code": 0,            /// Error Code     0:noError
+	"request": 2,             /// Request Type   2:getInformation
+	"interface": 64,          /// Interface Type 64:system
+	"device": 1,              /// Device Type => 0:unknown, 1:generic, 2:sensor, 3:gateway, 4:datalogger, 5:hmi          
+	"os": 2,                  /// Operating System => 0:unknown, 1:bareMetal, 2:freeRTOS, 3:linux, 4:windows, 5:mac
+	"version": [0,0,0,1,0],   /// Software Version: 0.0.0.1-alpha
+	"date": [19,6,23],        /// Built Date: 19 Jun 2023
+	"board": "ESP32 Devkit",  /// Board Name
+	"mcu": "ESP32",           /// MCU Name
+	"storage": 24576,         /// Storage Size in Bytes
+	"features": 8295          /// Fatures Bits Mask
+}
+```
+
+### Get Status
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,          /// Message Type   1:request
+  "request": 3,       /// Request Type   3:getStatus
+  "interface": 64     /// Interface Type 64:system
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type      1:request
+	"err_code": 0,    /// Error Code        0:noError
+	"request": 3,     /// Request Type      3:getStatus
+	"interface": 64,  /// Interface Type    64:system
+	"time": 254,      /// Internal Clock Timestamp in Seconds
+	"memory": 218844, /// Free Heap Memory
+	"err": 0,         /// System error code
+	"status": 0,      /// System status code
+	"lifetime": 254   /// Device Lifetime in Seconds
+}
+```
+
+### Restart
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,        /// Message Type   1:request
+  "interface": 1,   /// Interface Type 64:system
+  "request": 4      /// Request Type   4:restart
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type   1:request
+	"err_code": 0,    /// Error Code     0:noError
+	"request": 4,     /// Request Type   4:restart
+	"interface": 64   /// Interface Type 64:system
+}
+```
+
+### Save Settings
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,        /// Message Type   1:request
+  "interface": 1,   /// Interface Type 64:system
+  "request": 5      /// Request Type   5:saveSettings
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type   2:response
+	"err_code": 0,    /// Error Code     0:noError
+	"request": 5,     /// Request Type   5:saveSettings
+	"interface": 64   /// Interface Type 64:system
+}
+```
+
+### Clear Settings
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,        /// Message Type   1:request
+  "interface": 1,   /// Interface Type 64:system
+  "request": 6      /// Request Type   6:clearSettings
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type   2:response
+	"err_code": 0,    /// Error Code     0:noError
+	"request": 6,     /// Request Type   6:clearSettings
+	"interface": 64   /// Interface Type 64:system
+}
+```
+
+### Set Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 3,        /// Message Type   3:setConfiguration
+  "interface": 1,   /// Interface Type 64:system
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,        /// Message Type   2:response
+	"err_code": 0,    /// Error Code     0:noError
+	"request": 0,     /// Request Type   0:none
+	"interface": 64   /// Interface Type 64:system
 }
 ```
 
