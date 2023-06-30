@@ -8,11 +8,24 @@ Table of contents:
 
  - [API](#api)
     - [Wifi](#wifi)
-      - [Get Configuration](#get-configuration)
-      - [Get Information](#get-information)
-      - [Get Status](#get-status)
+      - [Get Configuration](#wifi-get-configuration)
+      - [Get Information](#wifi-get-information)
+      - [Get Status](#wifi-get-status)
       - [Scan](#scan)
-
+      - [Set Configuration](#wifi-set-configuration)
+	- [System](#system)
+      - [Get Configuration](#system-get-configuration)
+      - [Get Information](#system-get-information)
+      - [Get Status](#system-get-status)
+      - [Restart](#restart)
+      - [Save Settings](#save-settings)
+      - [Clear Settings](#clear-settings)
+      - [Set Configuration](#system-set-configuration)
+	- [NTP](#ntp)
+      - [Get Configuration](#ntp-get-configuration)
+      - [Get Information](#ntp-get-information)
+      - [Get Status](#ntp-get-status)
+      - [Set Configuration](#ntp-set-configuration)
 
 # API
 
@@ -36,7 +49,7 @@ int main(int argc, char **argv)
 
 ## WiFi
 
-### Get Configuration
+### Get Configuration {#wifi-get-configuration}
 
 #### Request
 
@@ -74,7 +87,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Information
+### Get Information {#wifi-get-information}
 
 #### Request
 
@@ -98,11 +111,12 @@ int main(int argc, char **argv)
   "err_code": 0,                  /// Error Code     0:noError
   "request": 2,                   /// Request Type   2:getInformation
   "interface": 1,                 /// Interface Type 1:wifi
+  "available": true,              /// Interface is Available
   "mac": [168,66,227,90,20,224],  /// Device MAC
 }
 ```
 
-### Get Status
+### Get Status {#wifi-get-status}
 
 #### Request
 
@@ -235,7 +249,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Set Configuration
+### Set Configuration {#wifi-set-configuration}
 
 #### Request
 
@@ -274,7 +288,7 @@ int main(int argc, char **argv)
 
 ## System
 
-### Get Configuration
+### Get Configuration {#system-get-configuration}
 
 #### Request
 
@@ -301,7 +315,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Information
+### Get Information {#system-get-information}
 
 #### Request
 
@@ -336,7 +350,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Status
+### Get Status {#system-get-status}
 
 #### Request
 
@@ -449,7 +463,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Set Configuration
+### Set Configuration {#system-set-configuration}
 
 #### Request
 
@@ -474,6 +488,122 @@ int main(int argc, char **argv)
 	"interface": 64   /// Interface Type 64:system
 }
 ```
+
+## NTP
+
+### Get Configuration {#ntp-get-configuration}
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,         /// Message Type   1:request
+  "interface": 65,   /// Interface Type 65:ntp
+  "request": 1       /// Request Type   1:getConfiguration
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "type": 2,                  /// Message Type   1:response
+  "err_code": 0,              /// Error Code     0:noError
+  "request": 1,               /// Request Type   1:getConfiguration          
+  "interface": 65,            /// Interface Type 65:ntp
+  "op_mode": 0,               /// Operation Mode => 0:pool, 1:listenOnly
+  "sync_mode": 0,             /// Sync Mode => 0:immediatly, 1:smooth
+  "sync_interval": 3600000,   /// Sync Interval in seconds
+  "timezone": "<-03>3",       /// Unix Timezone
+  "timeout": 10000            /// Connection timeout                
+}
+```
+
+### Get Information {#ntp-get-information}
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,        /// Message Type   1:request
+  "interface": 65,  /// Interface Type 65:ntp
+  "request": 2      /// Request Type   2:getInformation
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,          /// Message Type   1:request
+	"err_code": 0,      /// Error Code     0:noError
+	"request": 2,       /// Request Type   2:getInformation
+	"interface": 65,    /// Interface Type 65:ntp
+  "available": true   /// Interface is Available
+}
+```
+
+### Get Status {#ntp-get-status}
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 1,          /// Message Type   1:request
+  "request": 3,       /// Request Type   3:getStatus
+  "interface": 65     /// Interface Type 65:ntp
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+	"type": 2,          /// Message Type   1:request
+	"err_code": 0,      /// Error Code     0:noError
+	"request": 3,       /// Request Type   3:getStatus
+	"interface": 65,    /// Interface Type 65:ntp
+	"init": true,       /// Initialized
+	"sync": false,      /// Syncronized
+	"state": 0,         /// NTP Sync State 0:reseted, 1:completed, 2:inProgress
+  "sync_count": 0,    /// Sync counter
+	"last_sync": 0      /// Last sync timestamp
+}
+```
+
+### Set Configuration {#ntp-set-configuration}
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "type": 3,                      /// Message Type   3:setConfiguration
+  "interface": 65,                /// Interface Type 65:ntp
+  "op_mode": 0,                   /// Operation Mode => 0:pool, 1:listenOnly
+  "sync_mode": 0,                 /// Sync Mode => 0:immediatly, 1:smooth
+  "sync_interval": 3600000,       /// Sync Interval in seconds
+  "timezone": "<-03>3",           /// Unix Timezone (Optional)
+  "server1": "pool.ntp.org",      /// Main ntp server
+	"server2": "time.google.com",   /// Backup ntp server (Optional)
+	"server3": "gps.ntp.br",        /// Backup ntp server (Optional)
+  "timeout": 10000                /// Connection timeout                
+}
+```
+
 
 ## Roadmap:
 
