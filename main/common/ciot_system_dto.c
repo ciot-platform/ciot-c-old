@@ -26,7 +26,7 @@ ciot_err_t ciot_system_config_to_json(CJSON_PARAMETERS(ciot_system_config_t))
 ciot_err_t ciot_system_info_from_json(CJSON_PARAMETERS(ciot_system_info_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_NUMBER(type);
+    CJSON_GET_NUMBER(device);
     CJSON_GET_NUMBER(os);
     CJSON_GET_NUMBER_ARRAY(version);
     CJSON_GET_CHAR_ARRAY(date);
@@ -40,7 +40,7 @@ ciot_err_t ciot_system_info_from_json(CJSON_PARAMETERS(ciot_system_info_t))
 ciot_err_t ciot_system_info_to_json(CJSON_PARAMETERS(ciot_system_info_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(type);
+    CJSON_ADD_NUMBER(device);
     CJSON_ADD_NUMBER(os);
     CJSON_ADD_NUMBER_ARRAY(version);
     CJSON_ADD_NUMBER_ARRAY(date);

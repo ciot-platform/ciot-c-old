@@ -73,7 +73,7 @@ typedef struct ciot_system_config
 
 typedef struct ciot_system_info
 {
-    ciot_system_device_type_t type;
+    ciot_system_device_type_t device;
     ciot_system_os_t os;
     uint8_t version[5];
     uint8_t date[3];

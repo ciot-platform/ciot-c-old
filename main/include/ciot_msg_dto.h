@@ -23,8 +23,8 @@ typedef enum ciot_msg_type
 {
     CIOT_MSG_TYPE_UNKNOWN,
     CIOT_MSG_TYPE_REQUEST,
-    CIOT_MSG_TYPE_CONFIG,
     CIOT_MSG_TYPE_RESPONSE,
+    CIOT_MSG_TYPE_CONFIG,
 } ciot_msg_type_t;
 
 typedef enum ciot_msg_request_type

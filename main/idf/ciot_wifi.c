@@ -184,15 +184,23 @@ static wifi_mode_t ciot_wifi_get_mode(wifi_interface_t interface)
 
 static ciot_err_t ciot_wifi_scan(ciot_wifi_scan_result_t *scan_result)
 {
+    esp_err_t err = CIOT_ERR_OK;
+
     if(wifi[CIOT_WIFI_IF_STA].status.data.tcp.state <= CIOT_TCP_STATE_STOPPED)
     {
         ciot_wifi_init();
-        esp_err_t err = esp_wifi_start();
+
+        wifi_mode_t wifi_mode = ciot_wifi_get_mode(CIOT_WIFI_IF_STA);
+        err = esp_wifi_set_mode(wifi_mode);
+        if(err != CIOT_ERR_OK)
+            return err;
+        
+        err = esp_wifi_start();
         if(err != CIOT_ERR_OK)
             return err;
     }
     
-    esp_err_t err = esp_wifi_scan_start(NULL, false);
+    err = esp_wifi_scan_start(NULL, false);
     if(err != CIOT_ERR_OK)
         return err;
     
