@@ -57,6 +57,7 @@ typedef enum ciot_system_feature
     CIOT_SYSTEM_FEATURE_SDCARD,
     CIOT_SYSTEM_FEATURE_HARDDISK,
     CIOT_SYSTEM_FEATURE_DISPLAY,
+    CIOT_SYSTEM_FEATURE_NTP,
 } ciot_system_feature_t;
 
 typedef enum ciot_system_request

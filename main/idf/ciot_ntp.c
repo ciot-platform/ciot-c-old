@@ -27,7 +27,6 @@
 typedef struct ciot_ntp
 {
     ciot_ntp_config_t config;
-    ciot_ntp_info_t info;
     ciot_ntp_status_t status;
     EventGroupHandle_t event_group;
 } ciot_ntp_t;
@@ -112,7 +111,7 @@ ciot_err_t ciot_ntp_get_status(ciot_ntp_status_t *status)
 
 ciot_err_t ciot_ntp_get_info(ciot_ntp_info_t *info)
 {
-    *info = ntp.info;
+    info->available = CIOT_CONFIG_FEATURE_NTP;
     return CIOT_ERR_OK;
 }
 
@@ -120,7 +119,7 @@ static void ciot_ntp_sync_notification_cb(struct timeval *tv)
 {
     ESP_LOGI(TAG, "NTP Sync OK");
     ntp.status.sync = true;
-    ntp.info.sync_count++;
-    ntp.info.last_sync = time(NULL);
+    ntp.status.sync_count++;
+    ntp.status.last_sync = time(NULL);
     xEventGroupSetBits(ntp.event_group, CIOT_NTP_EVENT_BIT_DONE);
 }

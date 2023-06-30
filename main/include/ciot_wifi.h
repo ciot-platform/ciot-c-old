@@ -46,6 +46,7 @@ typedef struct ciot_wifi_config
 
 typedef struct ciot_wifi_info
 {
+    bool available;
     ciot_tcp_info_t tcp;
 } ciot_wifi_info_t;
 

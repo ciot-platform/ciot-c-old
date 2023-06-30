@@ -41,6 +41,7 @@ ciot_err_t ciot_wifi_config_to_json(CJSON_PARAMETERS(ciot_wifi_config_t))
 ciot_err_t ciot_wifi_info_from_json(CJSON_PARAMETERS(ciot_wifi_info_t))
 {
     CJSON_CHECK_PARAMETERS();
+    CJSON_GET_BOOLEAN(available);
     CJSON_GET_OBJ_FROM_ROOT(tcp, ciot_tcp_info_from_json);
     return CIOT_ERR_OK;
 }
@@ -48,16 +49,10 @@ ciot_err_t ciot_wifi_info_from_json(CJSON_PARAMETERS(ciot_wifi_info_t))
 ciot_err_t ciot_wifi_info_to_json(CJSON_PARAMETERS(ciot_wifi_info_t))
 {
     CJSON_CHECK_PARAMETERS();
+    CJSON_ADD_BOOLEAN(available);
     CJSON_ADD_OBJ_TO_ROOT(tcp, ciot_tcp_info_to_json);
     return CIOT_ERR_OK;
 }
-
-// ciot_err_t ciot_wifi_status_from_json(CJSON_PARAMETERS(ciot_wifi_status_t))
-// {
-//     CJSON_CHECK_PARAMETERS();
-
-//     return CIOT_ERR_OK;
-// }
 
 ciot_err_t ciot_wifi_status_to_json(CJSON_PARAMETERS(ciot_wifi_status_t))
 {

@@ -21,6 +21,7 @@
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
 
+#include "ciot_config.h"
 #include "ciot_wifi.h"
 
 #define CIOT_WIFI_EVENT_BIT_CONFIG_DONE BIT0
@@ -130,6 +131,7 @@ ciot_err_t ciot_wifi_get_info(ciot_wifi_interface_t interface, ciot_wifi_info_t 
         return CIOT_ERR_INVALID_TYPE;
     }
     memcpy(info, &wifi[interface].info, sizeof(*info));
+    info->available = CIOT_CONFIG_FEATURE_WIFI;
     return CIOT_ERR_OK;
 }
 

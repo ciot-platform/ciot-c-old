@@ -44,6 +44,7 @@
 #define CIOT_CONFIG_FEATURE_SDCARD 0
 #define CIOT_CONFIG_FEATURE_HARDDISK 0
 #define CIOT_CONFIG_FEATURE_DISPLAY 0
+#define CIOT_CONFIG_FEATURE_NTP 1
 
 #define CIOT_CONFIG_FEATURES                                             \
     (CIOT_CONFIG_FEATURE_I2C << CIOT_SYSTEM_FEATURE_I2C) |               \

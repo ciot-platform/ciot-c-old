@@ -42,16 +42,14 @@ ciot_err_t ciot_ntp_config_to_json(CJSON_PARAMETERS(ciot_ntp_config_t))
 ciot_err_t ciot_ntp_info_from_json(CJSON_PARAMETERS(ciot_ntp_info_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_NUMBER(sync_count);
-    CJSON_GET_NUMBER(last_sync);
+    CJSON_GET_BOOLEAN(available);
     return CIOT_ERR_OK;
 }
 
 ciot_err_t ciot_ntp_info_to_json(CJSON_PARAMETERS(ciot_ntp_info_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(sync_count);
-    CJSON_ADD_NUMBER(last_sync);
+    CJSON_ADD_BOOLEAN(available);
     return CIOT_ERR_OK;
 }
 
@@ -61,6 +59,8 @@ ciot_err_t ciot_ntp_status_from_json(CJSON_PARAMETERS(ciot_ntp_status_t))
     CJSON_GET_BOOLEAN(init);
     CJSON_GET_BOOLEAN(sync);
     CJSON_GET_NUMBER(state);
+    CJSON_GET_NUMBER(sync_count);
+    CJSON_GET_NUMBER(last_sync);
     return CIOT_ERR_OK;
 }
 
@@ -70,5 +70,7 @@ ciot_err_t ciot_ntp_status_to_json(CJSON_PARAMETERS(ciot_ntp_status_t))
     CJSON_ADD_BOOLEAN(init);
     CJSON_ADD_BOOLEAN(sync);
     CJSON_ADD_NUMBER(state);
+    CJSON_ADD_NUMBER(sync_count);
+    CJSON_ADD_NUMBER(last_sync);
     return CIOT_ERR_OK;
 }

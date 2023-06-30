@@ -40,8 +40,7 @@ typedef struct ciot_ntp_config
 
 typedef struct ciot_ntp_info
 {
-    int sync_count;
-    time_t last_sync;
+    bool available;
 } ciot_ntp_info_t;
 
 typedef struct ciot_ntp_status
@@ -49,6 +48,8 @@ typedef struct ciot_ntp_status
     bool init;
     bool sync;
     ciot_ntp_sync_state_t state;
+    int sync_count;
+    time_t last_sync;
 } ciot_ntp_status_t;
 
 ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf);
