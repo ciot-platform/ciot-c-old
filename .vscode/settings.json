@@ -66,6 +66,7 @@
         "ciot_config.h": "c",
         "ciot_default_config.h": "c",
         "bitset": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "ciot_custom_config.h": "c"
     }
 }
