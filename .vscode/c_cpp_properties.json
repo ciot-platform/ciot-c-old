@@ -25,6 +25,9 @@
                 ],
                 "limitSymbolsToIncludedHeaders": false
             }
+        },
+        {
+            "name": "Empty Configuration"
         }
     ],
     "version": 4
