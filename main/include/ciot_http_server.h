@@ -17,6 +17,11 @@
 #include "ciot_msg_dto.h"
 #include "ciot_err.h"
 
+#define CIOT_HTTP_SERVER_ERROR_MASK "{\"error_code\":%d}"
+#define CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG "{\"error_code\":%d, \"err_msg\":\"%s\"}"
+#define CIOT_HTTP_CONTENT_TYPE_OCTET "application/octet-stream"
+#define CIOT_HTTP_CONTENT_TYPE_JSON "application/json"
+
 typedef struct ciot_http_server_config
 {
     uint32_t port;

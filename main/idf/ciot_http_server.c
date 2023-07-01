@@ -15,9 +15,6 @@
 #include "ciot_http_server.h"
 #include "ciot_app.h"
 
-#define CIOT_HTTP_SERVER_ERROR_MASK "{\"error_code\":%d}"
-#define CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG "{\"error_code\":%d, \"message\":\"%s\"}"
-
 typedef struct ciot_http_server
 {
     httpd_handle_t handle;
