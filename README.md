@@ -668,10 +668,9 @@ int main(int argc, char **argv)
 }
 ```
 
-
 ## Roadmap:
 
-### v0.1.0: Handle wifi and ntp interfaces, accepting raw and json http requests.
+### v0.1.0: Handle wifi and ntp interfaces, accepting raw and json
 
  - [x] wifi interface (idf)
  - [x] ntp interface (idf)
@@ -679,21 +678,20 @@ int main(int argc, char **argv)
  - [ ] http server (windows)
  - [ ] http server (linux)
 
-### v0.2.0: Handle mqtt interface, accepting raw and json http requests.
+### v0.2.0: Handle mqtt interface, accepting raw and json
 
  - [ ] mqtt interface (idf)
  - [ ] mqtt interface (windows)
  - [ ] mqtt interface (linux)
 
-### v0.3.0: Handle uart interface outside ciot API.
+### v0.3.0: Handle ota interface, accepting raw and json
+
+ - [ ] ota interface (idf)
+ - [ ] ota interface (windows)
+ - [ ] ota interface (linux)
+
+### v0.4.0: Handle uart interface outside ciot API.
 
  - [ ] uart interface (idf)
  - [ ] uart interface (windows)
  - [ ] uart interface (linux)
-
-### v0.4.0: Handle uart with ciot API.
-
- - [ ] uart interface (idf)
- - [ ] uart interface (windows)
- - [ ] uart interface (linux)
- 
