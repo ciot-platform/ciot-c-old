@@ -683,7 +683,7 @@ int main(int argc, char **argv)
  - [x] ntp interface (idf)
  - [x] http server (idf)
  - [x] http server (windows)
- - [ ] http server (linux)
+ - [x] http server (linux)
 
 ### v0.2.0: Handle mqtt interface, accepting raw and json
 
