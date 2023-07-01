@@ -3,40 +3,38 @@
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
- * @date 2023-06-18
+ * @date 2023-07-01
  * 
  * @copyright Copyright (c) 2023
  * 
  */
 
-#include <sys/time.h>
-
-#include "esp_system.h"
-#include "esp_err.h"
-#include "esp_log.h"
-#include "esp_timer.h"
-
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
-#include "freertos/task.h"
+#include <windows.h>
 
 #include "ciot_system.h"
 #include "ciot_storage.h"
-#include "ciot_settings.h"
 #include "ciot_config.h"
 
-static const char *TAG = "ciot_system";
+typedef struct ciot_system
+{
+    ciot_system_config_t config;
+    uint32_t err_code;
+    uint32_t status_code;
+} ciot_system_t;
 
-static void reset_task(void *pvParameters);
+static ciot_system_t this;
+
+static DWORDLONG ciot_system_get_free_ram();
+static unsigned long ciot_system_get_lifetime();
 
 ciot_err_t ciot_system_get_status(ciot_system_status_t *status)
 {
     ciot_system_status_t system = {
         .time = time(NULL),
-        .memory = esp_get_free_heap_size(),
+        .memory = ciot_system_get_free_ram(),
         .err = this.err_code,
         .status = this.status_code,
-        .lifetime = esp_timer_get_time() / 1000000,
+        .lifetime = ciot_system_get_lifetime()
     };
     *status = system;
     return CIOT_ERR_OK;
@@ -60,12 +58,24 @@ ciot_err_t ciot_system_get_info(ciot_system_info_t *info)
 
 ciot_err_t ciot_system_reset(void)
 {
-    xTaskCreate(&reset_task, "reset_task", 2048, NULL, 5, NULL);
+#if _WIN32
+    system("shutdown /r /t 0");
+#else
+    system("sudo reboot");
+#endif
     return CIOT_ERR_OK;
 }
 
-static void reset_task(void *pvParameters)
+static DWORDLONG ciot_system_get_free_ram()
 {
-    vTaskDelay(pdMS_TO_TICKS(1000));
-    esp_restart();
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return status.ullAvailPhys / 1024;
+}
+
+static unsigned long ciot_system_get_lifetime()
+{
+    DWORD ticks = GetTickCount();
+    return ticks / 1000;
 }
