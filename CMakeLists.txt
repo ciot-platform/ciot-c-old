@@ -42,6 +42,8 @@ else()
     main/main.c
   )
 
-  target_link_libraries(ciot ws2_32)
+  if(WIN32)
+    target_link_libraries(ciot ws2_32)
+  endif()
 
 endif()

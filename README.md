@@ -1,4 +1,4 @@
-CIOT 0.0.0
+CIOT 0.1.0-alpha
 ===
 
 > **Advise:** This is an work in progress. Don't use it on production environments.
@@ -33,13 +33,14 @@ Table of contents:
    - [v0.2.0](#v020-handle-mqtt-interface-accepting-raw-and-json)
    - [v0.3.0](#v030-handle-ota-interface-accepting-raw-and-json)
    - [v0.4.0](#v04)
+   
 # Features
 
 The current version of CIOT API support the following features:
 
  - WiFi (idf)
  - NTP (idf)
- - HTTP Server (idf, windows)
+ - HTTP Server (idf, windows, linux)
 
 You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application. Alternatively you can use CMakeLists.txt to defining and setting values to each configuration macro. To view all available configurations, see the file: main/{target}/ciot_default_config.h. The following macros can be used to enable/disable features at compile time:
 

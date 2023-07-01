@@ -20,14 +20,14 @@ void app_main(void)
     ciot_app_config_t app = {
 #if CIOT_CONFIG_FEATURE_WIFI
         .wifi = {
-            .mode = CIOT_WIFI_IF_AP,
-            .ssid = "CIOT AP",
-            .password = "administrator",
+            .mode = CIOT_CONFIG_WIFI_AP_MODE,
+            .ssid = CIOT_CONFIG_WIFI_AP_SSID,
+            .password = CIOT_CONFIG_WIFI_AP_PASSWORD,
         },
 #endif
         .http_server = {
-            .port = 80,
-            .endpoint = "/v1/ciot"
+            .port = CIOT_CONFIG_HTTP_SERVER_PORT,
+            .endpoint = CIOT_CONFIG_HTTP_SERVER_ENDPOINT
         }
     };
     
@@ -36,7 +36,7 @@ void app_main(void)
     // Implement your application specific logic here
 }
 
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
 
 int	main(int argc, char **argv)
 {
@@ -46,4 +46,4 @@ int	main(int argc, char **argv)
     }
 }
 
-#endif  //WIN32
+#endif  //_WIN32

@@ -9,14 +9,18 @@
  * 
  */
 
+#include <stdlib.h>
+
+#ifdef  _WIN32
 #include <windows.h>
+#endif  //_WIN32
 
 #include "ciot_system.h"
 #include "ciot_storage.h"
 #include "ciot_config.h"
 
-static DWORDLONG ciot_system_get_free_ram();
-static unsigned long ciot_system_get_lifetime();
+static size_t ciot_system_get_free_ram();
+static time_t ciot_system_get_lifetime();
 
 ciot_err_t ciot_system_get_status(ciot_system_status_t *status)
 {
@@ -35,7 +39,7 @@ ciot_err_t ciot_system_get_info(ciot_system_info_t *info)
 {
     ciot_system_info_t system = {
         .device = CIOT_CONFIG_DEVICE_TYPE,
-        .os = CIOT_SYSTEM_OS_FREERTOS,
+        .os = CIOT_CONFIG_OS,
         .version = CIOT_CONFIG_VERSION,
         .date = CIOT_CONFIG_DATE,
         .board = CIOT_CONFIG_BOARD,
@@ -57,7 +61,8 @@ ciot_err_t ciot_system_reset(void)
     return CIOT_ERR_OK;
 }
 
-static DWORDLONG ciot_system_get_free_ram()
+#ifdef  _WIN32
+static size_t ciot_system_get_free_ram()
 {
     MEMORYSTATUSEX status;
     status.dwLength = sizeof(status);
@@ -65,8 +70,46 @@ static DWORDLONG ciot_system_get_free_ram()
     return status.ullAvailPhys / 1024;
 }
 
-static unsigned long ciot_system_get_lifetime()
+static time_t ciot_system_get_lifetime()
 {
     DWORD ticks = GetTickCount();
     return ticks / 1000;
 }
+#else
+static size_t ciot_system_get_free_ram()
+{
+    FILE* meminfo = fopen("/proc/meminfo", "r");
+    if (meminfo == NULL) {
+        return 0;
+    }
+
+    char line[256];
+    size_t free_ram = 0;
+
+    while (fgets(line, sizeof(line), meminfo)) {
+        if (sscanf(line, "MemAvailable: %zu kB", &free_ram) == 1) {
+            break;
+        }
+    }
+
+    fclose(meminfo);
+    return free_ram;
+}
+
+static time_t ciot_system_get_lifetime()
+{
+    FILE* uptime_file = fopen("/proc/uptime", "r");
+    if (uptime_file == NULL) {
+        return 0;
+    }
+
+    double uptime;
+    if (fscanf(uptime_file, "%lf", &uptime) != 1) {
+        fclose(uptime_file);
+        return 0;
+    }
+
+    fclose(uptime_file);
+    return uptime;
+}
+#endif
