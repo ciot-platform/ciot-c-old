@@ -70,6 +70,9 @@
         "ciot_custom_config.h": "c",
         "task.h": "c",
         "ciot_msg_dto.h": "c",
-        "ciot_json.h": "c"
+        "ciot_json.h": "c",
+        "mongoose.h": "c",
+        "ciot_config_windows.h": "c",
+        "windows.h": "c"
     }
 }
