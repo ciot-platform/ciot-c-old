@@ -148,6 +148,7 @@ ciot_err_t ciot_system_get_info(ciot_system_info_t *info);
 ciot_err_t ciot_system_set_err(uint32_t code);
 ciot_err_t ciot_system_set_status(uint32_t code);
 ciot_err_t ciot_system_process_request(ciot_system_request_t request);
+ciot_err_t ciot_system_reset(void);
 
 ciot_err_t ciot_system_config_from_json(CJSON_PARAMETERS(ciot_system_config_t));
 ciot_err_t ciot_system_config_to_json(CJSON_PARAMETERS(ciot_system_config_t));
