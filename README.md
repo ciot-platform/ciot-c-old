@@ -675,7 +675,7 @@ int main(int argc, char **argv)
  - [x] wifi interface (idf)
  - [x] ntp interface (idf)
  - [x] http server (idf)
- - [ ] http server (windows)
+ - [x] http server (windows)
  - [ ] http server (linux)
 
 ### v0.2.0: Handle mqtt interface, accepting raw and json
