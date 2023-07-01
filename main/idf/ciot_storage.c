@@ -43,12 +43,9 @@ ciot_err_t ciot_storage_init(void)
 ciot_err_t ciot_storage_save_data(void *data, size_t size, char *name)
 {
     nvs_handle_t nvs_handle;
-    esp_err_t err = nvs_open(CIOT_STORAGE_NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
-    if (err != ESP_OK) {
-        return err;
-    }
+    CIOT_ERROR_RETURN(nvs_open(CIOT_STORAGE_NVS_NAMESPACE, NVS_READWRITE, &nvs_handle));
 
-    err = nvs_set_blob(nvs_handle, name, data, size);
+    esp_err_t err = nvs_set_blob(nvs_handle, name, data, size);
     if (err == ESP_OK) {
         err = nvs_commit(nvs_handle);
     }
@@ -60,13 +57,10 @@ ciot_err_t ciot_storage_save_data(void *data, size_t size, char *name)
 ciot_err_t ciot_storage_load_data(void *data, size_t size, char *name)
 {
     nvs_handle_t nvs_handle;
-    esp_err_t err = nvs_open(CIOT_STORAGE_NVS_NAMESPACE, NVS_READONLY, &nvs_handle);
-    if (err != ESP_OK) {
-        return err;
-    }
+    CIOT_ERROR_RETURN(nvs_open(CIOT_STORAGE_NVS_NAMESPACE, NVS_READONLY, &nvs_handle));
 
     size_t required_size = size;
-    err = nvs_get_blob(nvs_handle, name, data, &required_size);
+    esp_err_t err = nvs_get_blob(nvs_handle, name, data, &required_size);
 
     nvs_close(nvs_handle);
     return err;
@@ -75,12 +69,9 @@ ciot_err_t ciot_storage_load_data(void *data, size_t size, char *name)
 ciot_err_t ciot_storage_remove_data(char *name)
 {
     nvs_handle_t nvs_handle;
-    esp_err_t err = nvs_open(CIOT_STORAGE_NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
-    if (err != ESP_OK) {
-        return err;
-    }
+    CIOT_ERROR_RETURN(nvs_open(CIOT_STORAGE_NVS_NAMESPACE, NVS_READWRITE, &nvs_handle));
 
-    err = nvs_erase_key(nvs_handle, name);
+    ciot_err_t err = nvs_erase_key(nvs_handle, name);
     if (err != ESP_OK) {
         nvs_close(nvs_handle);
         return err;

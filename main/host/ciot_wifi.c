@@ -13,22 +13,27 @@
 
 #include "ciot_wifi.h"
 
-ciot_err_t ciot_wifi_set_config(ciot_wifi_interface_t type, ciot_wifi_config_t *conf)
+ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf);
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
 
 ciot_err_t ciot_wifi_get_config(ciot_wifi_interface_t type, ciot_wifi_config_t *config)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
 
 ciot_err_t ciot_wifi_get_status(ciot_wifi_interface_t type, ciot_wifi_status_t *status)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
 
 ciot_err_t ciot_wifi_get_info(ciot_wifi_interface_t type, ciot_wifi_info_t *info)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_wifi_process_request(ciot_wifi_request_t request, ciot_wifi_scan_result_t *scan_result)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }

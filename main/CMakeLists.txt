@@ -1,5 +1,6 @@
 idf_component_register(SRCS 
                         "common/ciot_app.c"
+                        "common/ciot_err.c"
                         "common/ciot_msg_dto.c" 
                         "common/ciot_ntp_dto.c" 
                         "common/ciot_settings.c" 

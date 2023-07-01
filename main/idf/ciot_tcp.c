@@ -24,26 +24,19 @@ static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *
 
 ciot_err_t ciot_tcp_set_config(void *interface, ciot_tcp_config_t *tcp)
 {
-    esp_err_t err = ciot_tcp_set_dhcp_config(interface, tcp->ip.dhcp);
-    if (err)
-        return err;
-
-    err = ciot_tcp_set_ip_config(interface, &tcp->ip);
-    if (err)
-        return err;
-
-    return err;
+    CIOT_ERROR_RETURN(ciot_tcp_set_dhcp_config(interface, tcp->ip.dhcp));
+    CIOT_ERROR_RETURN(ciot_tcp_set_ip_config(interface, &tcp->ip));
+    return CIOT_ERR_OK;
 }
 
 static ciot_err_t ciot_tcp_set_dhcp_config(void *interface, ciot_tcp_dhcp_config_t dhcp)
 {
     esp_netif_t *netif = (esp_netif_t *)interface;
-
-    esp_err_t err = CIOT_ERR_OK;
     esp_netif_dhcp_status_t dhcpc;
     esp_netif_dhcp_status_t dhcps;
-    esp_netif_dhcpc_get_status(netif, &dhcpc);
-    esp_netif_dhcps_get_status(netif, &dhcps);
+
+    CIOT_ERROR_PRINT(esp_netif_dhcpc_get_status(netif, &dhcpc));
+    CIOT_ERROR_PRINT(esp_netif_dhcps_get_status(netif, &dhcps));
 
     switch (dhcp)
     {
@@ -54,50 +47,39 @@ static ciot_err_t ciot_tcp_set_dhcp_config(void *interface, ciot_tcp_dhcp_config
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_CLIENT");
         if (dhcps != ESP_NETIF_DHCP_STOPPED)
         {
-            err = esp_netif_dhcps_stop(netif);
-            if (err)
-                return err;
+            CIOT_ERROR_RETURN(esp_netif_dhcps_stop(netif));
         }
         if (dhcpc != ESP_NETIF_DHCP_STARTED)
         {
-            err = esp_netif_dhcpc_stop(netif);
-            if (err)
-                return err;
+            CIOT_ERROR_RETURN(esp_netif_dhcpc_stop(netif));
         }
-        return err;
+        break;
     case CIOT_TCP_DHCP_CONFIG_SERVER:
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_SERVER");
         if (dhcpc != ESP_NETIF_DHCP_STOPPED)
         {
-            err = esp_netif_dhcpc_stop(netif);
-            if (err)
-                return err;
+            CIOT_ERROR_RETURN(esp_netif_dhcpc_stop(netif));
         }
         if (dhcps != ESP_NETIF_DHCP_STARTED)
         {
-            err = esp_netif_dhcps_start(netif);
-            if (err)
-                return err;
+            CIOT_ERROR_RETURN(esp_netif_dhcps_start(netif));
         }
-        return err;
+        break;
     case CIOT_TCP_DHCP_CONFIG_DISABLED:
         ESP_LOGI(TAG, "CIOT_TCP_DHCP_CONFIG_DISABLED");
         if (dhcpc != ESP_NETIF_DHCP_STOPPED)
         {
-            err = esp_netif_dhcpc_stop(netif);
-            if (err)
-                return err;
+            CIOT_ERROR_RETURN(esp_netif_dhcpc_stop(netif));
         }
         if (dhcps != ESP_NETIF_DHCP_STOPPED)
         {
-            err = esp_netif_dhcps_stop(netif);
-            if (err)
-                return err;
+            CIOT_ERROR_RETURN(esp_netif_dhcps_stop(netif));
         }
-        return err;
+        break;
     default:
         return CIOT_ERR_INVALID_ARG;
     }
+    return CIOT_ERR_OK;
 }
 
 static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *ip)
@@ -118,7 +100,6 @@ static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *
         esp_netif_t *netif = (esp_netif_t *)interface;
         esp_netif_ip_info_t ip_info;
         esp_netif_dns_info_t dns_info;
-        esp_err_t err;
 
         sprintf(address, "%d.%d.%d.%d", ip->address[0], ip->address[1], ip->address[2], ip->address[3]);
         sprintf(gateway, "%d.%d.%d.%d", ip->gateway[0], ip->gateway[1], ip->gateway[2], ip->gateway[3]);
@@ -131,11 +112,8 @@ static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *
         dns_info.ip.u_addr.ip4.addr = ipaddr_addr(mask);
         dns_info.ip.type = IPADDR_TYPE_V4;
 
-        err = esp_netif_set_ip_info(netif, &ip_info);
-        if (err)
-            return err;
-
-        return esp_netif_set_dns_info(netif, ESP_NETIF_DNS_MAIN, &dns_info);
+        CIOT_ERROR_RETURN(esp_netif_set_ip_info(netif, &ip_info));
+        CIOT_ERROR_RETURN(esp_netif_set_dns_info(netif, ESP_NETIF_DNS_MAIN, &dns_info));
     }
     return CIOT_ERR_OK;
 }

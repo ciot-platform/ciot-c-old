@@ -13,5 +13,5 @@
 
 ciot_err_t ciot_tcp_set_config(void *interface, ciot_tcp_config_t *tcp)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }

@@ -9,6 +9,11 @@
  * 
  */
 
+#include "ciot_ntp.h"
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_NTP
+
 #include <stdbool.h>
 #include <string.h>
 
@@ -19,8 +24,6 @@
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
 
-#include "ciot_ntp.h"
-#include "ciot_config.h"
 
 #define CIOT_NTP_EVENT_BIT_DONE BIT0
 
@@ -123,3 +126,27 @@ static void ciot_ntp_sync_notification_cb(struct timeval *tv)
     ntp.status.last_sync = time(NULL);
     xEventGroupSetBits(ntp.event_group, CIOT_NTP_EVENT_BIT_DONE);
 }
+
+#else
+
+ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_ntp_get_config(ciot_ntp_config_t *config)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_ntp_get_status(ciot_ntp_status_t *status)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_ntp_get_info(ciot_ntp_info_t *info)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+#endif

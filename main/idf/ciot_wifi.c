@@ -9,6 +9,11 @@
  *
  */
 
+#include "ciot_config.h"
+#include "ciot_wifi.h"
+
+#if CIOT_CONFIG_FEATURE_WIFI
+
 #include <string.h>
 
 #include "esp_err.h"
@@ -21,8 +26,6 @@
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
 
-#include "ciot_config.h"
-#include "ciot_wifi.h"
 
 #define CIOT_WIFI_EVENT_BIT_CONFIG_DONE BIT0
 #define CIOT_WIFI_EVENT_BIT_SCAN_DONE BIT1
@@ -108,9 +111,7 @@ ciot_err_t ciot_wifi_get_status(ciot_wifi_interface_t interface, ciot_wifi_statu
     {
         wifi_ap_record_t ap;
 
-        esp_err_t err = esp_wifi_sta_get_ap_info(&ap);
-        if(err)
-            return err;
+        CIOT_ERROR_RETURN(esp_wifi_sta_get_ap_info(&ap));
 
         wifi[interface].status.data.sta.sta.authmode = ap.authmode;
         wifi[interface].status.data.sta.sta.rssi = ap.rssi;
@@ -186,26 +187,16 @@ static wifi_mode_t ciot_wifi_get_mode(wifi_interface_t interface)
 
 static ciot_err_t ciot_wifi_scan(ciot_wifi_scan_result_t *scan_result)
 {
-    esp_err_t err = CIOT_ERR_OK;
-
     if(wifi[CIOT_WIFI_IF_STA].status.data.tcp.state <= CIOT_TCP_STATE_STOPPED)
     {
         ciot_wifi_init();
 
         wifi_mode_t wifi_mode = ciot_wifi_get_mode(CIOT_WIFI_IF_STA);
-        err = esp_wifi_set_mode(wifi_mode);
-        if(err != CIOT_ERR_OK)
-            return err;
-        
-        err = esp_wifi_start();
-        if(err != CIOT_ERR_OK)
-            return err;
+        CIOT_ERROR_RETURN(esp_wifi_set_mode(wifi_mode));
+        CIOT_ERROR_RETURN(esp_wifi_start());
     }
     
-    err = esp_wifi_scan_start(NULL, false);
-    if(err != CIOT_ERR_OK)
-        return err;
-    
+    CIOT_ERROR_RETURN(esp_wifi_scan_start(NULL, false));
     wifi[CIOT_WIFI_IF_AP].status.data.sta.scan = CIOT_WIFI_SCAN_STATE_SCANNING;
     xEventGroupWaitBits(event_group, CIOT_WIFI_EVENT_BIT_SCAN_DONE, pdTRUE, pdFALSE, CIOT_WIFI_SCAN_TIMEOUT / portTICK_PERIOD_MS);
     
@@ -226,8 +217,8 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
         case WIFI_EVENT_AP_START:
             ESP_LOGI(TAG, "WIFI_EVENT_AP_START");
             wifi[CIOT_WIFI_IF_AP].status.data.tcp.state = CIOT_TCP_STATE_STARTED;
-            ESP_ERROR_CHECK_WITHOUT_ABORT(ciot_tcp_set_config(wifi[CIOT_WIFI_IF_AP].netif, &wifi[CIOT_WIFI_IF_AP].config.tcp));
-            ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_get_mac(WIFI_IF_AP, wifi[CIOT_WIFI_IF_AP].info.tcp.mac));
+            CIOT_ERROR_PRINT(ciot_tcp_set_config(wifi[CIOT_WIFI_IF_AP].netif, &wifi[CIOT_WIFI_IF_AP].config.tcp));
+            CIOT_ERROR_PRINT(esp_wifi_get_mac(WIFI_IF_AP, wifi[CIOT_WIFI_IF_AP].info.tcp.mac));
             break;
         case WIFI_EVENT_AP_STOP:
             ESP_LOGI(TAG, "WIFI_EVENT_AP_STOP");
@@ -244,8 +235,8 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
             break;
         case WIFI_EVENT_STA_START:
             ESP_LOGI(TAG, "WIFI_EVENT_STA_START");
-            ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_get_mac(WIFI_IF_STA, wifi[CIOT_WIFI_IF_STA].info.tcp.mac));
-            ESP_ERROR_CHECK_WITHOUT_ABORT(esp_wifi_connect());
+            CIOT_ERROR_PRINT(esp_wifi_get_mac(WIFI_IF_STA, wifi[CIOT_WIFI_IF_STA].info.tcp.mac));
+            CIOT_ERROR_PRINT(esp_wifi_connect());
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.state = CIOT_TCP_STATE_CONNECTING;
             break;
         case WIFI_EVENT_STA_STOP:
@@ -256,7 +247,7 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
             ESP_LOGI(TAG, "WIFI_EVENT_STA_CONNECTED");
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.state = CIOT_TCP_STATE_CONNECTED;
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.connection++;
-            ESP_ERROR_CHECK_WITHOUT_ABORT(ciot_tcp_set_config(wifi[CIOT_WIFI_IF_STA].netif, &wifi[CIOT_WIFI_IF_STA].config.tcp));
+            CIOT_ERROR_PRINT(ciot_tcp_set_config(wifi[CIOT_WIFI_IF_STA].netif, &wifi[CIOT_WIFI_IF_STA].config.tcp));
             xEventGroupSetBits(event_group, CIOT_WIFI_EVENT_BIT_CONFIG_DONE);
             break;
         case WIFI_EVENT_STA_DISCONNECTED:
@@ -282,9 +273,9 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.ip[3] = ip4_addr4(&event->ip_info.ip);
 
             esp_netif_dhcp_status_t status;
-            esp_netif_dhcpc_get_status(wifi[CIOT_WIFI_IF_STA].netif, &status);
+            CIOT_ERROR_PRINT(esp_netif_dhcpc_get_status(wifi[CIOT_WIFI_IF_STA].netif, &status));
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.dhcp.client = status;
-            esp_netif_dhcps_get_status(wifi[CIOT_WIFI_IF_STA].netif, &status);
+            CIOT_ERROR_PRINT(esp_netif_dhcps_get_status(wifi[CIOT_WIFI_IF_STA].netif, &status));
             wifi[CIOT_WIFI_IF_STA].status.data.tcp.dhcp.server = status;
             break;
         }
@@ -298,9 +289,9 @@ static void ciot_wifi_event_handler(void *arg, esp_event_base_t event_base, int3
             wifi[CIOT_WIFI_IF_AP].status.data.tcp.ip[3] = ip4_addr4(&event->ip_info.ip);
 
             esp_netif_dhcp_status_t status;
-            esp_netif_dhcpc_get_status(wifi[CIOT_WIFI_IF_AP].netif, &status);
+            CIOT_ERROR_PRINT(esp_netif_dhcpc_get_status(wifi[CIOT_WIFI_IF_AP].netif, &status));
             wifi[CIOT_WIFI_IF_AP].status.data.tcp.dhcp.client = status;
-            esp_netif_dhcps_get_status(wifi[CIOT_WIFI_IF_AP].netif, &status);
+            CIOT_ERROR_PRINT(esp_netif_dhcps_get_status(wifi[CIOT_WIFI_IF_AP].netif, &status));
             wifi[CIOT_WIFI_IF_AP].status.data.tcp.dhcp.server = status;
             break;
         }
@@ -356,3 +347,32 @@ static ciot_err_t ciot_wifi_get_scan_result(ciot_wifi_scan_result_t *scan_result
     }
     return err;
 }
+
+#else
+
+ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_wifi_get_config(ciot_wifi_interface_t type, ciot_wifi_config_t *config)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_wifi_get_status(ciot_wifi_interface_t type, ciot_wifi_status_t *status)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_wifi_get_info(ciot_wifi_interface_t type, ciot_wifi_info_t *info)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+ciot_err_t ciot_wifi_process_request(ciot_wifi_request_t request, ciot_wifi_scan_result_t *scan_result)
+{
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
+}
+
+#endif

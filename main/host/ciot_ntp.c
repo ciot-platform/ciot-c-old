@@ -13,20 +13,20 @@
 
 ciot_err_t ciot_ntp_set_config(ciot_ntp_config_t *conf)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
 
 ciot_err_t ciot_ntp_get_config(ciot_ntp_config_t *config)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
 
 ciot_err_t ciot_ntp_get_status(ciot_ntp_status_t *status)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
 
 ciot_err_t ciot_ntp_get_info(ciot_ntp_info_t *info)
 {
-    return CIOT_ERR_NOT_SUPPORTED;
+    return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }

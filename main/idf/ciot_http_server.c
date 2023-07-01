@@ -72,13 +72,9 @@ static esp_err_t ciot_http_server_on_post(httpd_req_t *req)
     char content_type[100];
     ciot_msg_t msg = { 0 };
     ciot_msg_response_t resp = { 0 };
-    esp_err_t err;
+    esp_err_t err = CIOT_ERR_OK;
 
-    err = httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
-    if(err != ESP_OK)
-    {
-        return err;
-    }
+    CIOT_ERROR_RETURN(httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*"));
 
     if(httpd_req_get_hdr_value_str(req, "Content-Type", content_type, sizeof(content_type)) == ESP_OK)
     {
