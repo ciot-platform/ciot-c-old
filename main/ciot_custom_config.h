@@ -14,8 +14,11 @@
 
 #if defined(_WIN32)
 #include "ciot_config_win.h"
+#elif defined(__linux__)
+#include "ciot_config_linux.h"
 #else
 #include "ciot_config_idf.h"
 #endif  // ESP_PLATFORM
+
 
 #endif  //!__CIOT_CUSTOM_CONFIG__H__
