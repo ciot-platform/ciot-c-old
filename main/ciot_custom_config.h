@@ -20,5 +20,10 @@
 #include "ciot_config_idf.h"
 #endif  // ESP_PLATFORM
 
+#define CIOT_CONFIG_WIFI_AP_MODE CIOT_WIFI_IF_AP
+#define CIOT_CONFIG_WIFI_AP_SSID "CIOT AP"
+#define CIOT_CONFIG_WIFI_AP_PASSWORD "administrator"
+#define CIOT_CONFIG_HTTP_SERVER_PORT 8000
+#define CIOT_CONFIG_HTTP_SERVER_ENDPOINT "/v1/ciot"
 
 #endif  //!__CIOT_CUSTOM_CONFIG__H__
