@@ -172,9 +172,9 @@ static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request)
     switch (request->interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_process_request(request->request, &this.result.data.wifi);    
+        return ciot_wifi_process_request((ciot_wifi_request_t)request->request, &this.result.data.wifi);    
     case CIOT_MSG_IF_SYSTEM:
-        return ciot_system_process_request(request->request);
+        return ciot_system_process_request((ciot_system_request_t)request->request);
     case CIOT_MSG_IF_NTP:
         return CIOT_ERR_INVALID_REQUEST;
     default:
