@@ -26,8 +26,14 @@ const char *ciot_err_to_message(ciot_err_t err)
         return "Fail";
     case CIOT_ERR_OK:
         return "OK";
+    case CIOT_ERR_TIMEOUT:
+        return "Timeout";
+    case CIOT_ERR_NOT_FOUND:
+        return "Not Found";
     case CIOT_ERR_NOT_IMPLEMENTED:
         return "Not Implemented";
+    case CIOT_ERR_NOTHING_TO_DO:
+        return "Nothing to do";
     case CIOT_ERR_FEATURE_NOT_SUPPORTED:
         return "Feature Not Supported";
     case CIOT_ERR_BUSY:
@@ -51,6 +57,8 @@ const char *ciot_err_to_message(ciot_err_t err)
     default:
 #ifdef IDF_VER
     return esp_err_to_name(err);
+#else
+    return "Unknown Error";
 #endif
     }
 }
