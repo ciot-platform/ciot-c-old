@@ -6,7 +6,7 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "forcedInclude": [
-                "${workspaceFolder}/build/config/sdkconfig.h",
+                "${workspaceFolder}/build/config/sdkconfig.h"
             ],
             "includePath": [
                 "${config:idf.espIdfPath}/components/**",
@@ -27,7 +27,20 @@
             }
         },
         {
-            "name": "Empty Configuration"
+            "name": "GCC",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.18362.0",
+            "compilerPath": "C:/MinGW/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

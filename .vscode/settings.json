@@ -74,6 +74,10 @@
         "mongoose.h": "c",
         "ciot_config_windows.h": "c",
         "windows.h": "c",
-        "ciot_config_idf.h": "c"
+        "ciot_config_idf.h": "c",
+        "stddef.h": "c",
+        "wchar.h": "c",
+        "_types.h": "c",
+        "cdefs.h": "c"
     }
 }
