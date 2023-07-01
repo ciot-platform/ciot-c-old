@@ -2,7 +2,7 @@
 
 > **Advise:** This is an work in progress. Don't use it on production environments.
 
-CIOT is an complete IoT standard API implemented in ansi C, compatible with esp-idf, windows, and linux. The CIOT API can be reached by an HTTP Client, but it's designed do easily support any compatible protocol in future. 
+CIOT is an complete IoT standard API implemented in ansi C, compatible with esp-idf, windows, and linux. The CIOT API can be reached by an HTTP Client, but it's designed do easily support any compatible protocol in future. Each CIOT component can be used individually as an library. Not used components can be disabled on macros described on Features item.
 
 Table of contents:
 
@@ -35,7 +35,7 @@ The current version of CIOT API support the following features:
  - WiFi (idf)
  - NTP (idf)
 
-You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application, or use CMakeLists.txt defining and setting values to each configuration macro. The following macros can be used to enable/disable features at compile time. To view all adjustable configurations, see main/{target}/ciot_default_config.h
+You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application. Alternatively you can use CMakeLists.txt to defining and setting values to each configuration macro. To view all available configurations, see the file: main/{target}/ciot_default_config.h. The following macros can be used to enable/disable features at compile time:
 
 ```c
 /**
@@ -93,7 +93,7 @@ If an client try to use an unsupported feature, the CIOT API will return an erro
 
 # API
 
-The CIOT API have an unic endpoint. It was designed to allow portability with simpler protocols like uart or modbus. The follow sample code shows how to start an http server on a host machine, and serves the API in "/v1/ciot" endpoint at 80 port.
+The CIOT API have an unic endpoint. It's designed to allow portability with simpler protocols like uart or modbus. Although, the default API with the single endpoint, can be easily overrided, because all CIOT application logic is separated from server. The follow sample code shows how to start an http server, and serves the API in "/v1/ciot" endpoint in port 80:
 
 ```c
 #include "ciot_app.h"
@@ -138,8 +138,8 @@ int main(int argc, char **argv)
   "request": 1,                     /// Request Type   1:getConfiguration
   "interface": 1,                   /// Interface Type 1:wifi
   "mode": 0,                        /// Wifi Mode      0:station, 1:accessPoint
-  "ssid": "CABO CANAVERAL",         /// Wifi SSID
-  "password": "16192020",           /// Wifi password
+  "ssid": "MY SSID",                /// Wifi SSID
+  "password": "mypassword",         /// Wifi password
   "ip": {                           /// IP Configuration (Optional)
     "dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
     "address": [192,168,1,16],      /// Device Address
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
   "request": 2,                   /// Request Type   2:getInformation
   "interface": 1,                 /// Interface Type 1:wifi
   "available": true,              /// Interface is Available
-  "mac": [168,66,227,90,20,224],  /// Device MAC
+  "mac": [15,47,53,44,55,77],     /// Device MAC
 }
 ```
 
@@ -205,10 +205,10 @@ int main(int argc, char **argv)
   "request": 3,                       /// Request Type   3:getStatus
   "interface": 1,                     /// Interface Type 1:wifi
   "sta": {                            /// Connected Station Status
-    "ssid": "CABO CANAVERAL",         /// STA SSID
+    "ssid": "MY-SSID",                /// STA SSID
     "rssi": -51,                      /// STA rssi
     "authmode": 3,                    /// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
-    "bssid": [16,71,56,232,157,249]   /// STA bssid (MAC)
+    "bssid": [44,55,56,123,222,123]   /// STA bssid (MAC)
   },
   "tcp": {                            /// Connected TCP Status
     "state": 3,                       /// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
@@ -323,8 +323,8 @@ int main(int argc, char **argv)
 {
   "type": 3,                      /// Message Type  	3:setConfiguration
   "interface": 1,                 /// Interface Type 	1:wifi
-  "ssid": "CABO CANAVERAL",       /// Wifi SSID
-  "password": "16192020",         /// Wifi Password
+  "ssid": "MY-SSID",              /// Wifi SSID
+  "password": "my-password",      /// Wifi Password
   "mode": 0,                      /// Wifi Mode => 0:station, 1:accessPoint
   "ip": {                         /// IP Configuration (Optional)
     "dhcp": 3,                    /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
