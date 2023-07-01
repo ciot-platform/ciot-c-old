@@ -29,11 +29,15 @@ static ciot_err_t ciot_app_init_interface(char *config_filename, size_t config_s
 
 ciot_err_t ciot_app_init(ciot_app_config_t *conf)
 {
-    ciot_wifi_config_t wifi_ap;
+    ciot_err_t err = CIOT_ERR_OK;
 
+#if CIOT_CONFIG_FEATURE_STORAGE
     CIOT_ERROR_PRINT(ciot_storage_init());
+#endif
 
-    ciot_err_t err = ciot_storage_load_data(&wifi_ap, sizeof(wifi_ap), CIOT_CONFIG_WIFI_AP_FILENAME);
+#if CIOT_CONFIG_FEATURE_WIFI
+    ciot_wifi_config_t wifi_ap;
+    err = ciot_storage_load_data(&wifi_ap, sizeof(wifi_ap), CIOT_CONFIG_WIFI_AP_FILENAME);
     if (err == CIOT_ERR_OK)
     {
         CIOT_ERROR_PRINT(ciot_wifi_set_config(&wifi_ap));
@@ -42,10 +46,16 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     {
         CIOT_ERROR_PRINT(ciot_wifi_set_config(&conf->wifi));
     }
-
-    CIOT_ERROR_PRINT(ciot_http_server_start(&conf->http_server));
     CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_WIFI_STA_FILENAME, sizeof(ciot_wifi_config_t), (ciot_err_t (*)(void *))ciot_wifi_set_config));
+#endif
+
+#if CIOT_CONFIG_FEATURE_HTTP_SERVER
+    CIOT_ERROR_PRINT(ciot_http_server_start(&conf->http_server));
+#endif
+
+#if CIOT_CONFIG_FEATURE_NTP
     CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t (*)(void *))ciot_ntp_set_config));
+#endif
 
     return err != CIOT_ERR_OK ? CIOT_ERR_FAIL : CIOT_ERR_OK;
 }
