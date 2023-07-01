@@ -39,7 +39,7 @@ static void reset_task(void *pvParameters);
 
 ciot_err_t ciot_system_set_config(ciot_system_config_t *conf)
 {
-    return CIOT_ERR_OK;
+    return CIOT_ERR_NOTHING_TO_DO;
 }
 
 ciot_err_t ciot_system_get_config(ciot_system_config_t *config)
