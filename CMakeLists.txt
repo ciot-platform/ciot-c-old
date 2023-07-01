@@ -27,6 +27,7 @@ else()
     main/common/ciot_msg_dto.c 
     main/common/ciot_ntp_dto.c
     main/common/ciot_settings.c
+    main/common/ciot_system_common.c 
     main/common/ciot_system_dto.c
     main/common/ciot_tcp_dto.c 
     main/common/ciot_wifi_dto.c

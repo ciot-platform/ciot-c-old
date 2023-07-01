@@ -4,6 +4,7 @@ idf_component_register(SRCS
                         "common/ciot_msg_dto.c" 
                         "common/ciot_ntp_dto.c" 
                         "common/ciot_settings.c" 
+                        "common/ciot_system_common.c" 
                         "common/ciot_system_dto.c" 
                         "common/ciot_tcp_dto.c" 
                         "common/ciot_wifi_dto.c" 
