@@ -13,7 +13,12 @@
 #include <stdio.h>
 #include <wchar.h>
 
+#ifdef  _WIN32
 #include <windows.h>
+#else
+#include <sys/statvfs.h>
+#endif  //_WIN32
+
 #include "ciot_storage.h"
 
 #ifndef _MAX_DRIVE
@@ -69,6 +74,7 @@ ciot_err_t ciot_storage_remove_data(char *name)
     }
 }
 
+#ifdef  _WIN32
 size_t ciot_storage_get_size()
 {
     char modulePath[MAX_PATH];
@@ -80,7 +86,7 @@ size_t ciot_storage_get_size()
             ULONGLONG freeBytesAvailable, totalBytes, totalFreeBytes;
             if (GetDiskFreeSpaceExA(drive, (PULARGE_INTEGER)&freeBytesAvailable, (PULARGE_INTEGER)&totalBytes, (PULARGE_INTEGER)&totalFreeBytes))
             {
-                return freeBytesAvailable / 1024;
+                return totalBytes / 1024;
             }
             else
             {
@@ -99,3 +105,21 @@ size_t ciot_storage_get_size()
 
     return 0;
 }
+#else
+size_t ciot_storage_get_size()
+{
+    struct statvfs stat;
+    const char* path = "/"; // Specify the path to the filesystem you want to check
+
+    if (statvfs(path, &stat) == 0) {
+        unsigned long long total_space = stat.f_blocks * stat.f_frsize;
+        // unsigned long long free_space = stat.f_bfree * stat.f_frsize;
+        // unsigned long long available_space = stat.f_bavail * stat.f_frsize;
+        return total_space / 1024;
+    } else {
+        printf("Error retrieving disk space information.\n");
+    }
+
+    return 0;
+}
+#endif
