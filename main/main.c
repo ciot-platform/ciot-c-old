@@ -13,15 +13,18 @@
 #include <stdio.h>
 
 #include "ciot_app.h"
+#include "ciot_config.h"
 
 void app_main(void)
 {
     ciot_app_config_t app = {
+#if CIOT_CONFIG_FEATURE_WIFI
         .wifi = {
             .mode = CIOT_WIFI_IF_AP,
             .ssid = "CIOT AP",
             .password = "administrator",
         },
+#endif
         .http_server = {
             .port = 80,
             .endpoint = "/v1/ciot"
