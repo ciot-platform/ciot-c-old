@@ -10,10 +10,11 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "ciot_wifi.h"
 
-ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf);
+ciot_err_t ciot_wifi_set_config(ciot_wifi_config_t *conf)
 {
     return CIOT_ERR_FEATURE_NOT_SUPPORTED;
 }
