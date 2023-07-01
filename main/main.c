@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "ciot_custom_config.h"
 #include "ciot_app.h"
 
 void app_main(void)
@@ -30,6 +29,8 @@ void app_main(void)
     };
     
     ciot_app_start(&app);
+
+    // Implement your application specific logic here
 }
 
 #if defined(WIN32) || defined(__linux__)
@@ -37,7 +38,9 @@ void app_main(void)
 int	main(int argc, char **argv)
 {
     app_main();
-    return 0;
+    while(true){
+        // Implement your application specific logic here
+    }
 }
 
 #endif  //WIN32
