@@ -24,27 +24,27 @@
 #else
 #if (CIOT_CONFIG_API_ERROR_MESSAGES)
 
-#define CIOT_ERROR_LOG(x) printf("%s\":%d error: %s", __FILE__, __LINE__, ciot_err_to_message(hc_err))
+#define CIOT_ERROR_LOG(x) printf("%s:%d error: %s\n", __FILE__, __LINE__, ciot_err_to_message(hc_err))
 #define CIOT_ERROR_PRINT(x)                                                               \
     do                                                                                    \
     {                                                                                     \
         ciot_err_t hc_err = x;                                                            \
         if (hc_err != CIOT_ERR_OK)                                                        \
         {                                                                                 \
-            printf("%s\":%d error: %s", __FILE__, __LINE__, ciot_err_to_message(hc_err)); \
+            printf("%s:%d error: %s\n", __FILE__, __LINE__, ciot_err_to_message(hc_err)); \
         }                                                                                 \
     } while (0)
 
 #else
 
-#define CIOT_ERROR_LOG(x) printf("%s\":%d", __FILE__, __LINE__)
+#define CIOT_ERROR_LOG(x) printf("%s:%d\n", __FILE__, __LINE__)
 #define CIOT_ERROR_PRINT(x)                               \
     do                                                    \
     {                                                     \
         ciot_err_t hc_err = x;                            \
         if (hc_err != CIOT_ERR_OK)                        \
         {                                                 \
-            printf("%s\":%d:%s", __FILE__, __LINE__, #x); \
+            printf("%s:%d:%s\n", __FILE__, __LINE__, #x); \
         }                                                 \
     } while (0)
 #endif

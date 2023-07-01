@@ -6,6 +6,7 @@ CIOT is an complete IoT standard API implemented in ansi C, compatible with esp-
 
 Table of contents:
 
+ - [Features](#features)
  - [API](#api)
     - [Wifi](#wifi)
       - [Get Configuration](#wifi-get-configuration)
@@ -26,6 +27,69 @@ Table of contents:
       - [Get Information](#ntp-get-information)
       - [Get Status](#ntp-get-status)
       - [Set Configuration](#ntp-set-configuration)
+
+# Features
+
+The current version of CIOT API support the following features:
+
+ - WiFi (idf)
+ - NTP (idf)
+
+You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application, or use CMakeLists.txt defining and setting values to each configuration macro. The following macros can be used to enable/disable features at compile time. To view all adjustable configurations, see main/{target}/ciot_default_config.h
+
+```c
+/**
+ *  Hardware Features
+ */
+#define CIOT_CONFIG_FEATURE_I2C 0
+#define CIOT_CONFIG_FEATURE_SPI 0
+#define CIOT_CONFIG_FEATURE_UART 0
+#define CIOT_CONFIG_FEATURE_USB 0
+#define CIOT_CONFIG_FEATURE_ETHERNET 0
+#define CIOT_CONFIG_FEATURE_WIFI 1
+#define CIOT_CONFIG_FEATURE_BLE 0
+#define CIOT_CONFIG_FEATURE_ZIGBEE 0
+#define CIOT_CONFIG_FEATURE_LORA 0
+#define CIOT_CONFIG_FEATURE_RS232 0
+#define CIOT_CONFIG_FEATURE_RS485 0
+#define CIOT_CONFIG_FEATURE_CAN 0
+#define CIOT_CONFIG_FEATURE_GPIO 0
+#define CIOT_CONFIG_FEATURE_RTC 1
+#define CIOT_CONFIG_FEATURE_EEPROM 0
+#define CIOT_CONFIG_FEATURE_FLASH 1
+#define CIOT_CONFIG_FEATURE_SDCARD 0
+#define CIOT_CONFIG_FEATURE_HARDDISK 0
+#define CIOT_CONFIG_FEATURE_DISPLAY 0
+
+/**
+ *  Software Features
+ */
+#define CIOT_CONFIG_FEATURE_OTA 0
+#define CIOT_CONFIG_FEATURE_NTP 1
+#define CIOT_CONFIG_FEATURE_MQTT 0
+#define CIOT_CONFIG_FEATURE_HTTP_CLIENT 0
+#define CIOT_CONFIG_FEATURE_HTTP_SERVER 1
+#define CIOT_CONFIG_FEATURE_COAP 0
+#define CIOT_CONFIG_FEATURE_MODBUS_RTU 0
+#define CIOT_CONFIG_FEATURE_MODBUS_TCP 0
+#define CIOT_CONFIG_FEATURE_OPCUA 0
+#define CIOT_CONFIG_FEATURE_DATALOGGER 0
+#define CIOT_CONFIG_FEATURE_GATEWAY 0
+#define CIOT_CONFIG_FEATURE_SCHEDULER 0
+#define CIOT_CONFIG_FEATURE_AI 0
+```
+
+If an client try to use an unsupported feature, the CIOT API will return an error code 2 (CIOT_ERR_FEATURE_NOT_SUPPORTED).
+
+```json
+{
+	"type": 2,
+	"request": 1,
+	"interface": 65,
+	"err_code": 2,
+	"err_msg": "Feature Not Supported"
+}
+```
 
 # API
 
