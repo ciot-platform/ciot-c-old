@@ -145,8 +145,10 @@ ciot_err_t ciot_system_set_config(ciot_system_config_t *conf);
 ciot_err_t ciot_system_get_config(ciot_system_config_t *config);
 ciot_err_t ciot_system_get_status(ciot_system_status_t *status);
 ciot_err_t ciot_system_get_info(ciot_system_info_t *info);
-ciot_err_t ciot_system_set_err(uint32_t code);
-ciot_err_t ciot_system_set_status(uint32_t code);
+ciot_err_t ciot_system_set_err_code(uint32_t code);
+ciot_err_t ciot_system_set_status_code(uint32_t code);
+uint32_t ciot_system_get_err_code(void);
+uint32_t ciot_system_get_status_code();
 ciot_err_t ciot_system_process_request(ciot_system_request_t request);
 ciot_err_t ciot_system_reset(void);
 

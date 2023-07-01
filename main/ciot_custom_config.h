@@ -12,10 +12,10 @@
 #ifndef __CIOT_CUSTOM_CONFIG__H__
 #define __CIOT_CUSTOM_CONFIG__H__
 
-#if defined(IDF_VER)
-#include "ciot_config_idf.h"
-#elif defined(_WIN32)
+#if defined(_WIN32)
 #include "ciot_config_win.h"
-#endif  //IDF_VER
+#else
+#include "ciot_config_idf.h"
+#endif  // ESP_PLATFORM
 
 #endif  //!__CIOT_CUSTOM_CONFIG__H__

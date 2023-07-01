@@ -15,15 +15,6 @@
 #include "ciot_storage.h"
 #include "ciot_config.h"
 
-typedef struct ciot_system
-{
-    ciot_system_config_t config;
-    uint32_t err_code;
-    uint32_t status_code;
-} ciot_system_t;
-
-static ciot_system_t this;
-
 static DWORDLONG ciot_system_get_free_ram();
 static unsigned long ciot_system_get_lifetime();
 
@@ -32,8 +23,8 @@ ciot_err_t ciot_system_get_status(ciot_system_status_t *status)
     ciot_system_status_t system = {
         .time = time(NULL),
         .memory = ciot_system_get_free_ram(),
-        .err = this.err_code,
-        .status = this.status_code,
+        .err = ciot_system_get_err_code(),
+        .status = ciot_system_get_status_code(),
         .lifetime = ciot_system_get_lifetime()
     };
     *status = system;

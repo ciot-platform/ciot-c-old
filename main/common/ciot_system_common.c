@@ -32,16 +32,26 @@ ciot_err_t ciot_system_get_config(ciot_system_config_t *config)
     return CIOT_ERR_OK;
 }
 
-ciot_err_t ciot_system_set_err(uint32_t code)
+ciot_err_t ciot_system_set_err_code(uint32_t code)
 {
     this.err_code = code;
     return CIOT_ERR_OK;
 }
 
-ciot_err_t ciot_system_set_status(uint32_t code)
+ciot_err_t ciot_system_set_status_code(uint32_t code)
 {
     this.status_code = code;
     return CIOT_ERR_OK;
+}
+
+uint32_t ciot_system_get_err_code(void)
+{
+    return this.err_code;
+}
+
+uint32_t ciot_system_get_status_code()
+{
+    return this.status_code;
 }
 
 ciot_err_t ciot_system_process_request(ciot_system_request_t request)

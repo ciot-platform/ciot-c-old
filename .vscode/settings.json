@@ -73,6 +73,7 @@
         "ciot_json.h": "c",
         "mongoose.h": "c",
         "ciot_config_windows.h": "c",
-        "windows.h": "c"
+        "windows.h": "c",
+        "ciot_config_idf.h": "c"
     }
 }
