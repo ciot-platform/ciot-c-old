@@ -48,7 +48,7 @@ extern "C"
     else                                      \
         ptr->x = false
 
-#define CJSON_GET_BOOLEAN_IN_UNION(x, union, received_type, expected_type) \
+#define CJSON_GET_BOOLEAN_UNION_CHILD(x, union, received_type, expected_type) \
     if (ptr->received_type == received_type)                               \
     {                                                                      \
         cJSON *x = cJSON_GetObjectItem(json, #x);                          \
@@ -63,7 +63,7 @@ extern "C"
     if (x && x->type == cJSON_Number)         \
     ptr->x = x->valueint
 
-#define CJSON_GET_NUMBER_IN_UNION(x, received_type, expected_type) \
+#define CJSON_GET_NUMBER_UNION_CHILD(x, received_type, expected_type) \
     if (received_type == expected_type)                            \
     {                                                              \
         cJSON *x = cJSON_GetObjectItem(json, #x);                  \
@@ -81,7 +81,7 @@ extern "C"
         }                                                   \
     }
 
-#define CJSON_GET_NUMBER_ARRAY_IN_UNION(x, union, received_type, expected_type) \
+#define CJSON_GET_NUMBER_ARRAY_UNION_CHILD(x, union, received_type, expected_type) \
     if (ptr->received_type == received_type)                                    \
     {                                                                           \
         cJSON *x = cJSON_GetObjectItem(json, #x);                               \
@@ -106,7 +106,7 @@ extern "C"
         ptr->x[len] = '\0';                                        \
     }
 
-#define CJSON_GET_CHAR_ARRAY_IN_UNION(x, union, received_type, expected_type) \
+#define CJSON_GET_CHAR_ARRAY_UNION_CHILD(x, union, received_type, expected_type) \
     if (ptr->received_type == received_type)                                  \
     {                                                                         \
         cJSON *x = cJSON_GetObjectItem(json, #x);                             \
@@ -175,7 +175,7 @@ extern "C"
 
 #define CJSON_GET_OBJ_FROM_ROOT(obj, handler) handler(json, &ptr->obj)
 
-#define CJSON_GET_OBJ_IN_UNION(obj, handler, received_type, expected_type) \
+#define CJSON_GET_OBJ_UNION_CHILD(obj, handler, received_type, expected_type) \
     if (received_type == expected_type)                                    \
     {                                                                      \
         int err = handler(json, &ptr->obj);                                \
@@ -183,7 +183,7 @@ extern "C"
             return err;                                                    \
     }
 
-#define CJSON_GET_UNION_IN_UNION(obj, handler, child_type, received_type, expected_type) \
+#define CJSON_GET_UNION_CHILD_OF_UNION(obj, handler, child_type, received_type, expected_type) \
     if (received_type == expected_type)                                                  \
     {                                                                                    \
         int err = handler(json, &ptr->obj, child_type);                                  \
@@ -241,7 +241,7 @@ extern "C"
         return CIOT_ERR_INVALID_ARG;                          \
     }
 
-#define CJSON_ADD_OBJ_CHILD_OF_UNION(obj, handler, received_type, expected_type) \
+#define CJSON_ADD_OBJ_UNION_CHILD(obj, handler, received_type, expected_type) \
     if (received_type == expected_type)                                          \
     {                                                                            \
         int err = handler(json, &ptr->obj);                                      \

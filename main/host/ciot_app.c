@@ -24,15 +24,15 @@
 #define ciot_thread_t pthread_t
 #endif
 
-typedef struct ciot_app_data
+typedef struct ciot_host
 {
     ciot_msg_t msg;
     bool msg_received;
     bool msg_processed;
     ciot_thread_t thread;
-} ciot_app_data_t;
+} ciot_app_host_t;
 
-static ciot_app_data_t this;
+static ciot_app_host_t this;
 struct mg_mgr mgr;
 
 static void* ciot_app_task(void* args);
@@ -91,6 +91,7 @@ static void* ciot_app_task(void* args)
 
     for(;;)
     {
+        CIOT_ERROR_PRINT(ciot_app_data_task());
         if(this.msg_received)
         {
             ciot_err_t err = ciot_app_msg_handle(&this.msg);

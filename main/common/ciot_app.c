@@ -64,6 +64,67 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     return err != CIOT_ERR_OK ? CIOT_ERR_FAIL : CIOT_ERR_OK;
 }
 
+ciot_err_t ciot_app_send_data(ciot_app_data_t *data)
+{
+    if(this.data_received)
+    {
+        return CIOT_ERR_BUSY;
+    }
+    else if(this.data.content != NULL || this.data.size != 0)
+    {
+        return CIOT_ERR_INVALID_STATE;
+    }
+    else
+    {
+        this.data.content = malloc(data->size);
+        memcpy(this.data.content, data->content, data->size);
+        this.data.data_type = data->data_type;
+        this.data_received = true;
+        return CIOT_ERR_OK;
+    }
+}
+
+ciot_err_t ciot_app_data_task()
+{
+    ciot_err_t err = CIOT_ERR_OK;
+    if(this.data_received)
+    {
+        switch (this.data.data_type)
+        {
+        case CIOT_APP_DATA_TYPE_RAW:
+        {
+            ciot_msg_t msg;
+            memcpy(&msg, this.data.content, this.data.size);
+            err = ciot_app_send_msg(&msg);
+            break;
+        }
+        case CIOT_APP_DATA_TYPE_JSON_STRING:
+        {
+            ciot_msg_t msg = { 0 };
+            cJSON *json = cJSON_Parse((char*)this.data.content);
+            err = ciot_msg_from_json(json, &msg);
+            free(json);
+            if(err == CIOT_ERR_OK)
+            {
+                err = ciot_app_send_msg(&msg);
+            }
+            break;
+        }
+        default:
+            err = CIOT_ERR_INVALID_TYPE;
+            break;
+        }
+        if(this.data.content != NULL)
+        {
+            free(this.data.content);
+            this.data.size = 0;
+            this.data.content = NULL;
+        }
+        this.data_received = false;
+    }
+    return err;
+}
+
 ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg)
 {
     ciot_err_t err;

@@ -42,7 +42,15 @@ typedef enum
     CIOT_MQTT_STATE_CONNECTED,
 } ciot_mqtt_state_t;
 
-typedef struct ciot_mqtt_config
+typedef enum
+{
+    CIOT_MQTT_CONFIG_UNKNOWN,
+    CIOT_MQTT_CONFIG_CONNECTION,
+    CIOT_MQTT_CONFIG_TOPICS,
+    CIOT_MQTT_CONFIG_ALL
+} ciot_mqtt_config_type_t;
+
+typedef struct ciot_mqtt_config_connection
 {
     char host[64];
     int port;
@@ -50,6 +58,33 @@ typedef struct ciot_mqtt_config
     char password[48];
     uint8_t qos;
     ciot_mqtt_transport_t transport;
+} ciot_mqtt_config_connection_t;
+
+typedef struct ciot_mqtt_config_topics
+{
+    int qos;
+    char message[64];
+    char response[64];
+    uint8_t data_type;
+} ciot_mqtt_config_topics_t;
+
+typedef struct ciot_mqtt_config_data_type
+{
+    ciot_mqtt_config_connection_t connection;
+    ciot_mqtt_config_topics_t topics;
+} ciot_mqtt_config_data_t;
+
+typedef union ciot_mqtt_config_data_union
+{
+    ciot_mqtt_config_connection_t connection;
+    ciot_mqtt_config_topics_t topics;
+    ciot_mqtt_config_data_t config;
+} ciot_mqtt_config_data_u;
+
+typedef struct ciot_mqtt_config
+{
+    ciot_mqtt_config_type_t config_type;
+    ciot_mqtt_config_data_u data;
 } ciot_mqtt_config_t;
 
 typedef struct ciot_mqtt_info

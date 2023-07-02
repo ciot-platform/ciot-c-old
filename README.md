@@ -41,7 +41,7 @@ The current version of CIOT API support the following features:
  - WiFi (idf)
  - NTP (idf)
  - HTTP Server (idf, windows, linux)
- - MQTT Server (windows, linux)
+ - MQTT Server (windows, linux) [work in progress...]
 
 You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application. Alternatively you can use CMakeLists.txt to defining and setting values to each configuration macro. To view all available configurations, see the file: main/{target}/ciot_default_config.h. The following macros can be used to enable/disable features at compile time:
 

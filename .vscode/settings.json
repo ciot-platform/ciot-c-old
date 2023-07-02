@@ -79,6 +79,7 @@
         "wchar.h": "c",
         "_types.h": "c",
         "cdefs.h": "c",
-        "ciot_config_linux.h": "c"
+        "ciot_config_linux.h": "c",
+        "ciot_mqtt.h": "c"
     }
 }

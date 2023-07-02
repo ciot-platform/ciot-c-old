@@ -29,7 +29,9 @@
         {
             "name": "GCC",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/main/**",
+                "${workspaceFolder}/lib/cJSON",
+                "${workspaceFolder}/lib/mongoose"
             ],
             "defines": [
                 "_DEBUG",

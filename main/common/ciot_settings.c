@@ -20,12 +20,12 @@ ciot_err_t ciot_settings_save(void)
 
 #if CIOT_CONFIG_FEATURE_WIFI
     err = ciot_wifi_get_config(CIOT_WIFI_IF_AP, &settings.wifi_ap);
-    if (err != CIOT_ERR_OK)
+    if (err == CIOT_ERR_OK)
     {
         CIOT_ERROR_PRINT(ciot_storage_save_data(&settings.wifi_ap, sizeof(settings.wifi_ap), CIOT_CONFIG_WIFI_AP_FILENAME));
     }
     err = ciot_wifi_get_config(CIOT_WIFI_IF_STA, &settings.wifi_sta);
-    if (err != CIOT_ERR_OK)
+    if (err == CIOT_ERR_OK)
     {
         CIOT_ERROR_PRINT(ciot_storage_save_data(&settings.wifi_sta, sizeof(settings.wifi_sta), CIOT_CONFIG_WIFI_STA_FILENAME));
     }
@@ -33,7 +33,7 @@ ciot_err_t ciot_settings_save(void)
 
 #if CIOT_CONFIG_FEATURE_NTP
     err = ciot_ntp_get_config(&settings.ntp);
-    if (err != CIOT_ERR_OK)
+    if (err == CIOT_ERR_OK)
     {
         CIOT_ERROR_PRINT(ciot_storage_save_data(&settings.ntp, sizeof(settings.ntp), CIOT_CONFIG_NTP_FILENAME));
     }
@@ -41,9 +41,9 @@ ciot_err_t ciot_settings_save(void)
 
 #if CIOT_CONFIG_FEATURE_MQTT
     err = ciot_mqtt_get_config(&settings.mqtt);
-    if (err != CIOT_ERR_OK)
+    if (err == CIOT_ERR_OK)
     {
-        CIOT_ERROR_PRINT(ciot_storage_save_data(&settings.ntp, sizeof(settings.ntp), CIOT_CONFIG_NTP_FILENAME));
+        CIOT_ERROR_PRINT(ciot_storage_save_data(&settings.mqtt, sizeof(settings.mqtt), CIOT_CONFIG_MQTT_FILENAME));
     }
 #endif
 

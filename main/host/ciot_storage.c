@@ -41,6 +41,7 @@ ciot_err_t ciot_storage_save_data(void *data, size_t size, char *name)
     else
     {
         fwrite(data, size, 1, f);
+        fclose(f);
     }
 
     return CIOT_ERR_OK;
@@ -57,6 +58,7 @@ ciot_err_t ciot_storage_load_data(void *data, size_t size, char *name)
     else
     {
         fread(data, size, 1, f);
+        fclose(f);
     }
 
     return CIOT_ERR_OK;
