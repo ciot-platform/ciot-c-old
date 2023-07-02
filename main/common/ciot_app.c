@@ -1,12 +1,12 @@
 /**
  * @file ciot_app.c
  * @author your name (you@domain.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-06-18
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include <stdlib.h>
@@ -20,7 +20,7 @@
 static ciot_app_t this;
 
 static ciot_err_t ciot_app_request_handle(ciot_msg_request_t *request);
-static ciot_err_t ciot_app_config_handle(ciot_msg_config_t  *config);
+static ciot_err_t ciot_app_config_handle(ciot_msg_config_t *config);
 static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface);
 static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface);
 static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface);
@@ -46,7 +46,7 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     {
         CIOT_ERROR_PRINT(ciot_wifi_set_config(&conf->wifi));
     }
-    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_WIFI_STA_FILENAME, sizeof(ciot_wifi_config_t), (ciot_err_t (*)(void *))ciot_wifi_set_config));
+    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_WIFI_STA_FILENAME, sizeof(ciot_wifi_config_t), (ciot_err_t(*)(void *))ciot_wifi_set_config));
 #endif
 
 #if CIOT_CONFIG_FEATURE_HTTP_SERVER
@@ -54,11 +54,11 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
 #endif
 
 #if CIOT_CONFIG_FEATURE_NTP
-    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t (*)(void *))ciot_ntp_set_config));
+    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t(*)(void *))ciot_ntp_set_config));
 #endif
 
 #if CIOT_CONFIG_FEATURE_MQTT
-    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_MQTT_FILENAME, sizeof(ciot_mqtt_config_t), (ciot_err_t (*)(void *))ciot_mqtt_set_config));
+    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_MQTT_FILENAME, sizeof(ciot_mqtt_config_t), (ciot_err_t(*)(void *))ciot_mqtt_set_config));
 #endif
 
     return err != CIOT_ERR_OK ? CIOT_ERR_FAIL : CIOT_ERR_OK;
@@ -66,11 +66,11 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
 
 ciot_err_t ciot_app_send_data(ciot_app_data_t *data)
 {
-    if(this.data_received)
+    if (this.data_received)
     {
         return CIOT_ERR_BUSY;
     }
-    else if(this.data.content != NULL || this.data.size != 0)
+    else if (this.data.content != NULL || this.data.size != 0)
     {
         return CIOT_ERR_INVALID_STATE;
     }
@@ -82,47 +82,6 @@ ciot_err_t ciot_app_send_data(ciot_app_data_t *data)
         this.data_received = true;
         return CIOT_ERR_OK;
     }
-}
-
-ciot_err_t ciot_app_data_task()
-{
-    ciot_err_t err = CIOT_ERR_OK;
-    if(this.data_received)
-    {
-        switch (this.data.data_type)
-        {
-        case CIOT_APP_DATA_TYPE_RAW:
-        {
-            ciot_msg_t msg;
-            memcpy(&msg, this.data.content, this.data.size);
-            err = ciot_app_send_msg(&msg);
-            break;
-        }
-        case CIOT_APP_DATA_TYPE_JSON_STRING:
-        {
-            ciot_msg_t msg = { 0 };
-            cJSON *json = cJSON_Parse((char*)this.data.content);
-            err = ciot_msg_from_json(json, &msg);
-            free(json);
-            if(err == CIOT_ERR_OK)
-            {
-                err = ciot_app_send_msg(&msg);
-            }
-            break;
-        }
-        default:
-            err = CIOT_ERR_INVALID_TYPE;
-            break;
-        }
-        if(this.data.content != NULL)
-        {
-            free(this.data.content);
-            this.data.size = 0;
-            this.data.content = NULL;
-        }
-        this.data_received = false;
-    }
-    return err;
 }
 
 ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg)
@@ -245,7 +204,7 @@ static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request)
     switch (request->interface)
     {
     case CIOT_MSG_IF_WIFI:
-        return ciot_wifi_process_request((ciot_wifi_request_t)request->request, &this.result.data.wifi);    
+        return ciot_wifi_process_request((ciot_wifi_request_t)request->request, &this.result.data.wifi);
     case CIOT_MSG_IF_SYSTEM:
         return ciot_system_process_request((ciot_system_request_t)request->request);
     case CIOT_MSG_IF_NTP:
@@ -258,15 +217,15 @@ static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request)
 static ciot_err_t ciot_app_init_interface(char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *))
 {
     void *data = malloc(config_size);
-    if(data == NULL)
+    if (data == NULL)
     {
         return CIOT_ERR_MEMORY_ALLOCATION;
     }
-    if(config_func == NULL)
+    if (config_func == NULL)
     {
         return CIOT_ERR_NULL_REFERENCE;
     }
-    if(ciot_storage_load_data(data, config_size, config_filename) == CIOT_ERR_OK)
+    if (ciot_storage_load_data(data, config_size, config_filename) == CIOT_ERR_OK)
     {
         return config_func(data);
     }
