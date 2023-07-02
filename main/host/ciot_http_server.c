@@ -19,30 +19,23 @@ typedef struct ciot_http_server
     char endpoint[48];
 } ciot_http_server_t;
 
+extern struct mg_mgr mgr;
 static ciot_http_server_t this;
 
-static void ciot_http_server_handle_request(struct mg_connection *c, int ev, void *ev_data, void *fn_data);
+static void ciot_http_server_event_handle(struct mg_connection *c, int ev, void *ev_data, void *fn_data);
 
 ciot_err_t ciot_http_server_start(ciot_http_server_config_t *conf)
 {
-    struct mg_mgr mgr;
     struct mg_connection *c;
     char address[128];
-
     sprintf(address, "http://0.0.0.0:%d%s", conf->port, conf->endpoint);
     memcpy(&this.endpoint, &conf->endpoint, sizeof(this.endpoint));
-
-    mg_mgr_init(&mgr);
-    if ((c = mg_http_listen(&mgr, address, ciot_http_server_handle_request, &mgr)) == NULL)
+    if ((c = mg_http_listen(&mgr, address, ciot_http_server_event_handle, &mgr)) == NULL)
     {
         return CIOT_ERR_FAIL;
     }
-
     printf("Server Started on port %d\n", conf->port);
-    while (true) mg_mgr_poll(&mgr, 1000);
-    mg_mgr_free(&mgr);
-
-    return CIOT_ERR_NOT_IMPLEMENTED;
+    return CIOT_ERR_OK;
 }
 
 ciot_err_t ciot_http_server_stop(void)
@@ -112,14 +105,15 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
     }
 }
 
-static void ciot_http_server_handle_request(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
+static void ciot_http_server_event_handle(struct mg_connection *c, int ev, void *ev_data, void *fn_data)
 {
-    if(ev == MG_EV_HTTP_MSG) {
+    switch (ev)
+    {
+    case MG_EV_HTTP_MSG:
+    {
         struct mg_http_message *hm = ev_data, tmp = {0};
-
         mg_http_parse((char*) c->recv.buf, c->recv.len, &tmp);
         bool is_post = strncmp(hm->method.ptr, "POST", hm->method.len) == 0;
-
         if(mg_http_match_uri(hm, this.endpoint) && is_post)
         {
             ciot_http_server_on_post(c, hm);
@@ -130,6 +124,10 @@ static void ciot_http_server_handle_request(struct mg_connection *c, int ev, voi
             sprintf(error_msg, CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG, CIOT_ERR_NOT_FOUND, "Not Found");
             mg_http_reply(c, 404, NULL, error_msg);
         }
+        break;
+    }
+    default:
+        break;
     }
     (void) fn_data;
 }

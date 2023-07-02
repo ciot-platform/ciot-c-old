@@ -32,18 +32,22 @@ void app_main(void)
     };
     
     ciot_app_start(&app);
-
-    // Implement your application specific logic here
 }
 
 #if defined(_WIN32) || defined(__linux__)
 
+#include "mongoose.h"
+
+struct mg_mgr mgr;
+
 int	main(int argc, char **argv)
 {
+    mg_mgr_init(&mgr);
     app_main();
     while(true){
-        // Implement your application specific logic here
+        mg_mgr_poll(&mgr, 1000);
     }
+    mg_mgr_free(&mgr);
 }
 
 #endif  //_WIN32

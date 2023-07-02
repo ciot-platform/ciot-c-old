@@ -13,10 +13,11 @@
 
 #include "ciot_mqtt.h"
 
+extern struct mg_mgr mgr;
+
 typedef struct ciot_mqtt
 {
     struct mg_connection *s_conn;
-    struct mg_mgr mgr;
     ciot_mqtt_config_t config;
     ciot_mqtt_info_t info;
     ciot_mqtt_status_t status;
@@ -30,7 +31,6 @@ static void ciot_mqtt_event_handler(struct mg_connection *c, int ev, void *ev_da
 
 ciot_err_t ciot_mqtt_set_config(ciot_mqtt_config_t *conf)
 {
-    mg_mgr_init(&this.mgr);
     memcpy(&this.config, conf, sizeof(this.config));
     struct mg_mqtt_opts opts = {
         .clean = true,
@@ -39,11 +39,7 @@ ciot_err_t ciot_mqtt_set_config(ciot_mqtt_config_t *conf)
         .user = mg_str(this.config.username),
         .pass = mg_str(this.config.password)
     };
-    if(this.s_conn == NULL) this.s_conn = mg_mqtt_connect(&this.mgr, this.config.host, &opts, ciot_mqtt_event_handler, NULL);
-    
-    while (true) mg_mgr_poll(&this.mgr, 1000);
-    mg_mgr_free(&this.mgr);
-    
+    if(this.s_conn == NULL) this.s_conn = mg_mqtt_connect(&mgr, this.config.host, &opts, ciot_mqtt_event_handler, NULL);
     return CIOT_ERR_OK;
 }
 
