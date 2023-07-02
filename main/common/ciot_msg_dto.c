@@ -58,6 +58,7 @@ ciot_err_t ciot_msg_config_data_from_json(CJSON_PARAMETERS(ciot_msg_config_data_
     CJSON_GET_OBJ_IN_UNION(wifi, ciot_wifi_config_from_json, interface, CIOT_MSG_IF_WIFI);
     CJSON_GET_OBJ_IN_UNION(system, ciot_system_config_from_json, interface, CIOT_MSG_IF_SYSTEM);
     CJSON_GET_OBJ_IN_UNION(ntp, ciot_ntp_config_from_json, interface, CIOT_MSG_IF_NTP);
+    CJSON_GET_OBJ_IN_UNION(mqtt, ciot_mqtt_config_from_json, interface, CIOT_MSG_IF_MQTT);
     return CIOT_ERR_OK;
 }
 
@@ -114,6 +115,7 @@ ciot_err_t ciot_msg_info_data_to_json(CJSON_PARAMETERS(ciot_msg_info_data_t), ci
     CJSON_ADD_OBJ_CHILD_OF_UNION(wifi, ciot_wifi_info_to_json, interface, CIOT_MSG_IF_WIFI);
     CJSON_ADD_OBJ_CHILD_OF_UNION(system, ciot_system_info_to_json, interface, CIOT_MSG_IF_SYSTEM);
     CJSON_ADD_OBJ_CHILD_OF_UNION(ntp, ciot_ntp_info_to_json, interface, CIOT_MSG_IF_NTP);
+    CJSON_ADD_OBJ_CHILD_OF_UNION(mqtt, ciot_mqtt_info_to_json, interface, CIOT_MSG_IF_MQTT);
     return CIOT_ERR_OK;
 }
 
@@ -131,6 +133,7 @@ ciot_err_t ciot_msg_status_data_to_json(CJSON_PARAMETERS(ciot_msg_status_data_t)
     CJSON_ADD_OBJ_CHILD_OF_UNION(wifi, ciot_wifi_status_to_json, interface, CIOT_MSG_IF_WIFI);
     CJSON_ADD_OBJ_CHILD_OF_UNION(system, ciot_system_status_to_json, interface, CIOT_MSG_IF_SYSTEM);
     CJSON_ADD_OBJ_CHILD_OF_UNION(ntp, ciot_ntp_status_to_json, interface, CIOT_MSG_IF_NTP);
+    CJSON_ADD_OBJ_CHILD_OF_UNION(mqtt, ciot_mqtt_status_to_json, interface, CIOT_MSG_IF_MQTT);
     return CIOT_ERR_OK;
 }
 
@@ -148,5 +151,6 @@ ciot_err_t ciot_msg_config_data_to_json(CJSON_PARAMETERS(ciot_msg_config_data_t)
     CJSON_ADD_OBJ_CHILD_OF_UNION(wifi, ciot_wifi_config_to_json, interface, CIOT_MSG_IF_WIFI);
     CJSON_ADD_OBJ_CHILD_OF_UNION(system, ciot_system_config_to_json, interface, CIOT_MSG_IF_SYSTEM);
     CJSON_ADD_OBJ_CHILD_OF_UNION(ntp, ciot_ntp_config_to_json, interface, CIOT_MSG_IF_NTP);
+    CJSON_ADD_OBJ_CHILD_OF_UNION(mqtt, ciot_mqtt_config_to_json, interface, CIOT_MSG_IF_MQTT);
     return CIOT_ERR_OK;
 }
