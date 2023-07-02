@@ -34,6 +34,14 @@ typedef enum
     CIOT_MQTT_PROTOCOL_V_5,
 } ciot_mqtt_protocol_version_t;
 
+typedef enum
+{
+    CIOT_MQTT_STATE_ERROR=-1,
+    CIOT_MQTT_STATE_DISCONNECTED,
+    CIOT_MQTT_STATE_CONNECTING,
+    CIOT_MQTT_STATE_CONNECTED,
+} ciot_mqtt_state_t;
+
 typedef struct ciot_mqtt_config
 {
     char host[64];
@@ -51,7 +59,8 @@ typedef struct ciot_mqtt_info
 
 typedef struct ciot_mqtt_status
 {
-
+    ciot_mqtt_state_t state;
+    uint8_t connection;
 } ciot_mqtt_status_t;
 
 typedef ciot_err_t (ciot_mqtt_on_data_cb_t)(const char *topic, size_t topic_len, const char *data, size_t data_len);
