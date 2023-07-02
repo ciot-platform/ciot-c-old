@@ -32,7 +32,7 @@ Table of contents:
    - [v0.1.0](#v010-handle-wifi-and-ntp-interfaces-accepting-raw-and-json)
    - [v0.2.0](#v020-handle-mqtt-interface-accepting-raw-and-json)
    - [v0.3.0](#v030-handle-ota-interface-accepting-raw-and-json)
-   - [v0.4.0](#v04)
+   - [v0.4.0](#v040-handle-uart-interface-outside-ciot-api)
    
 # Features
 
@@ -41,6 +41,7 @@ The current version of CIOT API support the following features:
  - WiFi (idf)
  - NTP (idf)
  - HTTP Server (idf, windows, linux)
+ - MQTT Server (windows, linux) [work in progress...]
 
 You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application. Alternatively you can use CMakeLists.txt to defining and setting values to each configuration macro. To view all available configurations, see the file: main/{target}/ciot_default_config.h. The following macros can be used to enable/disable features at compile time:
 
@@ -100,7 +101,7 @@ If an client try to use an unsupported feature, the CIOT API will return an erro
 
 # API
 
-The CIOT API have an unic endpoint. It's designed to allow portability with simpler protocols like uart or modbus. Although, the default API with the single endpoint, can be easily overrided, because all CIOT application logic is separated from server. The follow sample code shows how to start an http server, and serves the API in "/v1/ciot" endpoint in port 80:
+The CIOT API have an unic endpoint. It's designed to allow portability with simpler protocols like uart or modbus. Although, the default API with the single endpoint, can be easily overrided, because all CIOT application logic is separated from server. The follow sample code shows how to start an http server, and serves the API in "/v1/ciot" endpoint in port 8000:
 
 ```c
 #include "ciot_app.h"
@@ -109,11 +110,11 @@ int main(int argc, char **argv)
 {
   ciot_app_config_t app = {
     .http_server = {
-      .port = 80,
+      .port = 8000,
       .endpoint = "/v1/ciot"
     }
   };
-  return ciot_app_start(&app);
+  ciot_app_start(&app);
 }
 
 ```

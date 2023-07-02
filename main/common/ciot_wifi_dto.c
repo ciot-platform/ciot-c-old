@@ -64,8 +64,8 @@ ciot_err_t ciot_wifi_status_to_json(CJSON_PARAMETERS(ciot_wifi_status_t))
 static ciot_err_t ciot_wifi_status_data_to_json(CJSON_PARAMETERS(ciot_wifi_status_data_t), ciot_wifi_interface_t interface)
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_OBJ_CHILD_OF_UNION(sta, ciot_wifi_sta_status_to_json, interface, CIOT_WIFI_IF_STA);
-    CJSON_ADD_OBJ_CHILD_OF_UNION(ap, ciot_wifi_ap_status_to_json, interface, CIOT_WIFI_IF_AP);
+    CJSON_ADD_OBJ_UNION_CHILD(sta, ciot_wifi_sta_status_to_json, interface, CIOT_WIFI_IF_STA);
+    CJSON_ADD_OBJ_UNION_CHILD(ap, ciot_wifi_ap_status_to_json, interface, CIOT_WIFI_IF_AP);
     return CIOT_ERR_OK;
 }
 

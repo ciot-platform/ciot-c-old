@@ -25,6 +25,7 @@ else()
     main/common/ciot_app.c
     main/common/ciot_err.c
     main/common/ciot_msg_dto.c 
+    main/common/ciot_mqtt_dto.c 
     main/common/ciot_ntp_dto.c
     main/common/ciot_settings.c
     main/common/ciot_system_common.c 
@@ -34,6 +35,7 @@ else()
     main/common/ciot_app.c
     main/host/ciot_app.c
     main/host/ciot_http_server.c
+    main/host/ciot_mqtt.c
     main/host/ciot_ntp.c
     main/host/ciot_storage.c
     main/host/ciot_system.c

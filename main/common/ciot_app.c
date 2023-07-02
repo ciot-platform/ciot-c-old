@@ -57,7 +57,72 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t (*)(void *))ciot_ntp_set_config));
 #endif
 
+#if CIOT_CONFIG_FEATURE_MQTT
+    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_MQTT_FILENAME, sizeof(ciot_mqtt_config_t), (ciot_err_t (*)(void *))ciot_mqtt_set_config));
+#endif
+
     return err != CIOT_ERR_OK ? CIOT_ERR_FAIL : CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_app_send_data(ciot_app_data_t *data)
+{
+    if(this.data_received)
+    {
+        return CIOT_ERR_BUSY;
+    }
+    else if(this.data.content != NULL || this.data.size != 0)
+    {
+        return CIOT_ERR_INVALID_STATE;
+    }
+    else
+    {
+        this.data.content = malloc(data->size);
+        memcpy(this.data.content, data->content, data->size);
+        this.data.data_type = data->data_type;
+        this.data_received = true;
+        return CIOT_ERR_OK;
+    }
+}
+
+ciot_err_t ciot_app_data_task()
+{
+    ciot_err_t err = CIOT_ERR_OK;
+    if(this.data_received)
+    {
+        switch (this.data.data_type)
+        {
+        case CIOT_APP_DATA_TYPE_RAW:
+        {
+            ciot_msg_t msg;
+            memcpy(&msg, this.data.content, this.data.size);
+            err = ciot_app_send_msg(&msg);
+            break;
+        }
+        case CIOT_APP_DATA_TYPE_JSON_STRING:
+        {
+            ciot_msg_t msg = { 0 };
+            cJSON *json = cJSON_Parse((char*)this.data.content);
+            err = ciot_msg_from_json(json, &msg);
+            free(json);
+            if(err == CIOT_ERR_OK)
+            {
+                err = ciot_app_send_msg(&msg);
+            }
+            break;
+        }
+        default:
+            err = CIOT_ERR_INVALID_TYPE;
+            break;
+        }
+        if(this.data.content != NULL)
+        {
+            free(this.data.content);
+            this.data.size = 0;
+            this.data.content = NULL;
+        }
+        this.data_received = false;
+    }
+    return err;
 }
 
 ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg)
@@ -117,6 +182,8 @@ static ciot_err_t ciot_app_config_handle(ciot_msg_config_t *config)
         return ciot_system_set_config(&config->data.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_set_config(&config->data.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_set_config(&config->data.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -132,6 +199,8 @@ static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface)
         return ciot_system_get_config(&this.result.data.config.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_get_config(&this.result.data.config.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_get_config(&this.result.data.config.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -147,6 +216,8 @@ static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface)
         return ciot_system_get_info(&this.result.data.info.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_get_info(&this.result.data.info.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_get_info(&this.result.data.info.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -162,6 +233,8 @@ static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface)
         return ciot_system_get_status(&this.result.data.status.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_get_status(&this.result.data.status.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_get_status(&this.result.data.status.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
