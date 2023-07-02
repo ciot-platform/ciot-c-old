@@ -23,6 +23,7 @@ else()
     lib/cJSON/cJSON.c
     lib/mongoose/mongoose.c
     main/common/ciot_app.c
+    main/common/ciot_data_io.c
     main/common/ciot_err.c
     main/common/ciot_msg_dto.c 
     main/common/ciot_mqtt_dto.c 
