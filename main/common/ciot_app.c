@@ -57,6 +57,10 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t (*)(void *))ciot_ntp_set_config));
 #endif
 
+#if CIOT_CONFIG_FEATURE_MQTT
+    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_MQTT_FILENAME, sizeof(ciot_mqtt_config_t), (ciot_err_t (*)(void *))ciot_mqtt_set_config));
+#endif
+
     return err != CIOT_ERR_OK ? CIOT_ERR_FAIL : CIOT_ERR_OK;
 }
 
@@ -117,6 +121,8 @@ static ciot_err_t ciot_app_config_handle(ciot_msg_config_t *config)
         return ciot_system_set_config(&config->data.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_set_config(&config->data.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_set_config(&config->data.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -132,6 +138,8 @@ static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface)
         return ciot_system_get_config(&this.result.data.config.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_get_config(&this.result.data.config.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_get_config(&this.result.data.config.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -147,6 +155,8 @@ static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface)
         return ciot_system_get_info(&this.result.data.info.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_get_info(&this.result.data.info.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_get_info(&this.result.data.info.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -162,6 +172,8 @@ static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface)
         return ciot_system_get_status(&this.result.data.status.system);
     case CIOT_MSG_IF_NTP:
         return ciot_ntp_get_status(&this.result.data.status.ntp);
+    case CIOT_MSG_IF_MQTT:
+        return ciot_mqtt_get_status(&this.result.data.status.mqtt);
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
