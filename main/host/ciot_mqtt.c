@@ -13,6 +13,7 @@
 
 #include "ciot_mqtt.h"
 #include "ciot_app.h"
+#include "ciot_data_io.h"
 
 extern struct mg_mgr mgr;
 
@@ -129,22 +130,42 @@ static void ciot_mqtt_event_handler(struct mg_connection *c, int ev, void *ev_da
         struct mg_mqtt_message *mm = (struct mg_mqtt_message *)ev_data;
         if (strncmp(mm->topic.ptr, this.config.topics.message, mm->topic.len) == 0)
         {
-            ciot_app_data_t data = {
-                .content = (void *)mm->data.ptr,
-                .size = mm->data.len,
-                .data_type = this.config.topics.data_type};
-            err = ciot_app_send_data(&data);
-            if (err == CIOT_ERR_OK)
+            ciot_msg_t msg = {0};
+            ciot_data_t msg_data = {
+                .data_type = this.config.topics.data_type,
+                .buffer.content = (void *)mm->data.ptr,
+                .buffer.size = mm->data.len,
+            };
+            err = ciot_data_deserialize_msg(&msg_data, &msg);
+            if (err != CIOT_ERR_OK)
             {
-                ciot_msg_response_t resp = {0};
-                ciot_app_wait_process(20000);
-                ciot_app_get_msg_response(&resp);
-                cJSON *json = cJSON_CreateObject();
-                ciot_msg_response_to_json(json, &resp);
-                char *json_str = cJSON_Print(json);
-                ciot_mqtt_publish(this.config.topics.response, json_str, strlen(json_str), 0, false);
-                cJSON_Delete(json);
-                free(json_str);
+                char err_msg[28];
+                sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
+                ciot_mqtt_publish(this.config.topics.response, err_msg, strlen(err_msg), this.config.connection.qos, false);
+            }
+            else
+            {
+                err = ciot_app_send_msg(&msg);
+                if (err == CIOT_ERR_OK)
+                {
+                    ciot_data_t resp_data = {.data_type = this.config.topics.data_type};
+                    ciot_msg_response_t resp = {0};
+                    ciot_app_wait_process(20000);
+                    ciot_app_get_msg_response(&resp);
+
+                    err = ciot_data_serialize_resp(&resp, &resp_data);
+                    if (err != CIOT_ERR_OK)
+                    {
+                        char err_msg[28];
+                        sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
+                        ciot_mqtt_publish(this.config.topics.response, err_msg, strlen(err_msg), this.config.connection.qos, false);
+                    }
+                    else
+                    {
+                        ciot_mqtt_publish(this.config.topics.response, resp_data.buffer.content, resp_data.buffer.size, this.config.connection.qos, false);
+                        free(resp_data.buffer.content);
+                    }
+                }
             }
         }
         if (this.on_data_cb != NULL)
