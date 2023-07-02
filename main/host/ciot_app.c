@@ -91,7 +91,6 @@ static void* ciot_app_task(void* args)
 
     for(;;)
     {
-        CIOT_ERROR_PRINT(ciot_app_data_task());
         if(this.msg_received)
         {
             ciot_err_t err = ciot_app_msg_handle(&this.msg);
