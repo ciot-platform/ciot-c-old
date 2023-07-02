@@ -52,11 +52,15 @@ ciot_err_t ciot_mqtt_info_to_json(CJSON_PARAMETERS(ciot_mqtt_info_t))
 ciot_err_t ciot_mqtt_status_from_json(CJSON_PARAMETERS(ciot_mqtt_status_t))
 {
     CJSON_CHECK_PARAMETERS();
+    CJSON_GET_NUMBER(state);
+    CJSON_GET_NUMBER(connection);
     return CIOT_ERR_OK;
 }
 
 ciot_err_t ciot_mqtt_status_to_json(CJSON_PARAMETERS(ciot_mqtt_status_t))
 {
     CJSON_CHECK_PARAMETERS();
+    CJSON_ADD_NUMBER(state);
+    CJSON_ADD_NUMBER(connection);
     return CIOT_ERR_OK;
 }
