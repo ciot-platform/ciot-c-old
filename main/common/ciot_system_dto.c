@@ -10,6 +10,16 @@
  */
 
 #include "ciot_system.h"
+#include "ciot_settings.h"
+
+typedef struct ciot_system
+{
+    ciot_system_config_t config;
+    uint32_t err_code;
+    uint32_t status_code;
+} ciot_system_t;
+
+static ciot_system_t this;
 
 ciot_err_t ciot_system_config_from_json(CJSON_PARAMETERS(ciot_system_config_t))
 {
@@ -71,4 +81,55 @@ ciot_err_t ciot_system_status_to_json(CJSON_PARAMETERS(ciot_system_status_t))
     CJSON_ADD_NUMBER(status);
     CJSON_ADD_NUMBER(lifetime);
     return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_system_set_config(ciot_system_config_t *conf)
+{
+    return CIOT_ERR_NOTHING_TO_DO;
+}
+
+ciot_err_t ciot_system_get_config(ciot_system_config_t *config)
+{
+    *config = this.config;
+    return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_system_set_err_code(uint32_t code)
+{
+    this.err_code = code;
+    return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_system_set_status_code(uint32_t code)
+{
+    this.status_code = code;
+    return CIOT_ERR_OK;
+}
+
+uint32_t ciot_system_get_err_code(void)
+{
+    return this.err_code;
+}
+
+uint32_t ciot_system_get_status_code()
+{
+    return this.status_code;
+}
+
+ciot_err_t ciot_system_process_request(ciot_system_request_t request)
+{
+    switch (request)
+    {
+    case CIOT_SYSTEM_REQUEST_RESTART:
+        printf("CIOT_SYSTEM_REQUEST_RESTART\n");
+        return ciot_system_reset();
+    case CIOT_SYSTEM_REQUEST_SAVE_SETTINGS:
+        printf("CIOT_SYSTEM_REQUEST_SAVE_SETTINGS\n");
+        return ciot_settings_save();
+    case CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS:
+        printf("CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS\n");
+        return ciot_settings_clear();
+    default:
+        return CIOT_ERR_INVALID_REQUEST;
+    }
 }
