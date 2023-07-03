@@ -12,6 +12,7 @@
 #include "mongoose.h"
 
 #include "ciot_app.h"
+#include "ciot_data_io.h"
 #include "ciot_http_server.h"
 
 typedef struct ciot_http_server
@@ -48,6 +49,22 @@ ciot_err_t ciot_http_server_set_response(ciot_msg_t *msg)
     return CIOT_ERR_NOT_IMPLEMENTED;
 }
 
+ciot_data_type_t ciot_http_server_get_data_type(struct mg_str *content_type)
+{
+    if (strncmp(content_type->ptr, CIOT_HTTP_CONTENT_TYPE_JSON, content_type->len) == 0)
+    {
+        return CIOT_DATA_TYPE_JSON_STRING;
+    }
+    else if (strncmp(content_type->ptr, CIOT_HTTP_CONTENT_TYPE_OCTET, content_type->len) == 0)
+    {
+        return CIOT_DATA_TYPE_RAW;
+    }
+    else
+    {
+        return CIOT_DATA_TYPE_UNKNOWN;
+    }
+}
+
 static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_message *mg)
 {
     struct mg_str *content_type = mg_http_get_header(mg, "Content-Type");
@@ -55,17 +72,8 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
 
     if (content_type->len != 0)
     {
-        ciot_app_data_type_t data_type;
-
-        if (strncmp(content_type->ptr, CIOT_HTTP_CONTENT_TYPE_JSON, content_type->len) == 0)
-        {
-            data_type = CIOT_APP_DATA_TYPE_JSON_STRING;
-        }
-        else if (strncmp(content_type->ptr, CIOT_HTTP_CONTENT_TYPE_OCTET, content_type->len) == 0)
-        {
-            data_type = CIOT_APP_DATA_TYPE_RAW;
-        }
-        else
+        ciot_data_type_t data_type = ciot_http_server_get_data_type(content_type);
+        if (data_type == CIOT_DATA_TYPE_UNKNOWN)
         {
             char err_msg[64];
             err = CIOT_ERR_INVALID_TYPE;
@@ -73,24 +81,43 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
             mg_http_reply(c, 400, NULL, err_msg);
         }
 
-        ciot_app_data_t data = {
-            .content = (void *)mg->body.ptr,
-            .size = mg->body.len,
-            .data_type = data_type
+        ciot_msg_t msg = {0};
+        ciot_data_t msg_data = {
+            .data_type = data_type,
+            .buffer.content = (void *)mg->body.ptr,
+            .buffer.size = mg->body.len,
         };
-        err = ciot_app_send_data(&data);
-        if (err == CIOT_ERR_OK)
+        err = ciot_data_deserialize_msg(&msg_data, &msg);
+        if (err != CIOT_ERR_OK)
         {
-            ciot_msg_response_t resp = {0};
-            ciot_app_wait_process(20000);
-            ciot_app_get_msg_response(&resp);
-            cJSON *json = cJSON_CreateObject();
-            ciot_msg_response_to_json(json, &resp);
-            char *json_str = cJSON_Print(json);
-            int status_code = resp.err_code == CIOT_ERR_OK ? 200 : 500;
-            mg_http_reply(c, status_code, NULL, json_str);
-            cJSON_Delete(json);
-            free(json_str);
+            char err_msg[28];
+            sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
+            mg_http_reply(c, 400, NULL, err_msg);
+        }
+        else
+        {
+            err = ciot_app_send_msg(&msg);
+            if (err == CIOT_ERR_OK)
+            {
+                ciot_data_t resp_data = { .data_type = data_type };
+                ciot_msg_response_t resp = {0};
+                ciot_app_wait_process(20000);
+                ciot_app_get_msg_response(&resp);
+
+                err = ciot_data_serialize_resp(&resp, &resp_data);
+                if (err != CIOT_ERR_OK)
+                {
+                    char err_msg[28];
+                    sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
+                    mg_http_reply(c, 400, NULL, err_msg);
+                }
+                else
+                {
+                    int status_code = resp.err_code == CIOT_ERR_OK ? 200 : 500;
+                    mg_http_reply(c, status_code, NULL, resp_data.buffer.content);
+                    free(resp_data.buffer.content);
+                }
+            }
         }
     }
     else

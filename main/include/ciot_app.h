@@ -46,8 +46,8 @@ typedef struct ciot_app
 
 ciot_err_t ciot_app_init(ciot_app_config_t *conf);
 ciot_err_t ciot_app_start(ciot_app_config_t *conf);
-ciot_err_t ciot_app_send_data(ciot_app_data_t *data);
-ciot_err_t ciot_app_data_task();
+// ciot_err_t ciot_app_send_data(ciot_app_data_t *data);
+// ciot_err_t ciot_app_data_task();
 ciot_err_t ciot_app_send_msg(ciot_msg_t *msg);
 ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg);
 ciot_err_t ciot_app_wait_process(uint32_t timeout);

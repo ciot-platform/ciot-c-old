@@ -52,6 +52,8 @@ const char *ciot_err_to_message(ciot_err_t err)
         return "Invalid State";
     case CIOT_ERR_MEMORY_ALLOCATION:
         return "Memory Allocation Error";
+    case CIOT_ERR_MEMORY_OVERFLOW:
+        return "Memory Overflow Error";
     case CIOT_ERR_NULL_REFERENCE:
         return "Null Reference";
     default:
