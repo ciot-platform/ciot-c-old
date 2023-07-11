@@ -116,6 +116,7 @@ ciot_err_t ciot_mqtt_get_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *config);
 ciot_err_t ciot_mqtt_get_status(ciot_mqtt_t *mqtt, ciot_mqtt_status_t *status);
 ciot_err_t ciot_mqtt_get_info(ciot_mqtt_t *mqtt, ciot_mqtt_info_t *info);
 ciot_err_t ciot_mqtt_on_data(ciot_mqtt_t *mqtt, ciot_mqtt_on_data_cb_t on_data_cb);
+ciot_err_t ciot_mqtt_handle_data(ciot_mqtt_t *mqtt, void *data);
 ciot_err_t ciot_mqtt_on_connection(ciot_mqtt_t *mqtt, ciot_mqtt_on_connection_cb_t on_connection_cb);
 
 ciot_err_t ciot_mqtt_connect(ciot_mqtt_t *mqtt);

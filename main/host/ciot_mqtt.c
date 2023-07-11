@@ -81,43 +81,12 @@ static void ciot_mqtt_event_handler(struct mg_connection *c, int ev, void *ev_da
         struct mg_mqtt_message *mm = (struct mg_mqtt_message *)ev_data;
         if (strncmp(mm->topic.ptr, mqtt->config.topics.message, mm->topic.len) == 0)
         {
-            ciot_msg_t msg = {0};
             ciot_data_t msg_data = {
                 .data_type = mqtt->config.topics.data_type,
                 .buffer.content = (void *)mm->data.ptr,
                 .buffer.size = mm->data.len,
             };
-            err = ciot_data_deserialize_msg(&msg_data, &msg);
-            if (err != CIOT_ERR_OK)
-            {
-                char err_msg[28];
-                sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
-                ciot_mqtt_publish(mqtt, mqtt->config.topics.response, err_msg, strlen(err_msg), mqtt->config.connection.qos, false);
-            }
-            else
-            {
-                err = ciot_app_send_msg(&msg);
-                if (err == CIOT_ERR_OK)
-                {
-                    ciot_data_t resp_data = {.data_type = mqtt->config.topics.data_type};
-                    ciot_msg_response_t resp = {0};
-                    ciot_app_wait_process(20000);
-                    ciot_app_get_msg_response(&resp);
-
-                    err = ciot_data_serialize_resp(&resp, &resp_data);
-                    if (err != CIOT_ERR_OK)
-                    {
-                        char err_msg[28];
-                        sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
-                        ciot_mqtt_publish(mqtt, mqtt->config.topics.response, err_msg, strlen(err_msg), mqtt->config.connection.qos, false);
-                    }
-                    else
-                    {
-                        ciot_mqtt_publish(mqtt, mqtt->config.topics.response, resp_data.buffer.content, resp_data.buffer.size, mqtt->config.connection.qos, false);
-                        free(resp_data.buffer.content);
-                    }
-                }
-            }
+            CIOT_ERROR_PRINT(ciot_mqtt_handle_data(mqtt, &msg_data));
         }
         if (mqtt->on_data_cb != NULL)
         {

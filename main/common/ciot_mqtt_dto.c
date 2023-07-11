@@ -10,6 +10,9 @@
  */
 
 #include "ciot_mqtt.h"
+#include "ciot_data_io.h"
+#include "ciot_msg_dto.h"
+#include "ciot_app.h"
 
 static ciot_err_t ciot_mqtt_config_data_union_from_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config_type);
 static ciot_err_t ciot_mqtt_config_data_union_to_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config_type);
@@ -71,6 +74,44 @@ ciot_err_t ciot_mqtt_on_connection(ciot_mqtt_t *mqtt, ciot_mqtt_on_connection_cb
 {
     mqtt->on_connection_cb = on_connection_cb;
     return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_mqtt_handle_data(ciot_mqtt_t *mqtt, void *data)
+{
+    ciot_msg_t msg = {0};
+    ciot_msg_data_t *msg_data = (ciot_msg_data_t*)data;
+    ciot_err_t err = ciot_data_deserialize_msg(msg_data, &msg);
+    if (err != CIOT_ERR_OK)
+    {
+        char err_msg[28];
+        sprintf(err_msg, CIOT_ERROR_MASK, err);
+        ciot_mqtt_publish(mqtt, mqtt->config.topics.response, err_msg, strlen(err_msg), mqtt->config.connection.qos, false);
+    }
+    else
+    {
+        err = ciot_app_send_msg(&msg);
+        if (err == CIOT_ERR_OK)
+        {
+            ciot_data_t resp_data = {.data_type = mqtt->config.topics.data_type};
+            ciot_msg_response_t resp = {0};
+            ciot_app_wait_process(20000);
+            ciot_app_get_msg_response(&resp);
+
+            err = ciot_data_serialize_resp(&resp, &resp_data);
+            if (err != CIOT_ERR_OK)
+            {
+                char err_msg[28];
+                sprintf(err_msg, CIOT_ERROR_MASK, err);
+                ciot_mqtt_publish(mqtt, mqtt->config.topics.response, err_msg, strlen(err_msg), mqtt->config.connection.qos, false);
+            }
+            else
+            {
+                ciot_mqtt_publish(mqtt, mqtt->config.topics.response, resp_data.buffer.content, resp_data.buffer.size, mqtt->config.connection.qos, false);
+                free(resp_data.buffer.content);
+            }
+        }
+    }
+    return err;
 }
 
 ciot_err_t ciot_mqtt_config_from_json(CJSON_PARAMETERS(ciot_mqtt_config_t))

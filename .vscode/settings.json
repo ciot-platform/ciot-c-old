@@ -80,6 +80,10 @@
         "_types.h": "c",
         "cdefs.h": "c",
         "ciot_config_linux.h": "c",
-        "ciot_mqtt.h": "c"
+        "ciot_mqtt.h": "c",
+        "mqtt_client.h": "c",
+        "esp_crt_bundle.h": "c",
+        "esp_wifi.h": "c",
+        "esp_random.h": "c"
     }
 }

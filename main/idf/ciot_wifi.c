@@ -26,7 +26,6 @@
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
 
-
 #define CIOT_WIFI_EVENT_BIT_CONFIG_DONE BIT0
 #define CIOT_WIFI_EVENT_BIT_SCAN_DONE BIT1
 #define CIOT_WIFI_SCAN_TIMEOUT 5000

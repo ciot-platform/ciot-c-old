@@ -16,6 +16,9 @@
 
 #include "ciot_config.h"
 
+#define CIOT_ERROR_MASK "{\"error_code\":%d}"
+#define CIOT_ERROR_MASK_WITH_MSG "{\"error_code\":%d, \"err_msg\":\"%s\"}"
+
 #if CIOT_CONFIG_CONSOLE_ERROR_MESSAGES == 0
 
 #define CIOT_ERROR_PRINT(x) x

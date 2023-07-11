@@ -10,24 +10,24 @@ Table of contents:
  - [Features](#features)
  - [API](#api)
     - [Wifi](#wifi)
-      - [Get Configuration](#wifi-get-configuration)
-      - [Get Information](#wifi-get-information)
-      - [Get Status](#wifi-get-status)
+      - [Get Configuration](#get-configuration)
+      - [Get Information](#get-information)
+      - [Get Status](#get-status)
       - [Scan](#scan)
-      - [Set Configuration](#wifi-set-configuration)
+      - [Set Configuration](#set-configuration)
 	- [System](#system)
-      - [Get Configuration](#system-get-configuration)
-      - [Get Information](#system-get-information)
-      - [Get Status](#system-get-status)
+      - [Get Configuration](#get-configuration-1)
+      - [Get Information](#get-information-1)
+      - [Get Status](#get-status-1)
       - [Restart](#restart)
       - [Save Settings](#save-settings)
       - [Clear Settings](#clear-settings)
-      - [Set Configuration](#system-set-configuration)
+      - [Set Configuration](#set-configuration-1)
 	- [NTP](#ntp)
-      - [Get Configuration](#ntp-get-configuration)
-      - [Get Information](#ntp-get-information)
-      - [Get Status](#ntp-get-status)
-      - [Set Configuration](#ntp-set-configuration)
+      - [Get Configuration](#get-configuration-2)
+      - [Get Information](#get-information-2)
+      - [Get Status](#get-status-2)
+      - [Set Configuration](#set-configuration-2)
  - [Roadmap](#roadmap)
    - [v0.1.0](#v010-handle-wifi-and-ntp-interfaces-accepting-raw-and-json)
    - [v0.2.0](#v020-handle-mqtt-interface-accepting-raw-and-json)
@@ -41,14 +41,11 @@ The current version of CIOT API support the following features:
  - WiFi (idf)
  - NTP (idf)
  - HTTP Server (idf, windows, linux)
- - MQTT Server (windows, linux) [work in progress...]
+ - MQTT Server (idf, windows, linux) [work in progress...]
 
 You can create an ciot_custom_config.h, to enabled/disabled each feature and customize ciot application. Alternatively you can use CMakeLists.txt to defining and setting values to each configuration macro. To view all available configurations, see the file: main/{target}/ciot_default_config.h. The following macros can be used to enable/disable features at compile time:
 
 ```c
-/**
- *  Hardware Features
- */
 #define CIOT_CONFIG_FEATURE_I2C 0
 #define CIOT_CONFIG_FEATURE_SPI 0
 #define CIOT_CONFIG_FEATURE_UART 0
@@ -68,10 +65,6 @@ You can create an ciot_custom_config.h, to enabled/disabled each feature and cus
 #define CIOT_CONFIG_FEATURE_SDCARD 0
 #define CIOT_CONFIG_FEATURE_HARDDISK 0
 #define CIOT_CONFIG_FEATURE_DISPLAY 0
-
-/**
- *  Software Features
- */
 #define CIOT_CONFIG_FEATURE_OTA 0
 #define CIOT_CONFIG_FEATURE_NTP 1
 #define CIOT_CONFIG_FEATURE_MQTT 0
@@ -121,7 +114,7 @@ int main(int argc, char **argv)
 
 ## WiFi
 
-### Get Configuration {#wifi-get-configuration}
+### Get Configuration
 
 #### Request
 
@@ -159,7 +152,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Information {#wifi-get-information}
+### Get Information
 
 #### Request
 
@@ -188,7 +181,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Status {#wifi-get-status}
+### Get Status
 
 #### Request
 
@@ -321,7 +314,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Set Configuration {#wifi-set-configuration}
+### Set Configuration
 
 #### Request
 
@@ -360,7 +353,7 @@ int main(int argc, char **argv)
 
 ## System
 
-### Get Configuration {#system-get-configuration}
+### Get Configuration
 
 #### Request
 
@@ -387,7 +380,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Information {#system-get-information}
+### Get Information
 
 #### Request
 
@@ -422,7 +415,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Status {#system-get-status}
+### Get Status
 
 #### Request
 
@@ -535,7 +528,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Set Configuration {#system-set-configuration}
+### Set Configuration
 
 #### Request
 
@@ -563,7 +556,7 @@ int main(int argc, char **argv)
 
 ## NTP
 
-### Get Configuration {#ntp-get-configuration}
+### Get Configuration
 
 #### Request
 
@@ -595,7 +588,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Information {#ntp-get-information}
+### Get Information
 
 #### Request
 
@@ -623,7 +616,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Get Status {#ntp-get-status}
+### Get Status
 
 #### Request
 
@@ -655,7 +648,7 @@ int main(int argc, char **argv)
 }
 ```
 
-### Set Configuration {#ntp-set-configuration}
+### Set Configuration
 
 #### Request
 
@@ -688,9 +681,9 @@ int main(int argc, char **argv)
 
 ### v0.2.0: Handle mqtt interface, accepting raw and json
 
- - [ ] mqtt interface (idf)
- - [ ] mqtt interface (windows)
- - [ ] mqtt interface (linux)
+ - [x] mqtt interface (idf)
+ - [x] mqtt interface (windows)
+ - [x] mqtt interface (linux)
 
 ### v0.3.0: Handle ota interface, accepting raw and json
 
