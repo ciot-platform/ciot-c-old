@@ -39,6 +39,14 @@ ciot_err_t ciot_settings_save(void)
     }
 #endif
 
+#if CIOT_CONFIG_FEATURE_MQTT
+    err = ciot_mqtt_get_config(&settings.mqtt);
+    if (err == CIOT_ERR_OK)
+    {
+        CIOT_ERROR_PRINT(ciot_storage_save_data(&settings.mqtt, sizeof(settings.mqtt), CIOT_CONFIG_MQTT_FILENAME));
+    }
+#endif
+
     return err;
 }
 
@@ -55,6 +63,11 @@ ciot_err_t ciot_settings_load(ciot_settings_t *settings)
 
 #if CIOT_CONFIG_FEATURE_NTP
     err = ciot_storage_load_data(&settings->ntp, sizeof(settings->ntp), CIOT_CONFIG_NTP_FILENAME);
+    CIOT_ERROR_PRINT(err);
+#endif
+
+#if CIOT_CONFIG_FEATURE_MQTT
+    err = ciot_storage_load_data(&settings->mqtt, sizeof(settings->mqtt), CIOT_CONFIG_MQTT_FILENAME);
     CIOT_ERROR_PRINT(err);
 #endif
 
@@ -83,6 +96,15 @@ ciot_err_t ciot_settings_clear(void)
 
 #if CIOT_CONFIG_FEATURE_NTP
     err = ciot_storage_remove_data(CIOT_CONFIG_NTP_FILENAME);
+    if(err != CIOT_ERR_OK)
+    {
+        ret = err;
+        CIOT_ERROR_PRINT(ret);
+    }
+#endif
+
+#if CIOT_CONFIG_FEATURE_MQTT
+    err = ciot_storage_remove_data(CIOT_CONFIG_MQTT_FILENAME);
     if(err != CIOT_ERR_OK)
     {
         ret = err;

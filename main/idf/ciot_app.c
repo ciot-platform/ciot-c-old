@@ -22,13 +22,13 @@
 
 #define CIOT_APP_EVENT_BIT_DONE BIT0
 
-typedef struct ciot_app_data
+typedef struct ciot_app_idf
 {
     QueueHandle_t queue;
     EventGroupHandle_t event_group;
-} ciot_app_data_t;
+} ciot_app_idf_t;
 
-static ciot_app_data_t this;
+static ciot_app_idf_t this;
 static const char *TAG = "ciot_app";
 
 static void ciot_app_task(void *args);
