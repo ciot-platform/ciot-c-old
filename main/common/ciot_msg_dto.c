@@ -67,15 +67,15 @@ ciot_err_t ciot_msg_response_to_json(CJSON_PARAMETERS(ciot_msg_response_t))
     CJSON_CHECK_PARAMETERS();
     CJSON_ADD_NUMBER(type);
     CJSON_ADD_OBJ_TO_ROOT(request, ciot_msg_request_to_json);
-    CJSON_ADD_NUMBER(err_code);
-    #if CIOT_CONFIG_API_ERROR_MESSAGES
-    if(ptr->err_code != CIOT_ERR_OK)
+    if (ptr->err_code != CIOT_ERR_OK)
     {
+#if CIOT_CONFIG_API_ERROR_MESSAGES
         const char *err_msg = ciot_err_to_message(ptr->err_code);
         cJSON_AddStringToObject(json, "err_msg", err_msg);
+#endif
+        CJSON_ADD_NUMBER(err_code);
     }
-    #endif
-    if(ptr->err_code != CIOT_ERR_FEATURE_NOT_SUPPORTED)
+    if (ptr->err_code != CIOT_ERR_FEATURE_NOT_SUPPORTED)
     {
         CJSON_ADD_UNION_TO_ROOT(data, ciot_msg_response_data_to_json, request);
     }
@@ -85,7 +85,7 @@ ciot_err_t ciot_msg_response_to_json(CJSON_PARAMETERS(ciot_msg_response_t))
 ciot_err_t ciot_msg_response_data_to_json(CJSON_PARAMETERS(ciot_msg_response_data_t), ciot_msg_request_t request)
 {
     CJSON_CHECK_PARAMETERS();
-    
+
     CJSON_ADD_UNION_CHILD_OF_UNION(config, ciot_msg_config_data_to_json, request.request, CIOT_MSG_REQUEST_GET_CONFIG, request.interface);
     CJSON_ADD_UNION_CHILD_OF_UNION(info, ciot_msg_info_data_to_json, request.request, CIOT_MSG_REQUEST_GET_INFO, request.interface);
     CJSON_ADD_UNION_CHILD_OF_UNION(status, ciot_msg_status_data_to_json, request.request, CIOT_MSG_REQUEST_GET_STATUS, request.interface);

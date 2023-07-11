@@ -9,6 +9,8 @@
  *
  */
 
+#include <stdlib.h>
+
 #include "ciot_mqtt.h"
 #include "ciot_data_io.h"
 #include "ciot_msg_dto.h"
@@ -73,13 +75,17 @@ ciot_err_t ciot_mqtt_on_data(ciot_mqtt_t *mqtt, ciot_mqtt_on_data_cb_t on_data_c
 ciot_err_t ciot_mqtt_on_connection(ciot_mqtt_t *mqtt, ciot_mqtt_on_connection_cb_t on_connection_cb)
 {
     mqtt->on_connection_cb = on_connection_cb;
+    if(mqtt->config.topics.message[0] != '\0')
+    {
+        ciot_mqtt_subscribe(mqtt, mqtt->config.topics.message, mqtt->config.connection.qos);
+    }
     return CIOT_ERR_OK;
 }
 
 ciot_err_t ciot_mqtt_handle_data(ciot_mqtt_t *mqtt, void *data)
 {
     ciot_msg_t msg = {0};
-    ciot_msg_data_t *msg_data = (ciot_msg_data_t*)data;
+    ciot_data_t *msg_data = (ciot_data_t*)data;
     ciot_err_t err = ciot_data_deserialize_msg(msg_data, &msg);
     if (err != CIOT_ERR_OK)
     {
@@ -202,24 +208,22 @@ static ciot_err_t ciot_mqtt_config_data_to_json(CJSON_PARAMETERS(ciot_mqtt_confi
 static ciot_err_t ciot_mqtt_config_connection_from_json(CJSON_PARAMETERS(ciot_mqtt_config_connection_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_CHAR_ARRAY(host);
+    CJSON_GET_CHAR_ARRAY(url);
     CJSON_GET_NUMBER(port);
     CJSON_GET_CHAR_ARRAY(username);
     CJSON_GET_CHAR_ARRAY(password);
     CJSON_GET_NUMBER(qos);
-    CJSON_GET_NUMBER(transport);
     return CIOT_ERR_OK;
 }
 
 static ciot_err_t ciot_mqtt_config_connection_to_json(CJSON_PARAMETERS(ciot_mqtt_config_connection_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_CHAR_ARRAY(host);
+    CJSON_ADD_CHAR_ARRAY(url);
     CJSON_ADD_NUMBER(port);
     CJSON_ADD_CHAR_ARRAY(username);
     CJSON_ADD_CHAR_ARRAY(password);
     CJSON_ADD_NUMBER(qos);
-    CJSON_ADD_NUMBER(transport);
     return CIOT_ERR_OK;
 }
 
@@ -250,5 +254,5 @@ static ciot_err_t ciot_mqtt_set_config_connection(ciot_mqtt_t *mqtt, ciot_mqtt_c
 static ciot_err_t ciot_mqtt_set_config_topics(ciot_mqtt_t *mqtt, ciot_mqtt_config_topics_t *conf)
 {
     memcpy(&mqtt->config.topics, conf, sizeof(mqtt->config.topics));
-    return ciot_mqtt_subscribe(mqtt, mqtt->config.topics.message, mqtt->config.topics.qos);
+    return CIOT_ERR_OK;
 }

@@ -24,7 +24,8 @@ static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface);
 static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface);
 static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface);
 static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request);
-static ciot_err_t ciot_app_init_interface(char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *));
+static ciot_err_t ciot_app_init_static_interface(char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *));
+static ciot_err_t ciot_app_init_interface(void *interface, char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *, void *));
 
 ciot_err_t ciot_app_init(ciot_app_config_t *conf)
 {
@@ -45,7 +46,7 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
     {
         CIOT_ERROR_PRINT(ciot_wifi_set_config(&conf->wifi));
     }
-    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_WIFI_STA_FILENAME, sizeof(ciot_wifi_config_t), (ciot_err_t(*)(void *))ciot_wifi_set_config));
+    CIOT_ERROR_PRINT(ciot_app_init_static_interface(CIOT_CONFIG_WIFI_STA_FILENAME, sizeof(ciot_wifi_config_t), (ciot_err_t(*)(void *))ciot_wifi_set_config));
 #endif
 
 #if CIOT_CONFIG_FEATURE_HTTP_SERVER
@@ -53,11 +54,11 @@ ciot_err_t ciot_app_init(ciot_app_config_t *conf)
 #endif
 
 #if CIOT_CONFIG_FEATURE_NTP
-    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t(*)(void *))ciot_ntp_set_config));
+    CIOT_ERROR_PRINT(ciot_app_init_static_interface(CIOT_CONFIG_NTP_FILENAME, sizeof(ciot_ntp_config_t), (ciot_err_t(*)(void *))ciot_ntp_set_config));
 #endif
 
 #if CIOT_CONFIG_FEATURE_MQTT
-    CIOT_ERROR_PRINT(ciot_app_init_interface(CIOT_CONFIG_MQTT_FILENAME, sizeof(ciot_mqtt_config_t), (ciot_err_t(*)(void *))ciot_mqtt_set_config));
+    CIOT_ERROR_PRINT(ciot_app_init_interface(&this.mqtt, CIOT_CONFIG_MQTT_FILENAME, sizeof(ciot_mqtt_config_t), (ciot_err_t(*)(void *, void*))ciot_mqtt_set_config));
 #endif
 
     return err != CIOT_ERR_OK ? CIOT_ERR_FAIL : CIOT_ERR_OK;
@@ -217,7 +218,7 @@ static ciot_err_t ciot_app_other_request_handle(ciot_msg_request_t *request)
     }
 }
 
-static ciot_err_t ciot_app_init_interface(char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *))
+static ciot_err_t ciot_app_init_static_interface(char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *))
 {
     void *data = malloc(config_size);
     if (data == NULL)
@@ -231,6 +232,24 @@ static ciot_err_t ciot_app_init_interface(char *config_filename, size_t config_s
     if (ciot_storage_load_data(data, config_size, config_filename) == CIOT_ERR_OK)
     {
         return config_func(data);
+    }
+    return CIOT_ERR_OK;
+}
+
+static ciot_err_t ciot_app_init_interface(void *interface, char *config_filename, size_t config_size, ciot_err_t (*config_func)(void *, void *))
+{
+    void *data = malloc(config_size);
+    if (data == NULL)
+    {
+        return CIOT_ERR_MEMORY_ALLOCATION;
+    }
+    if (config_func == NULL)
+    {
+        return CIOT_ERR_NULL_REFERENCE;
+    }
+    if (ciot_storage_load_data(data, config_size, config_filename) == CIOT_ERR_OK)
+    {
+        return config_func(interface, data);
     }
     return CIOT_ERR_OK;
 }

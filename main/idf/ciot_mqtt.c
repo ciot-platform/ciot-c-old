@@ -40,11 +40,22 @@ static void ciot_mqtt_event_handler(void *handler_args, esp_event_base_t base, i
 
 ciot_err_t ciot_mqtt_connect(ciot_mqtt_t *mqtt)
 {
-    static bool init = false;
-    if(init == false)
+    uint8_t mac[6];
+    char client_id[32];
+    esp_wifi_get_mac(WIFI_IF_STA, mac);
+    sprintf(client_id, "%x%x%x%x%x%x-%lu", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], esp_random());
+
+    ESP_LOGI(TAG, "config: url:%s port:%d user:<%s> pass:<%s> qos:%d",
+        mqtt->config.connection.url,
+        mqtt->config.connection.port,
+        mqtt->config.connection.username,
+        mqtt->config.connection.password,
+        mqtt->config.connection.qos
+    );
+
+    if(this.event_group == NULL)
     {
         this.event_group = xEventGroupCreate();
-        init = true;
     }
 
     if (mqtt->status.state == CIOT_MQTT_STATE_CONNECTED)
@@ -52,35 +63,22 @@ ciot_err_t ciot_mqtt_connect(ciot_mqtt_t *mqtt)
         esp_mqtt_client_disconnect(mqtt->handle);
     }
 
-    uint8_t mac[6];
-    char client_id[32];
-    esp_wifi_get_mac(WIFI_IF_STA, mac);
-    sprintf(client_id, "%x%x%x%x%x%x-%lu", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], esp_random());
-
-    esp_mqtt_client_config_t config = {
-        .broker.address.hostname = mqtt->config.connection.host,
+    const esp_mqtt_client_config_t config = {
+        .broker.address.uri = mqtt->config.connection.url,
         .broker.address.port = mqtt->config.connection.port,
-        .credentials.client_id = client_id,
         .credentials.username = mqtt->config.connection.username,
         .credentials.authentication.password = mqtt->config.connection.password,
-        .broker.address.transport = mqtt->config.connection.transport,
-    };
-
+        .credentials.client_id = client_id,
 #ifdef CONFIG_MBEDTLS_CERTIFICATE_BUNDLE
-    if (mqtt->config.connection.transport == CIOT_MQTT_TRANSPORT_SSL)
-    {
-        config.broker.verification.crt_bundle_attach = esp_crt_bundle_attach;
-    }
+        .broker.verification.crt_bundle_attach = esp_crt_bundle_attach
 #endif
-
+    };
     
     mqtt->handle =  esp_mqtt_client_init(&config);
-
     CIOT_ERROR_RETURN(esp_mqtt_client_register_event(mqtt->handle, ESP_EVENT_ANY_ID, ciot_mqtt_event_handler, mqtt));
     CIOT_ERROR_RETURN(esp_mqtt_client_start(mqtt->handle));
     xEventGroupWaitBits(this.event_group, CIOT_MQTT_EVENT_BIT_CONNECT_DONE, pdTRUE, pdFALSE, CIOT_MQTT_TIMEOUT / portTICK_PERIOD_MS);
-
-    return mqtt->status.state == CIOT_MQTT_STATE_CONNECTED;
+    return mqtt->status.state == CIOT_MQTT_STATE_CONNECTED ? CIOT_ERR_OK : CIOT_ERR_FAIL;
 }
 
 ciot_err_t ciot_mqtt_publish(ciot_mqtt_t *mqtt, const char *topic, const char *data, int len, int qos, bool retain)
@@ -127,10 +125,12 @@ static void ciot_mqtt_event_handler(void *handler_args, esp_event_base_t base, i
         {
             mqtt->on_connection_cb();
         }
+        xEventGroupSetBits(this.event_group, CIOT_MQTT_EVENT_BIT_CONNECT_DONE);
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
         mqtt->status.state = CIOT_MQTT_STATE_DISCONNECTED;
+        xEventGroupSetBits(this.event_group, CIOT_MQTT_EVENT_BIT_CONNECT_DONE);
         break;
     case MQTT_EVENT_SUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
@@ -145,6 +145,7 @@ static void ciot_mqtt_event_handler(void *handler_args, esp_event_base_t base, i
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         if (strncmp(event->topic, mqtt->config.topics.message, event->topic_len) == 0)
         {
+            ESP_LOGI(TAG, "CIOT APP Processing msg...");
             ciot_data_t msg_data = {
                 .data_type = mqtt->config.topics.data_type,
                 .buffer.content = (void *)event->data,

@@ -19,15 +19,6 @@
 
 typedef enum
 {
-    CIOT_MQTT_TRANSPORT_UNKNOWN,
-    CIOT_MQTT_TRANSPORT_TCP,
-    CIOT_MQTT_TRANSPORT_SSL,
-    CIOT_MQTT_TRANSPORT_WS,
-    CIOT_MQTT_TRANSPORT_WSS
-} ciot_mqtt_transport_t;
-
-typedef enum
-{
     CIOT_MQTT_PROTOCOL_UNKNOWN,
     CIOT_MQTT_PROTOCOL_V_3_1,
     CIOT_MQTT_PROTOCOL_V_3_1_1,
@@ -52,12 +43,11 @@ typedef enum
 
 typedef struct ciot_mqtt_config_connection
 {
-    char host[64];
+    char url[64];
     int port;
     char username[48];
     char password[48];
     uint8_t qos;
-    ciot_mqtt_transport_t transport;
 } ciot_mqtt_config_connection_t;
 
 typedef struct ciot_mqtt_config_topics

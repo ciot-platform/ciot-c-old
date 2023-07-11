@@ -32,7 +32,7 @@ ciot_err_t ciot_mqtt_connect(ciot_mqtt_t *mqtt)
         .pass = mg_str(mqtt->config.connection.password)};
     mqtt->status.state = CIOT_MQTT_STATE_CONNECTING;
     if (mqtt->handle == NULL)
-        mqtt->handle = mg_mqtt_connect(&mgr, mqtt->config.connection.host, &opts, ciot_mqtt_event_handler, NULL);
+        mqtt->handle = mg_mqtt_connect(&mgr, mqtt->config.connection.url, &opts, ciot_mqtt_event_handler, &mqtt->handle);
     ciot_mqtt_wait_connection(mqtt, CIOT_MQTT_TIMEOUT);
     return mqtt->status.state == CIOT_MQTT_STATE_CONNECTED ? CIOT_ERR_OK : CIOT_ERR_FAIL;
 }
@@ -110,6 +110,7 @@ static void ciot_mqtt_wait_connection(ciot_mqtt_t *mqtt, int timeout)
     while (mqtt->status.state == CIOT_MQTT_STATE_CONNECTING)
     {
         time_t current_time = time(0);
+        mg_mgr_poll(&mgr, 1000);
         if((start_time + timeout) < current_time)
         {
             return;
