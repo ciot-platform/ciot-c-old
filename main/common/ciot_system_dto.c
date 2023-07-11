@@ -10,13 +10,14 @@
  */
 
 #include "ciot_system.h"
-#include "ciot_settings.h"
+#include "ciot_app.h"
 
 typedef struct ciot_system
 {
     ciot_system_config_t config;
     uint32_t err_code;
     uint32_t status_code;
+    ciot_settings_t settings;
 } ciot_system_t;
 
 static ciot_system_t this;
@@ -124,8 +125,12 @@ ciot_err_t ciot_system_process_request(ciot_system_request_t request)
         printf("CIOT_SYSTEM_REQUEST_RESTART\n");
         return ciot_system_reset();
     case CIOT_SYSTEM_REQUEST_SAVE_SETTINGS:
+    {
         printf("CIOT_SYSTEM_REQUEST_SAVE_SETTINGS\n");
-        return ciot_settings_save();
+        ciot_settings_t settings;
+        ciot_app_get_settings(&settings);
+        return ciot_settings_save(&settings);
+    }
     case CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS:
         printf("CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS\n");
         return ciot_settings_clear();

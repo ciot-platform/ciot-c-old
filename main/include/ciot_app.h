@@ -16,6 +16,7 @@
 #include "ciot_msg_dto.h"
 #include "ciot_wifi.h"
 #include "ciot_http_server.h"
+#include "ciot_settings.h"
 
 typedef enum ciot_app_data_type
 {
@@ -42,15 +43,15 @@ typedef struct ciot_app
     bool data_received;
     ciot_app_data_t data;
     ciot_msg_response_t result;
+    ciot_mqtt_t mqtt;
 } ciot_app_t;
 
 ciot_err_t ciot_app_init(ciot_app_config_t *conf);
 ciot_err_t ciot_app_start(ciot_app_config_t *conf);
-// ciot_err_t ciot_app_send_data(ciot_app_data_t *data);
-// ciot_err_t ciot_app_data_task();
 ciot_err_t ciot_app_send_msg(ciot_msg_t *msg);
 ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg);
 ciot_err_t ciot_app_wait_process(uint32_t timeout);
 ciot_err_t ciot_app_get_msg_response(ciot_msg_response_t *response);
+ciot_err_t ciot_app_get_settings(ciot_settings_t *settings);
 
 #endif  //!__CIOT_APP__H__

@@ -21,6 +21,6 @@ typedef struct ciot_settings
     ciot_mqtt_config_t mqtt;
 } ciot_settings_t;
 
-ciot_err_t ciot_settings_save(void);
+ciot_err_t ciot_settings_save(ciot_settings_t *settings);
 ciot_err_t ciot_settings_load(ciot_settings_t *settings);
 ciot_err_t ciot_settings_clear(void);

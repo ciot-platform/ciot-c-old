@@ -23,6 +23,56 @@ static ciot_err_t ciot_mqtt_config_connection_to_json(CJSON_PARAMETERS(ciot_mqtt
 static ciot_err_t ciot_mqtt_config_topics_from_json(CJSON_PARAMETERS(ciot_mqtt_config_topics_t));
 static ciot_err_t ciot_mqtt_config_topics_to_json(CJSON_PARAMETERS(ciot_mqtt_config_topics_t));
 
+static ciot_err_t ciot_mqtt_set_config_connection(ciot_mqtt_t *mqtt, ciot_mqtt_config_connection_t *config);
+static ciot_err_t ciot_mqtt_set_config_topics(ciot_mqtt_t *mqtt, ciot_mqtt_config_topics_t *config);
+
+ciot_err_t ciot_mqtt_set_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *conf)
+{
+    switch (conf->config_type)
+    {
+    case CIOT_MQTT_CONFIG_CONNECTION:
+        return ciot_mqtt_set_config_connection(mqtt, &conf->data.connection);
+    case CIOT_MQTT_CONFIG_TOPICS:
+        return ciot_mqtt_set_config_topics(mqtt, &conf->data.topics);
+    case CIOT_MQTT_CONFIG_ALL:
+        CIOT_ERROR_RETURN(ciot_mqtt_set_config_connection(mqtt, &conf->data.config.connection));
+        return ciot_mqtt_set_config_topics(mqtt, &conf->data.config.topics);
+    default:
+        return CIOT_ERR_INVALID_TYPE;
+    }
+}
+
+ciot_err_t ciot_mqtt_get_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *config)
+{
+    config->config_type = CIOT_MQTT_CONFIG_ALL;
+    config->data.config = mqtt->config;
+    return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_mqtt_get_status(ciot_mqtt_t *mqtt, ciot_mqtt_status_t *status)
+{
+    *status = mqtt->status;
+    return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_mqtt_get_info(ciot_mqtt_t *mqtt, ciot_mqtt_info_t *info)
+{
+    *info = mqtt->info;
+    return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_mqtt_on_data(ciot_mqtt_t *mqtt, ciot_mqtt_on_data_cb_t on_data_cb)
+{
+    mqtt->on_data_cb = on_data_cb;
+    return CIOT_ERR_OK;
+}
+
+ciot_err_t ciot_mqtt_on_connection(ciot_mqtt_t *mqtt, ciot_mqtt_on_connection_cb_t on_connection_cb)
+{
+    mqtt->on_connection_cb = on_connection_cb;
+    return CIOT_ERR_OK;
+}
+
 ciot_err_t ciot_mqtt_config_from_json(CJSON_PARAMETERS(ciot_mqtt_config_t))
 {
     CJSON_CHECK_PARAMETERS();
@@ -148,4 +198,16 @@ static ciot_err_t ciot_mqtt_config_topics_to_json(CJSON_PARAMETERS(ciot_mqtt_con
     CJSON_ADD_CHAR_ARRAY(response);
     CJSON_ADD_NUMBER(data_type);
     return CIOT_ERR_OK;
+}
+
+static ciot_err_t ciot_mqtt_set_config_connection(ciot_mqtt_t *mqtt, ciot_mqtt_config_connection_t *conf)
+{
+    memcpy(&mqtt->config.connection, conf, sizeof(mqtt->config.connection));
+    return ciot_mqtt_connect(mqtt);
+}
+
+static ciot_err_t ciot_mqtt_set_config_topics(ciot_mqtt_t *mqtt, ciot_mqtt_config_topics_t *conf)
+{
+    memcpy(&mqtt->config.topics, conf, sizeof(mqtt->config.topics));
+    return ciot_mqtt_subscribe(mqtt, mqtt->config.topics.message, mqtt->config.topics.qos);
 }

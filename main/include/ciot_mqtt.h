@@ -101,15 +101,26 @@ typedef struct ciot_mqtt_status
 typedef ciot_err_t (ciot_mqtt_on_data_cb_t)(const char *topic, size_t topic_len, const char *data, size_t data_len);
 typedef ciot_err_t (ciot_mqtt_on_connection_cb_t)();
 
-ciot_err_t ciot_mqtt_set_config(ciot_mqtt_config_t *conf);
-ciot_err_t ciot_mqtt_get_config(ciot_mqtt_config_t *config);
-ciot_err_t ciot_mqtt_get_status(ciot_mqtt_status_t *status);
-ciot_err_t ciot_mqtt_get_info(ciot_mqtt_info_t *info);
+typedef struct ciot_mqtt
+{
+    void *handle;
+    ciot_mqtt_config_data_t config;
+    ciot_mqtt_info_t info;
+    ciot_mqtt_status_t status;
+    ciot_mqtt_on_data_cb_t *on_data_cb;
+    ciot_mqtt_on_connection_cb_t *on_connection_cb;
+} ciot_mqtt_t;
 
-ciot_err_t ciot_mqtt_publish(const char *topic, const char *data, int len, int qos, bool retain);
-ciot_err_t ciot_mqtt_subscribe(const char *topic, int qos);
-ciot_err_t ciot_mqtt_on_data(ciot_mqtt_on_data_cb_t on_data_cb);
-ciot_err_t ciot_mqtt_on_connection(ciot_mqtt_on_connection_cb_t on_connection_cb);
+ciot_err_t ciot_mqtt_set_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *conf);
+ciot_err_t ciot_mqtt_get_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *config);
+ciot_err_t ciot_mqtt_get_status(ciot_mqtt_t *mqtt, ciot_mqtt_status_t *status);
+ciot_err_t ciot_mqtt_get_info(ciot_mqtt_t *mqtt, ciot_mqtt_info_t *info);
+ciot_err_t ciot_mqtt_on_data(ciot_mqtt_t *mqtt, ciot_mqtt_on_data_cb_t on_data_cb);
+ciot_err_t ciot_mqtt_on_connection(ciot_mqtt_t *mqtt, ciot_mqtt_on_connection_cb_t on_connection_cb);
+
+ciot_err_t ciot_mqtt_connect(ciot_mqtt_t *mqtt);
+ciot_err_t ciot_mqtt_publish(ciot_mqtt_t *mqtt, const char *topic, const char *data, int len, int qos, bool retain);
+ciot_err_t ciot_mqtt_subscribe(ciot_mqtt_t *mqtt, const char *topic, int qos);
 
 ciot_err_t ciot_mqtt_config_from_json(CJSON_PARAMETERS(ciot_mqtt_config_t));
 ciot_err_t ciot_mqtt_config_to_json(CJSON_PARAMETERS(ciot_mqtt_config_t));
