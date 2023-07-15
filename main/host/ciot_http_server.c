@@ -113,7 +113,7 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
                 }
                 else
                 {
-                    int status_code = resp.err_code == CIOT_ERR_OK ? 200 : 500;
+                    int status_code = resp.err == CIOT_ERR_OK ? 200 : 500;
                     mg_http_reply(c, status_code, NULL, resp_data.buffer.content);
                     free(resp_data.buffer.content);
                 }

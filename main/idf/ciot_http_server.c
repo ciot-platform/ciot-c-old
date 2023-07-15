@@ -107,7 +107,7 @@ static esp_err_t ciot_http_server_on_post(httpd_req_t *req)
             cJSON *json = cJSON_CreateObject();
             ciot_msg_response_to_json(json, &resp);
             char *json_str = cJSON_Print(json);
-            if(resp.err_code == CIOT_ERR_OK)
+            if(resp.err == CIOT_ERR_OK)
             {
                 err = httpd_resp_send(req, json_str, strlen(json_str));
             }

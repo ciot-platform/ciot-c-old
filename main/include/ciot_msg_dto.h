@@ -104,8 +104,8 @@ typedef union ciot_msg_response_data
 
 typedef struct ciot_msg_response
 {
-    ciot_msg_type_t type;
-    ciot_err_t err_code;
+    ciot_msg_type_t msg;
+    ciot_err_t err;
     ciot_msg_request_t request;
     ciot_msg_response_data_t data;
 } ciot_msg_response_t;
@@ -119,12 +119,12 @@ typedef union ciot_msg_data
 
 typedef struct ciot_msg
 {
-    ciot_msg_type_t type;
+    ciot_msg_type_t msg;
     ciot_msg_data_t data;
 } ciot_msg_t;
 
 ciot_err_t ciot_msg_from_json(CJSON_PARAMETERS(ciot_msg_t));
-ciot_err_t ciot_msg_data_from_json(CJSON_PARAMETERS(ciot_msg_data_t), ciot_msg_type_t type);
+ciot_err_t ciot_msg_data_from_json(CJSON_PARAMETERS(ciot_msg_data_t), ciot_msg_type_t msg);
 ciot_err_t ciot_msg_request_from_json(CJSON_PARAMETERS(ciot_msg_request_t));
 
 ciot_err_t ciot_msg_config_from_json(CJSON_PARAMETERS(ciot_msg_config_t));

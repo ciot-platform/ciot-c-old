@@ -15,16 +15,16 @@
 ciot_err_t ciot_msg_from_json(CJSON_PARAMETERS(ciot_msg_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_NUMBER(type);
-    CJSON_GET_UNION(data, ciot_msg_data_from_json, type);
+    CJSON_GET_NUMBER(msg);
+    CJSON_GET_UNION(data, ciot_msg_data_from_json, msg);
     return CIOT_ERR_OK;
 }
 
-ciot_err_t ciot_msg_data_from_json(CJSON_PARAMETERS(ciot_msg_data_t), ciot_msg_type_t type)
+ciot_err_t ciot_msg_data_from_json(CJSON_PARAMETERS(ciot_msg_data_t), ciot_msg_type_t msg)
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_OBJ_UNION_CHILD(request, ciot_msg_request_from_json, type, CIOT_MSG_TYPE_REQUEST);
-    CJSON_GET_OBJ_UNION_CHILD(config, ciot_msg_config_from_json, type, CIOT_MSG_TYPE_CONFIG);
+    CJSON_GET_OBJ_UNION_CHILD(request, ciot_msg_request_from_json, msg, CIOT_MSG_TYPE_REQUEST);
+    CJSON_GET_OBJ_UNION_CHILD(config, ciot_msg_config_from_json, msg, CIOT_MSG_TYPE_CONFIG);
     return CIOT_ERR_OK;
 }
 
@@ -65,17 +65,17 @@ ciot_err_t ciot_msg_config_data_from_json(CJSON_PARAMETERS(ciot_msg_config_data_
 ciot_err_t ciot_msg_response_to_json(CJSON_PARAMETERS(ciot_msg_response_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(type);
+    CJSON_ADD_NUMBER(msg);
     CJSON_ADD_OBJ_TO_ROOT(request, ciot_msg_request_to_json);
-    if (ptr->err_code != CIOT_ERR_OK)
+    if (ptr->err != CIOT_ERR_OK)
     {
 #if CIOT_CONFIG_API_ERROR_MESSAGES
-        const char *err_msg = ciot_err_to_message(ptr->err_code);
+        const char *err_msg = ciot_err_to_message(ptr->err);
         cJSON_AddStringToObject(json, "err_msg", err_msg);
 #endif
-        CJSON_ADD_NUMBER(err_code);
+        CJSON_ADD_NUMBER(err);
     }
-    if (ptr->err_code != CIOT_ERR_FEATURE_NOT_SUPPORTED)
+    if (ptr->err != CIOT_ERR_FEATURE_NOT_SUPPORTED)
     {
         CJSON_ADD_UNION_TO_ROOT(data, ciot_msg_response_data_to_json, request);
     }

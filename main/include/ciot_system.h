@@ -136,8 +136,8 @@ typedef struct ciot_system_status
 {
     time_t time;
     uint32_t memory;
-    uint32_t err;
-    uint32_t status;
+    uint32_t sys_err;
+    uint32_t sys_status;
     uint32_t lifetime;
 } ciot_system_status_t;
 

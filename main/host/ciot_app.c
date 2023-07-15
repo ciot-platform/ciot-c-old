@@ -96,7 +96,7 @@ static void* ciot_app_task(void* args)
             ciot_err_t err = ciot_app_msg_handle(&this.msg);
             this.msg_received = false;
             this.msg_processed = true;
-            printf("Message %d processed with err code %x\n", this.msg.type, err);
+            printf("Message %d processed with err code %x\n", this.msg.msg, err);
         }
     }
 }

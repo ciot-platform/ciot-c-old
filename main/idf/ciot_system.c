@@ -34,8 +34,8 @@ ciot_err_t ciot_system_get_status(ciot_system_status_t *status)
     ciot_system_status_t system = {
         .time = time(NULL),
         .memory = esp_get_free_heap_size(),
-        .err = ciot_system_get_err_code(),
-        .status = ciot_system_get_status_code(),
+        .sys_err = ciot_system_get_err_code(),
+        .sys_status = ciot_system_get_status_code(),
         .lifetime = esp_timer_get_time() / 1000000,
     };
     *status = system;
