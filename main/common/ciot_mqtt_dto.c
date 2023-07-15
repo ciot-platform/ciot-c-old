@@ -9,9 +9,13 @@
  *
  */
 
+#include "ciot_config.h"
+#include "ciot_mqtt.h"
+
+#if CIOT_CONFIG_FEATURE_MQTT
+
 #include <stdlib.h>
 
-#include "ciot_mqtt.h"
 #include "ciot_data_io.h"
 #include "ciot_msg_dto.h"
 #include "ciot_app.h"
@@ -256,3 +260,5 @@ static ciot_err_t ciot_mqtt_set_config_topics(ciot_mqtt_t *mqtt, ciot_mqtt_confi
     memcpy(&mqtt->config.topics, conf, sizeof(mqtt->config.topics));
     return CIOT_ERR_OK;
 }
+
+#endif

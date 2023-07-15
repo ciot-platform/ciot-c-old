@@ -9,9 +9,13 @@
  *
  */
 
+#include "ciot_config.h"
+#include "ciot_mqtt.h"
+
+#if CIOT_CONFIG_FEATURE_MQTT
+
 #include "mongoose.h"
 
-#include "ciot_mqtt.h"
 #include "ciot_app.h"
 #include "ciot_data_io.h"
 
@@ -117,3 +121,5 @@ static void ciot_mqtt_wait_connection(ciot_mqtt_t *mqtt, int timeout)
         }
     }
 }
+
+#endif

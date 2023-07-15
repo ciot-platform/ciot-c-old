@@ -9,6 +9,10 @@
  * 
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_SYS
+
 #include "ciot_system.h"
 #include "ciot_app.h"
 
@@ -124,6 +128,7 @@ ciot_err_t ciot_system_process_request(ciot_system_request_t request)
     case CIOT_SYSTEM_REQUEST_RESTART:
         printf("CIOT_SYSTEM_REQUEST_RESTART\n");
         return ciot_system_reset();
+#if CIOT_CONFIG_FEATURE_STORAGE
     case CIOT_SYSTEM_REQUEST_SAVE_SETTINGS:
     {
         printf("CIOT_SYSTEM_REQUEST_SAVE_SETTINGS\n");
@@ -134,7 +139,10 @@ ciot_err_t ciot_system_process_request(ciot_system_request_t request)
     case CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS:
         printf("CIOT_SYSTEM_REQUEST_CLEAR_SETTINGS\n");
         return ciot_settings_clear();
+#endif
     default:
         return CIOT_ERR_INVALID_REQUEST;
     }
 }
+
+#endif

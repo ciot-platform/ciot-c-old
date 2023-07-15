@@ -10,8 +10,10 @@
  */
 
 #include "ciot_config.h"
-#include "ciot_settings.h"
 #include "ciot_storage.h"
+#include "ciot_settings.h"
+
+#if CIOT_CONFIG_FEATURE_STORAGE
 
 ciot_err_t ciot_settings_save(ciot_settings_t *settings)
 {
@@ -83,3 +85,5 @@ ciot_err_t ciot_settings_clear(void)
 
     return err;
 }
+
+#endif

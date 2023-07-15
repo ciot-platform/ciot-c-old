@@ -9,6 +9,10 @@
  * 
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_STORAGE
+
 #include "nvs_flash.h"
 
 #include "esp_partition.h"
@@ -87,3 +91,5 @@ size_t ciot_storage_get_size(void)
     const esp_partition_t* partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_ANY, "nvs");
     return partition->size;
 }
+
+#endif

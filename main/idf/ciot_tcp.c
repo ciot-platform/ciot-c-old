@@ -9,6 +9,10 @@
  *
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_ETHERNET || CIOT_CONFIG_FEATURE_WIFI
+
 #include "esp_netif.h"
 #include "esp_log.h"
 #include "lwip/ip4_addr.h"
@@ -117,3 +121,5 @@ static ciot_err_t ciot_tcp_set_ip_config(void *interface, ciot_tcp_ip_config_t *
     }
     return CIOT_ERR_OK;
 }
+
+#endif

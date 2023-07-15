@@ -139,6 +139,9 @@
         "cinttypes": "c",
         "cstdbool": "c",
         "typeinfo": "c",
-        "*.inc": "c"
+        "*.inc": "c",
+        "ciot_config_win.h": "c",
+        "event_groups.h": "c",
+        "time.h": "c"
     }
 }

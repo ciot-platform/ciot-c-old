@@ -9,7 +9,10 @@
  * 
  */
 
+#include "ciot_config.h"
 #include "ciot_ntp.h"
+
+#if CIOT_CONFIG_FEATURE_NTP
 
 ciot_err_t ciot_ntp_config_from_json(CJSON_PARAMETERS(ciot_ntp_config_t))
 {
@@ -74,3 +77,5 @@ ciot_err_t ciot_ntp_status_to_json(CJSON_PARAMETERS(ciot_ntp_status_t))
     CJSON_ADD_NUMBER(last_sync);
     return CIOT_ERR_OK;
 }
+
+#endif
