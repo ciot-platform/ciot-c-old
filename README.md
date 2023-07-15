@@ -1,4 +1,4 @@
-CIOT 0.1.0-alpha
+CIOT 0.2.0-alpha
 ===
 
 > **Advise:** This is an work in progress. Don't use it on production environments.
@@ -33,7 +33,7 @@ Table of contents:
    - [v0.2.0](#v020-handle-mqtt-interface-accepting-raw-and-json)
    - [v0.3.0](#v030-handle-ota-interface-accepting-raw-and-json)
    - [v0.4.0](#v040-handle-uart-interface-outside-ciot-api)
-   
+
 # Features
 
 The current version of CIOT API support the following features:
@@ -84,7 +84,7 @@ If an client try to use an unsupported feature, the CIOT API will return an erro
 
 ```json
 {
-	"type": 2,
+	"msg": 2, 
 	"request": 1,
 	"interface": 65,
 	"err_code": 2,
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,         /// Message Type   1:request
+  "msg": 1,          /// Message Type   1:request
   "interface": 1,    /// Interface Type 1:wifi
   "request": 1       /// Request Type   1:getConfiguration
 }
@@ -134,8 +134,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 2,                        /// Message Type   2:Response
-  "err_code": 0,                    /// Error Code     0:noError
+  "msg": 2,                         /// Message Type   2:Response
   "request": 1,                     /// Request Type   1:getConfiguration
   "interface": 1,                   /// Interface Type 1:wifi
   "mode": 0,                        /// Wifi Mode      0:station, 1:accessPoint
@@ -160,7 +159,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,         /// Message Type   1:request
+  "msg": 1,          /// Message Type   1:request
   "interface": 1,    /// Interface Type 1:wifi
   "request": 2       /// Request Type   2:getInformation
 }
@@ -172,8 +171,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 2,                      /// Message Type   2:Response
-  "err_code": 0,                  /// Error Code     0:noError
+  "msg": 2,                       /// Message Type   2:Response
   "request": 2,                   /// Request Type   2:getInformation
   "interface": 1,                 /// Interface Type 1:wifi
   "available": true,              /// Interface is Available
@@ -189,7 +187,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,          /// Message Type   1:request
+  "msg": 1,           /// Message Type   1:request
   "request": 3,       /// Request Type   3:getStatus
   "interface": 1      /// Interface Type 1:wifi
 }
@@ -201,8 +199,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 2,                          /// Message Type   2:response
-  "err_code": 0,                      /// Error Code     0:noError
+  "msg": 2,                           /// Message Type   2:response
   "request": 3,                       /// Request Type   3:getStatus
   "interface": 1,                     /// Interface Type 1:wifi
   "sta": {                            /// Connected Station Status
@@ -232,7 +229,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,        /// Message Type   1:request
+  "msg": 1,         /// Message Type   1:request
   "interface": 1,   /// Interface Type 1:wifi
   "request": 4      /// Request Type   4:scan
 }
@@ -244,8 +241,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type   1:request
-	"err_code": 0,    /// Error Code     0:noError
+	"msg": 2,         /// Message Type   1:request
 	"request": 4,     /// Interface Type 1:wifi
 	"interface": 1,   /// Request Type   4:scan
 	"state": 0,       /// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
@@ -322,7 +318,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 3,                      /// Message Type  	3:setConfiguration
+  "msg": 3,                       /// Message Type  	3:setConfiguration
   "interface": 1,                 /// Interface Type 	1:wifi
   "ssid": "MY-SSID",              /// Wifi SSID
   "password": "my-password",      /// Wifi Password
@@ -344,10 +340,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,      /// Message Type    2:response	
-	"err_code": 0,  /// Error Code      0:noError
-	"request": 0,   /// Request Type    0:none
-	"interface": 1, /// Interface Type 	1:wifi
+  "msg": 2,       /// Message Type    2:response	
+  "request": 0,   /// Request Type    0:none
+  "interface": 1, /// Interface Type 	1:wifi
 }
 ```
 
@@ -361,7 +356,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,         /// Message Type   1:request
+  "msg": 1,          /// Message Type   1:request
   "interface": 64,   /// Interface Type 64:system
   "request": 1       /// Request Type   1:getConfiguration
 }
@@ -373,10 +368,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type    2:response	
-	"err_code": 0,    /// Error Code      0:noError
-	"request": 1,     /// Request Type    1:getConfiguration
-	"interface": 64,  /// Interface Type 	64:system
+  "msg": 2,         /// Message Type    2:response	
+  "request": 1,     /// Request Type    1:getConfiguration
+  "interface": 64,  /// Interface Type 	64:system
 }
 ```
 
@@ -388,7 +382,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,         /// Message Type   1:request
+  "msg": 1,          /// Message Type   1:request
   "interface": 64,   /// Interface Type 64:system
   "request": 2       /// Request Type   2:getInformation
 }
@@ -400,18 +394,17 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,                /// Message Type   1:request
-	"err_code": 0,            /// Error Code     0:noError
-	"request": 2,             /// Request Type   2:getInformation
-	"interface": 64,          /// Interface Type 64:system
-	"device": 1,              /// Device Type => 0:unknown, 1:generic, 2:sensor, 3:gateway, 4:datalogger, 5:hmi          
-	"os": 2,                  /// Operating System => 0:unknown, 1:bareMetal, 2:freeRTOS, 3:linux, 4:windows, 5:mac
-	"version": [0,0,0,1,0],   /// Software Version: 0.0.0.1-alpha
-	"date": [19,6,23],        /// Built Date: 19 Jun 2023
-	"board": "ESP32 Devkit",  /// Board Name
-	"mcu": "ESP32",           /// MCU Name
-	"storage": 24576,         /// Storage Size in Bytes
-	"features": 8295          /// Fatures Bits Mask
+  "msg": 2,                 /// Message Type   1:request
+  "request": 2,             /// Request Type   2:getInformation
+  "interface": 64,          /// Interface Type 64:system
+  "device": 1,              /// Device Type => 0:unknown, 1:generic, 2:sensor, 3:gateway, 4:datalogger, 5:hmi          
+  "os": 2,                  /// Operating System => 0:unknown, 1:bareMetal, 2:freeRTOS, 3:linux, 4:windows, 5:mac
+  "version": [0,0,0,1,0],   /// Software Version: 0.0.0.1-alpha
+  "date": [19,6,23],        /// Built Date: 19 Jun 2023
+  "board": "ESP32 Devkit",  /// Board Name
+  "mcu": "ESP32",           /// MCU Name
+  "storage": 24576,         /// Storage Size in Bytes
+  "features": 8295          /// Fatures Bits Mask
 }
 ```
 
@@ -423,7 +416,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,          /// Message Type   1:request
+  "msg": 1,           /// Message Type   1:request
   "request": 3,       /// Request Type   3:getStatus
   "interface": 64     /// Interface Type 64:system
 }
@@ -435,15 +428,14 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type      1:request
-	"err_code": 0,    /// Error Code        0:noError
-	"request": 3,     /// Request Type      3:getStatus
-	"interface": 64,  /// Interface Type    64:system
-	"time": 254,      /// Internal Clock Timestamp in Seconds
-	"memory": 218844, /// Free Heap Memory
-	"err": 0,         /// System error code
-	"status": 0,      /// System status code
-	"lifetime": 254   /// Device Lifetime in Seconds
+  "msg": 2,         /// Message Type      1:request
+  "request": 3,     /// Request Type      3:getStatus
+  "interface": 64,  /// Interface Type    64:system
+  "time": 254,      /// Internal Clock Timestamp in Seconds
+  "memory": 218844, /// Free Heap Memory
+  "err": 0,         /// System error code
+  "status": 0,      /// System status code
+  "lifetime": 254   /// Device Lifetime in Seconds
 }
 ```
 
@@ -455,7 +447,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,        /// Message Type   1:request
+  "msg": 1,         /// Message Type   1:request
   "interface": 1,   /// Interface Type 64:system
   "request": 4      /// Request Type   4:restart
 }
@@ -467,10 +459,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type   1:request
-	"err_code": 0,    /// Error Code     0:noError
-	"request": 4,     /// Request Type   4:restart
-	"interface": 64   /// Interface Type 64:system
+  "msg": 2,         /// Message Type   1:request
+  "request": 4,     /// Request Type   4:restart
+  "interface": 64   /// Interface Type 64:system
 }
 ```
 
@@ -482,7 +473,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,        /// Message Type   1:request
+  "msg": 1,         /// Message Type   1:request
   "interface": 1,   /// Interface Type 64:system
   "request": 5      /// Request Type   5:saveSettings
 }
@@ -494,10 +485,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type   2:response
-	"err_code": 0,    /// Error Code     0:noError
-	"request": 5,     /// Request Type   5:saveSettings
-	"interface": 64   /// Interface Type 64:system
+  "msg": 2,         /// Message Type   2:response
+  "request": 5,     /// Request Type   5:saveSettings
+  "interface": 64   /// Interface Type 64:system
 }
 ```
 
@@ -509,7 +499,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,        /// Message Type   1:request
+  "msg": 1,         /// Message Type   1:request
   "interface": 1,   /// Interface Type 64:system
   "request": 6      /// Request Type   6:clearSettings
 }
@@ -521,10 +511,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type   2:response
-	"err_code": 0,    /// Error Code     0:noError
-	"request": 6,     /// Request Type   6:clearSettings
-	"interface": 64   /// Interface Type 64:system
+  "msg": 2,         /// Message Type   2:response
+  "request": 6,     /// Request Type   6:clearSettings
+  "interface": 64   /// Interface Type 64:system
 }
 ```
 
@@ -536,7 +525,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 3,        /// Message Type   3:setConfiguration
+  "msg": 3,         /// Message Type   3:setConfiguration
   "interface": 1,   /// Interface Type 64:system
 }
 ```
@@ -547,10 +536,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,        /// Message Type   2:response
-	"err_code": 0,    /// Error Code     0:noError
-	"request": 0,     /// Request Type   0:none
-	"interface": 64   /// Interface Type 64:system
+  "msg": 2,         /// Message Type   2:response
+  "request": 0,     /// Request Type   0:none
+  "interface": 64   /// Interface Type 64:system
 }
 ```
 
@@ -564,7 +552,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,         /// Message Type   1:request
+  "msg": 1,          /// Message Type   1:request
   "interface": 65,   /// Interface Type 65:ntp
   "request": 1       /// Request Type   1:getConfiguration
 }
@@ -576,8 +564,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 2,                  /// Message Type   1:response
-  "err_code": 0,              /// Error Code     0:noError
+  "msg": 2,                   /// Message Type   1:response
   "request": 1,               /// Request Type   1:getConfiguration          
   "interface": 65,            /// Interface Type 65:ntp
   "op_mode": 0,               /// Operation Mode => 0:pool, 1:listenOnly
@@ -596,7 +583,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,        /// Message Type   1:request
+  "msg": 1,         /// Message Type   1:request
   "interface": 65,  /// Interface Type 65:ntp
   "request": 2      /// Request Type   2:getInformation
 }
@@ -608,10 +595,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,          /// Message Type   1:request
-	"err_code": 0,      /// Error Code     0:noError
-	"request": 2,       /// Request Type   2:getInformation
-	"interface": 65,    /// Interface Type 65:ntp
+  "msg": 2,           /// Message Type   1:request
+  "request": 2,       /// Request Type   2:getInformation
+  "interface": 65,    /// Interface Type 65:ntp
   "available": true   /// Interface is Available
 }
 ```
@@ -624,7 +610,7 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 1,          /// Message Type   1:request
+  "msg": 1,           /// Message Type   1:request
   "request": 3,       /// Request Type   3:getStatus
   "interface": 65     /// Interface Type 65:ntp
 }
@@ -636,15 +622,14 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"type": 2,          /// Message Type   1:request
-	"err_code": 0,      /// Error Code     0:noError
-	"request": 3,       /// Request Type   3:getStatus
-	"interface": 65,    /// Interface Type 65:ntp
-	"init": true,       /// Initialized
-	"sync": false,      /// Syncronized
-	"state": 0,         /// NTP Sync State 0:reseted, 1:completed, 2:inProgress
+  "msg": 2,           /// Message Type   1:request
+  "request": 3,       /// Request Type   3:getStatus
+  "interface": 65,    /// Interface Type 65:ntp
+  "init": true,       /// Initialized
+  "sync": false,      /// Syncronized
+  "state": 0,         /// NTP Sync State 0:reseted, 1:completed, 2:inProgress
   "sync_count": 0,    /// Sync counter
-	"last_sync": 0      /// Last sync timestamp
+  "last_sync": 0      /// Last sync timestamp
 }
 ```
 
@@ -656,15 +641,15 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "type": 3,                      /// Message Type   3:setConfiguration
+  "msg": 3,                       /// Message Type   3:setConfiguration
   "interface": 65,                /// Interface Type 65:ntp
   "op_mode": 0,                   /// Operation Mode => 0:pool, 1:listenOnly
   "sync_mode": 0,                 /// Sync Mode => 0:immediatly, 1:smooth
   "sync_interval": 3600000,       /// Sync Interval in seconds
   "timezone": "<-03>3",           /// Unix Timezone (Optional)
   "server1": "pool.ntp.org",      /// Main ntp server
-	"server2": "time.google.com",   /// Backup ntp server (Optional)
-	"server3": "gps.ntp.br",        /// Backup ntp server (Optional)
+  "server2": "time.google.com",   /// Backup ntp server (Optional)
+  "server3": "gps.ntp.br",        /// Backup ntp server (Optional)
   "timeout": 10000                /// Connection timeout                
 }
 ```

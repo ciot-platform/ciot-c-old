@@ -67,8 +67,8 @@ ciot_err_t ciot_system_status_from_json(CJSON_PARAMETERS(ciot_system_status_t))
     CJSON_CHECK_PARAMETERS();
     CJSON_GET_NUMBER(time);
     CJSON_GET_NUMBER(memory);
-    CJSON_GET_NUMBER(err);
-    CJSON_GET_NUMBER(status);
+    CJSON_GET_NUMBER(sys_err);
+    CJSON_GET_NUMBER(sys_status);
     CJSON_GET_NUMBER(lifetime);
     return CIOT_ERR_OK;
 }
@@ -78,8 +78,8 @@ ciot_err_t ciot_system_status_to_json(CJSON_PARAMETERS(ciot_system_status_t))
     CJSON_CHECK_PARAMETERS();
     CJSON_ADD_NUMBER(time);
     CJSON_ADD_NUMBER(memory);
-    CJSON_ADD_NUMBER(err);
-    CJSON_ADD_NUMBER(status);
+    CJSON_ADD_NUMBER(sys_err);
+    CJSON_ADD_NUMBER(sys_status);
     CJSON_ADD_NUMBER(lifetime);
     return CIOT_ERR_OK;
 }

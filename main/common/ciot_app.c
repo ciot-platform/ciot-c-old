@@ -68,7 +68,7 @@ ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg)
 {
     ciot_err_t err;
 
-    switch (msg->type)
+    switch (msg->msg)
     {
     case CIOT_MSG_TYPE_REQUEST:
         err = ciot_app_request_handle(&msg->data.request);
@@ -83,8 +83,8 @@ ciot_err_t ciot_app_msg_handle(ciot_msg_t *msg)
         break;
     }
 
-    this.result.type = CIOT_MSG_TYPE_RESPONSE;
-    this.result.err_code = err;
+    this.result.msg = CIOT_MSG_TYPE_RESPONSE;
+    this.result.err = err;
 
     return err;
 }
