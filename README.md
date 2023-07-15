@@ -51,7 +51,7 @@ You can create an ciot_custom_config.h, to enabled/disabled each feature and cus
 #define CIOT_CONFIG_FEATURE_UART 0
 #define CIOT_CONFIG_FEATURE_USB 0
 #define CIOT_CONFIG_FEATURE_ETHERNET 0
-#define CIOT_CONFIG_FEATURE_WIFI 1
+#define CIOT_CONFIG_FEATURE_WIFI 0
 #define CIOT_CONFIG_FEATURE_BLE 0
 #define CIOT_CONFIG_FEATURE_ZIGBEE 0
 #define CIOT_CONFIG_FEATURE_LORA 0
@@ -61,34 +61,34 @@ You can create an ciot_custom_config.h, to enabled/disabled each feature and cus
 #define CIOT_CONFIG_FEATURE_GPIO 0
 #define CIOT_CONFIG_FEATURE_RTC 1
 #define CIOT_CONFIG_FEATURE_EEPROM 0
-#define CIOT_CONFIG_FEATURE_FLASH 1
+#define CIOT_CONFIG_FEATURE_FLASH 0
 #define CIOT_CONFIG_FEATURE_SDCARD 0
-#define CIOT_CONFIG_FEATURE_HARDDISK 0
-#define CIOT_CONFIG_FEATURE_DISPLAY 0
+#define CIOT_CONFIG_FEATURE_HARDDISK 1
+#define CIOT_CONFIG_FEATURE_DISPLAY 1
+#define CIOT_CONFIG_FEATURE_STORAGE 1
+#define CIOT_CONFIG_FEATURE_SYS 1
 #define CIOT_CONFIG_FEATURE_OTA 0
-#define CIOT_CONFIG_FEATURE_NTP 1
-#define CIOT_CONFIG_FEATURE_MQTT 0
-#define CIOT_CONFIG_FEATURE_HTTP_CLIENT 0
+#define CIOT_CONFIG_FEATURE_NTP 0
+#define CIOT_CONFIG_FEATURE_MQTT 1
 #define CIOT_CONFIG_FEATURE_HTTP_SERVER 1
+#define CIOT_CONFIG_FEATURE_HTTP_CLIENT 0
 #define CIOT_CONFIG_FEATURE_COAP 0
 #define CIOT_CONFIG_FEATURE_MODBUS_RTU 0
 #define CIOT_CONFIG_FEATURE_MODBUS_TCP 0
 #define CIOT_CONFIG_FEATURE_OPCUA 0
 #define CIOT_CONFIG_FEATURE_DATALOGGER 0
 #define CIOT_CONFIG_FEATURE_GATEWAY 0
-#define CIOT_CONFIG_FEATURE_SCHEDULER 0
-#define CIOT_CONFIG_FEATURE_AI 0
 ```
 
-If an client try to use an unsupported feature, the CIOT API will return an error code 2 (CIOT_ERR_FEATURE_NOT_SUPPORTED).
+If an client try to use an disabled feature, the CIOT API will return an error code 10(CIOT_ERR_INVALID_INTERFACE).
 
 ```json
 {
 	"msg": 2, 
 	"request": 1,
 	"interface": 65,
-	"err_code": 2,
-	"err_msg": "Feature Not Supported"
+	"err_code": 10,
+	"err_msg": "Invalid Interface"
 }
 ```
 
