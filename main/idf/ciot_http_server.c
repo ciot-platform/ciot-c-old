@@ -9,6 +9,10 @@
  * 
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_HTTP_SERVER
+
 #include "esp_http_server.h"
 #include "esp_log.h"
 
@@ -134,3 +138,5 @@ static esp_err_t ciot_http_server_on_post(httpd_req_t *req)
         return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, err_msg);
     }
 }
+
+#endif

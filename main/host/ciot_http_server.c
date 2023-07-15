@@ -9,11 +9,15 @@
  *
  */
 
+#include "ciot_config.h"
+#include "ciot_http_server.h"
+
+#if CIOT_CONFIG_FEATURE_HTTP_SERVER
+
 #include "mongoose.h"
 
 #include "ciot_app.h"
 #include "ciot_data_io.h"
-#include "ciot_http_server.h"
 
 typedef struct ciot_http_server
 {
@@ -154,3 +158,5 @@ static void ciot_http_server_event_handle(struct mg_connection *c, int ev, void 
     }
     (void)fn_data;
 }
+
+#endif

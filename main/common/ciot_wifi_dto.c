@@ -10,6 +10,9 @@
  */
 
 #include "ciot_wifi.h"
+#include "ciot_wifi.h"
+
+#if CIOT_CONFIG_FEATURE_WIFI
 
 static ciot_err_t ciot_wifi_status_data_to_json(CJSON_PARAMETERS(ciot_wifi_status_data_t), ciot_wifi_interface_t interface);
 static ciot_err_t ciot_wifi_ap_status_to_json(CJSON_PARAMETERS(ciot_wifi_ap_status_t));
@@ -102,3 +105,5 @@ static ciot_err_t ciot_wifi_ap_info_to_json(CJSON_PARAMETERS(ciot_wifi_ap_info_t
     CJSON_ADD_NUMBER_ARRAY(bssid);
     return CIOT_ERR_OK;
 }
+
+#endif

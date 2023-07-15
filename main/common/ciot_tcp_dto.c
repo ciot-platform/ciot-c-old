@@ -12,7 +12,10 @@
 #ifndef __CIOT_TCP_DTO__H__
 #define __CIOT_TCP_DTO__H__
 
+#include "ciot_config.h"
 #include "ciot_tcp.h"
+
+#if CIOT_CONFIG_FEATURE_ETHERNET || CIOT_CONFIG_FEATURE_WIFI
 
 static ciot_err_t ciot_tcp_ip_config_from_json(CJSON_PARAMETERS(ciot_tcp_ip_config_t));
 static ciot_err_t ciot_tcp_ip_config_to_json(CJSON_PARAMETERS(ciot_tcp_ip_config_t));
@@ -104,5 +107,7 @@ static ciot_err_t ciot_tcp_dhcp_info_to_json(CJSON_PARAMETERS(ciot_tcp_dhcp_info
     CJSON_ADD_NUMBER(server);
     return CIOT_ERR_OK;
 }
+
+#endif
 
 #endif  //!__CIOT_TCP_DTO__H__

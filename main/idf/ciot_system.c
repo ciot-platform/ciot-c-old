@@ -9,6 +9,10 @@
  * 
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_SYS
+
 #include <sys/time.h>
 
 #include "esp_system.h"
@@ -23,7 +27,6 @@
 #include "ciot_system.h"
 #include "ciot_storage.h"
 #include "ciot_settings.h"
-#include "ciot_config.h"
 
 static const char *TAG = "ciot_system";
 
@@ -69,3 +72,5 @@ static void reset_task(void *pvParameters)
     vTaskDelay(pdMS_TO_TICKS(1000));
     esp_restart();
 }
+
+#endif

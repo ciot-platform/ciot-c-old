@@ -9,6 +9,11 @@
  * 
  */
 
+#include "ciot_config.h"
+#include "ciot_mqtt.h"
+
+#if CIOT_CONFIG_FEATURE_MQTT
+
 #include "mqtt_client.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
@@ -23,7 +28,6 @@
 #include "freertos/task.h"
 
 #include "ciot_data_io.h"
-#include "ciot_mqtt.h"
 
 #define CIOT_MQTT_EVENT_BIT_CONNECT_DONE BIT0
 #define CIOT_MQTT_TIMEOUT 5000
@@ -163,3 +167,5 @@ static void ciot_mqtt_event_handler(void *handler_args, esp_event_base_t base, i
         break;
     }
 }
+
+#endif

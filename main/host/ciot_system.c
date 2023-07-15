@@ -9,6 +9,10 @@
  * 
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_SYS
+
 #include <stdlib.h>
 
 #ifdef  _WIN32
@@ -17,7 +21,6 @@
 
 #include "ciot_system.h"
 #include "ciot_storage.h"
-#include "ciot_config.h"
 
 static size_t ciot_system_get_free_ram();
 static time_t ciot_system_get_lifetime();
@@ -112,4 +115,6 @@ static time_t ciot_system_get_lifetime()
     fclose(uptime_file);
     return uptime;
 }
+#endif
+
 #endif

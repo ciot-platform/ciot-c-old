@@ -91,11 +91,11 @@ static void ciot_app_task(void *args)
             xEventGroupSetBits(this.event_group, CIOT_APP_EVENT_BIT_DONE);
             if (err != CIOT_ERR_OK)
             {
-                ESP_LOGE(TAG, "Message %d processed with err code %x", msg->type, err);
+                ESP_LOGE(TAG, "Message %d processed with err code %x", msg->msg, err);
             }
             else
             {
-                ESP_LOGI(TAG, "Message %d processed with err code %x", msg->type, err);
+                ESP_LOGI(TAG, "Message %d processed with err code %x", msg->msg, err);
             }
         }
     }
