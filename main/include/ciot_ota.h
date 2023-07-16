@@ -37,6 +37,7 @@ typedef struct ciot_ota_config
     char url[256];
     bool force;
     bool encrypted;
+    int timeout;
 } ciot_ota_config_t;
 
 typedef struct ciot_ota_info
