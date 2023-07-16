@@ -1,21 +1,23 @@
-idf_component_register(SRCS 
+idf_component_register(SRCS
                         common/ciot_app.c
                         common/ciot_data_io.c
                         common/ciot_err.c
-                        common/ciot_msg_dto.c 
-                        common/ciot_mqtt_dto.c 
-                        common/ciot_ntp_dto.c 
-                        common/ciot_settings.c 
-                        common/ciot_system_dto.c 
-                        common/ciot_tcp_dto.c 
-                        common/ciot_wifi_dto.c 
+                        common/ciot_msg_dto.c
+                        common/ciot_mqtt_dto.c
+                        common/ciot_ntp_dto.c
+                        common/ciot_ota_dto.c
+                        common/ciot_settings.c
+                        common/ciot_system_dto.c
+                        common/ciot_tcp_dto.c
+                        common/ciot_wifi_dto.c
                         idf/ciot_app.c
                         idf/ciot_http_server.c
                         idf/ciot_mqtt.c
-                        idf/ciot_ntp.c 
-                        idf/ciot_storage.c 
-                        idf/ciot_system.c 
-                        idf/ciot_tcp.c 
-                        idf/ciot_wifi.c 
+                        idf/ciot_ntp.c
+                        idf/ciot_ota.c
+                        idf/ciot_storage.c
+                        idf/ciot_system.c
+                        idf/ciot_tcp.c
+                        idf/ciot_wifi.c
                         main.c
                     INCLUDE_DIRS "." "include" "idf")

@@ -3,7 +3,7 @@ CIOT 0.2.0-alpha
 
 > **Advise:** This is an work in progress. Don't use it on production environments.
 
-CIOT is an complete IoT standard API implemented in ansi C, compatible with esp-idf, windows, and linux. The CIOT API can be reached by an HTTP Client, but it's designed do easily support any compatible protocol in future. Each CIOT component can be used individually as an library. Not used components can be disabled on macros described on Features item.
+CIOT is an complete IoT standard API implemented in ansi C, compatible with esp-idf, windows, and linux. The CIOT API can be reached by an HTTP Client, but it's designed to easily support any compatible protocol in future. Each CIOT component can be used individually as an library. Not used components can be disabled on macros described on Features item.
 
 Table of contents:
 
