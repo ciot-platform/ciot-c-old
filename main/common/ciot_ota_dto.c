@@ -18,7 +18,7 @@
 ciot_err_t ciot_ota_set_config(ciot_ota_t *ota, ciot_ota_config_t *conf)
 {
     ota->config = *conf;
-    return ciot_ota_start();
+    return ciot_ota_start(ota);
 }
 
 ciot_err_t ciot_ota_get_config(ciot_ota_t *ota, ciot_ota_config_t *conf)
