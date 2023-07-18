@@ -15,7 +15,7 @@
 #include "ciot_err.h"
 #include "ciot_json.h"
 
-#define BUFFSIZE 1024
+#define CIOT_OTA_BUFFSIZE 1024
 
 typedef enum ciot_ota_state
 {
@@ -48,16 +48,16 @@ typedef struct ciot_ota_info
 typedef struct ciot_ota_status
 {
     ciot_ota_state_t state;
+    ciot_err_t error;
 } ciot_ota_status_t;
 
 typedef struct ciot_ota
 {
     ciot_ota_callbacks_t callbacks;
     ciot_ota_config_t config;
-    ciot_err_t err_code;
     ciot_ota_status_t status;
     ciot_ota_info_t info;
-    char buffer[BUFFSIZE];
+    char *buffer;
     void *task;
 } ciot_ota_t;
 
@@ -67,7 +67,7 @@ ciot_err_t ciot_ota_get_status(ciot_ota_t *ota, ciot_ota_status_t *status);
 ciot_err_t ciot_ota_get_info(ciot_ota_t *ota, ciot_ota_info_t *info);
 ciot_err_t ciot_ota_set_callbacks(ciot_ota_t *ota, ciot_ota_callbacks_t *callbacks);
 
-ciot_err_t ciot_ota_start(void);
+ciot_err_t ciot_ota_start(ciot_ota_t *ota);
 
 ciot_err_t ciot_ota_config_from_json(CJSON_PARAMETERS(ciot_ota_config_t));
 ciot_err_t ciot_ota_config_to_json(CJSON_PARAMETERS(ciot_ota_config_t));
