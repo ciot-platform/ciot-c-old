@@ -33,10 +33,13 @@
 #include "ciot_ota.h"
 #include "ciot_tasks.h"
 
+#define CIOT_OTA_EVENT_BIT_DONE BIT0
+
 static const char *TAG = "hdr_ota";
 
 static void ciot_ota_task(void *pvParameters);
 static void ciot_ota_task_fatal_error(ciot_ota_t *ota);
+static void ciot_ota_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 
 #ifdef CONFIG_ESP_HTTPS_OTA_DECRYPT_CB
 static ciot_err_t ciot_ota_validate_image_header(esp_app_desc_t *new_app_info);
@@ -59,9 +62,16 @@ ciot_err_t ciot_ota_start(ciot_ota_t *ota)
         return CIOT_ERR_INVALID_STATE;
     }
 
+    if (ota->event_group == NULL)
+    {
+        ota->event_group = xEventGroupCreate();
+    }
+
     ota->buffer = malloc(CIOT_OTA_BUFFSIZE);
-    ota->status.state = CIOT_OTA_STATE_IN_PROGRESS;
+    ota->status.state = CIOT_OTA_STATE_INIT;
     ota->status.error = CIOT_ERR_OK;
+
+    ESP_ERROR_CHECK(esp_event_handler_register(ESP_HTTPS_OTA_EVENT, ESP_EVENT_ANY_ID, ciot_ota_event_handler, ota));
 
     xTaskCreatePinnedToCore(
         ciot_ota_task,
@@ -71,8 +81,8 @@ ciot_err_t ciot_ota_start(ciot_ota_t *ota)
         CIOT_OTA_TASK_TASK_PRIORITY,
         ota->task,
         CIOT_OTA_TASK_CORE_ID);
-
-    return CIOT_ERR_OK;
+    xEventGroupWaitBits(ota->event_group, CIOT_OTA_EVENT_BIT_DONE, pdTRUE, pdFALSE, ota->config.timeout / portTICK_PERIOD_MS);
+    return ota->status.error;
 }
 
 static void ciot_ota_task(void *pvParameters)
@@ -119,8 +129,8 @@ static void ciot_ota_task(void *pvParameters)
         ota->callbacks.on_ota_started();
     }
 
-    esp_https_ota_handle_t https_ota_handle = NULL;
-    ota->status.error = esp_https_ota_begin(&ota_config, &https_ota_handle);
+    ota->handle = NULL;
+    ota->status.error = esp_https_ota_begin(&ota_config, &ota->handle);
     if (ota->status.error != ESP_OK)
     {
         ESP_LOGE(TAG, "ESP HTTPS OTA Begin failed!");
@@ -129,14 +139,14 @@ static void ciot_ota_task(void *pvParameters)
 
     while (1)
     {
-        ota->status.error = esp_https_ota_perform(https_ota_handle);
+        ota->status.error = esp_https_ota_perform(ota->handle);
         if (ota->status.error != ESP_ERR_HTTPS_OTA_IN_PROGRESS)
         {
             break;
         }
     }
 
-    if (!esp_https_ota_is_complete_data_received(https_ota_handle))
+    if (!esp_https_ota_is_complete_data_received(ota->handle))
     {
         ESP_LOGE(TAG, "Complete data was not received.");
     }
@@ -148,16 +158,15 @@ static void ciot_ota_task(void *pvParameters)
             ota->status.error = esp_encrypted_img_decrypt_end(decrypt_handle);
             if (ota->status.error != ESP_OK)
             {
-                esp_https_ota_abort(https_ota_handle);
+                esp_https_ota_abort(ota->handle);
                 ESP_LOGE(TAG, "upgrade failed");
                 ciot_ota_task_fatal_error(ota);
                 return;
             }
         }
 #endif
-
-        ota->status.error = esp_https_ota_finish(https_ota_handle);
-        if (ota->status.error == ESP_OK)
+        ota->status.error = esp_https_ota_finish(ota->handle);
+        if (ota->status.error == ESP_OK && ota->config.restart)
         {
             ESP_LOGI(TAG, "Prepare to restart system!");
 
@@ -169,26 +178,28 @@ static void ciot_ota_task(void *pvParameters)
             vTaskDelay(1000 / portTICK_PERIOD_MS);
             esp_restart();
         }
-        else
+        if (ota->status.error != ESP_OK)
         {
             ESP_LOGE(TAG, "ESP_HTTPS_OTA upgrade failed 0x%x", ota->status.error);
             ciot_ota_task_fatal_error(ota);
         }
     }
 
-    esp_https_ota_abort(https_ota_handle);
-    ESP_LOGE(TAG, "upgrade failed");
-    ciot_ota_task_fatal_error(ota);
+    xEventGroupSetBits(ota->event_group, CIOT_OTA_EVENT_BIT_DONE);
+
+    (void)vTaskDelete(NULL);
 }
 
 static void __attribute__((noreturn)) ciot_ota_task_fatal_error(ciot_ota_t *ota)
 {
     ESP_LOGE(TAG, "Exiting task due to fatal error...");
 
+    ota->status.state = CIOT_OTA_STATE_ERROR;
     if (ota->callbacks.on_ota_error != NULL)
     {
         ota->callbacks.on_ota_error(ota->status.error);
     }
+    xEventGroupSetBits(ota->event_group, CIOT_OTA_EVENT_BIT_DONE);
 
     (void)vTaskDelete(NULL);
 
@@ -198,151 +209,58 @@ static void __attribute__((noreturn)) ciot_ota_task_fatal_error(ciot_ota_t *ota)
     }
 }
 
-// static void ciot_ota_task(void *pvParameter)
-// {
-//     ciot_ota_t *ota = (ciot_ota_t*)pvParameter;
-//     esp_ota_handle_t update_handle = 0;
-//     const esp_partition_t *update_partition = NULL;
-
-//     ESP_LOGI(TAG, "OTA application start.");
-//     ESP_LOGI(TAG, "config: url:%s", ota->config.url);
-
-//     update_partition = esp_ota_get_next_update_partition(NULL);
-//     assert(update_partition != NULL);
-
-//     esp_http_client_config_t http_client_config = {
-//         .url = (const char*)ota->config.url,
-// #ifdef CONFIG_MBEDTLS_CERTIFICATE_BUNDLE
-//         .crt_bundle_attach = esp_crt_bundle_attach
-// #endif
-//     };
-//     esp_http_client_handle_t client = esp_http_client_init(&http_client_config);
-
-//     if(client == NULL)
-//     {
-//         ESP_LOGE(TAG, "Http client init error");
-//         ota->status.error = CIOT_ERR_INIT;
-//         ciot_ota_task_fatal_error(ota);
-//         return;
-//     }
-
-//     ota->status.error = esp_http_client_open(client, 0);
-//     if(ota->status.error != CIOT_ERR_OK)
-//     {
-//         ciot_ota_task_fatal_error(ota);
-//         esp_http_client_cleanup(client);
-//         return;
-//     }
-
-//     esp_http_client_fetch_headers(client);
-//     ciot_ota_http_read(ota, client, update_handle, update_partition);
-//     ota->status.error = esp_ota_end(update_handle);
-//     if(ota->status.error != CIOT_ERR_OK)
-//     {
-//         ESP_LOGE(TAG, "%s", esp_err_to_name(ota->status.error));
-//         esp_http_client_close(client);
-//         esp_http_client_cleanup(client);
-//         ciot_ota_task_fatal_error(ota);
-//     }
-
-//     ota->status.error = esp_ota_set_boot_partition(update_partition);
-//     if (ota->status.error != ESP_OK)
-//     {
-//         ESP_LOGE(TAG, "%s", esp_err_to_name(ota->status.error));
-//         esp_http_client_close(client);
-//         esp_http_client_cleanup(client);
-//         ciot_ota_task_fatal_error(ota);
-//     }
-
-//     if (ota->callbacks.on_ota_completed != NULL)
-//     {
-//         ota->callbacks.on_ota_completed();
-//     }
-
-//     ESP_LOGI(TAG, "Prepare to restart system!");
-//     vTaskDelay(1000 / portTICK_PERIOD_MS);
-//     esp_restart();
-//     return;
-// }
-
-// static void ciot_ota_http_read(ciot_ota_t *ota, esp_http_client_handle_t client, esp_ota_handle_t update_handle, const esp_partition_t *update_partition)
-// {
-//     int binary_file_lenght = 0;
-//     bool image_header_was_checked = false;
-//     esp_app_desc_t new_app_info;
-
-//     while (true)
-//     {
-//         int data_read = esp_http_client_read(client, ota->buffer, CIOT_OTA_BUFFSIZE);
-//         if(data_read < 0)
-//         {
-//             ESP_LOGE(TAG, "Http client read error");
-//             ota->status.error = CIOT_ERR_READ;
-//             esp_http_client_close(client);
-//             esp_http_client_cleanup(client);
-//             ciot_ota_task_fatal_error(ota);
-//         }
-//         else if(data_read > 0)
-//         {
-//             const int expected_size = sizeof(esp_image_header_t) + sizeof(esp_image_segment_header_t) + sizeof(esp_app_desc_t);
-
-//             if(image_header_was_checked == false && data_read > expected_size)
-//             {
-//                 const int header_size = sizeof(esp_image_header_t) + sizeof(esp_image_segment_header_t);
-//                 const int app_descr_size = sizeof(esp_app_desc_t);
-
-//                 memcpy(&new_app_info, &ota->buffer[header_size], app_descr_size);
-//                 ota->status.error = ciot_ota_validate_image_header(&new_app_info);
-//                 if(ota->status.error != CIOT_ERR_OK && ota->config.force == false)
-//                 {
-//                     esp_http_client_close(client);
-//                     esp_http_client_cleanup(client);
-//                     ciot_ota_task_fatal_error(ota);
-//                 }
-
-//                 image_header_was_checked = true;
-
-//                 if(ota->callbacks.on_ota_started != NULL)
-//                 {
-//                     ota->callbacks.on_ota_started();
-//                 }
-
-//                 ota->status.error = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &update_handle);
-//                 if(ota->status.error != CIOT_ERR_OK)
-//                 {
-//                     ESP_LOGE(TAG, "%s", esp_err_to_name(ota->status.error));
-//                     esp_http_client_close(client);
-//                     esp_http_client_cleanup(client);
-//                     ciot_ota_task_fatal_error(ota);
-//                 }
-//             }
-
-//             if(data_read < expected_size)
-//             {
-//                 ESP_LOGE(TAG, "Received data size is incorrect");
-//                 ota->status.error = CIOT_ERR_INVALID_SIZE;
-//                 esp_http_client_close(client);
-//                 esp_http_client_cleanup(client);
-//                 ciot_ota_task_fatal_error(ota);
-//             }
-
-//             ota->status.error = esp_ota_write(update_handle, (const void *)ota->buffer, data_read);
-//             if(ota->status.error != CIOT_ERR_OK)
-//             {
-//                 ESP_LOGE(TAG, "%s", esp_err_to_name(ota->status.error));
-//                 esp_http_client_close(client);
-//                 esp_http_client_cleanup(client);
-//                 ciot_ota_task_fatal_error(ota);
-//             }
-
-//             binary_file_lenght += data_read;
-//         }
-//         else if(data_read == 0)
-//         {
-//             break;
-//         }
-//     }
-// }
+static void ciot_ota_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+    if(event_base == ESP_HTTPS_OTA_EVENT)
+    {
+        ciot_ota_t *ota = (ciot_ota_t*)arg;
+        switch (event_id)
+        {
+            case ESP_HTTPS_OTA_START:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_START");
+                ota->status.state = CIOT_OTA_STATE_START;
+                break;
+            case ESP_HTTPS_OTA_CONNECTED:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_CONNECTED");
+                ota->status.state = CIOT_OTA_STATE_CONNECTED;
+                break;
+            case ESP_HTTPS_OTA_GET_IMG_DESC:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_GET_IMG_DESC");
+                ota->status.state = CIOT_OTA_STATE_CHECKING_DATA;
+                break;
+            case ESP_HTTPS_OTA_VERIFY_CHIP_ID:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_VERIFY_CHIP_ID");
+                ota->status.state = CIOT_OTA_STATE_CHECKING_DATA;
+                break;
+            case ESP_HTTPS_OTA_DECRYPT_CB:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_DECRYPT_CB");
+                ota->status.state = CIOT_OTA_STATE_DECRYPTING;
+                break;
+            case ESP_HTTPS_OTA_WRITE_FLASH:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_WRITE_FLASH");
+                ota->status.state = CIOT_OTA_STATE_FLASHING;
+                ota->status.image_size = esp_https_ota_get_image_size(ota->handle);
+                ota->status.image_read = esp_https_ota_get_image_len_read(ota->handle);
+                break;
+            case ESP_HTTPS_OTA_UPDATE_BOOT_PARTITION:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_UPDATE_BOOT_PARTITION");
+                ota->status.state = CIOT_OTA_STATE_UPDATE_BOOT_PARTITION;
+                break;
+            case ESP_HTTPS_OTA_FINISH:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_FINISH");
+                ota->status.state = CIOT_OTA_STATE_DONE;
+                xEventGroupSetBits(ota->event_group, CIOT_OTA_EVENT_BIT_DONE);
+                break;
+            case ESP_HTTPS_OTA_ABORT:
+                ESP_LOGI(TAG, "ESP_HTTPS_OTA_ABORT");
+                ota->status.state = CIOT_OTA_STATE_ERROR;
+                xEventGroupSetBits(ota->event_group, CIOT_OTA_EVENT_BIT_DONE);
+                break;
+        default:
+            break;
+        }
+    }
+}
 
 #ifdef CONFIG_ESP_HTTPS_OTA_DECRYPT_CB
 static ciot_err_t ciot_ota_validate_image_header(esp_app_desc_t *new_app_info)
