@@ -1,0 +1,2 @@
+ - Move ciot_mqtt_idf_t struct content to ciot_mqtt_ota_t
+ - Change mqtt and ota ciot_t instances to pointers to safe memory
