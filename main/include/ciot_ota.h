@@ -21,7 +21,14 @@ typedef enum ciot_ota_state
 {
     CIOT_OTA_STATE_ERROR=-1,
     CIOT_OTA_STATE_IDLE,
+    CIOT_OTA_STATE_INIT,
     CIOT_OTA_STATE_IN_PROGRESS,
+    CIOT_OTA_STATE_START,
+    CIOT_OTA_STATE_CONNECTED,
+    CIOT_OTA_STATE_CHECKING_DATA,
+    CIOT_OTA_STATE_DECRYPTING,
+    CIOT_OTA_STATE_FLASHING,
+    CIOT_OTA_STATE_UPDATE_BOOT_PARTITION,
     CIOT_OTA_STATE_DONE,
 } ciot_ota_state_t;
 
@@ -38,6 +45,7 @@ typedef struct ciot_ota_config
     bool force;
     bool encrypted;
     int timeout;
+    bool restart;
 } ciot_ota_config_t;
 
 typedef struct ciot_ota_info
@@ -49,6 +57,8 @@ typedef struct ciot_ota_status
 {
     ciot_ota_state_t state;
     ciot_err_t error;
+    size_t image_size;
+    size_t image_read;
 } ciot_ota_status_t;
 
 typedef struct ciot_ota
@@ -59,6 +69,8 @@ typedef struct ciot_ota
     ciot_ota_info_t info;
     char *buffer;
     void *task;
+    void *handle;
+    void *event_group;
 } ciot_ota_t;
 
 ciot_err_t ciot_ota_set_config(ciot_ota_t *ota, ciot_ota_config_t *conf);
