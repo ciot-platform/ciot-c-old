@@ -9,11 +9,15 @@
  *
  */
 
+#include "ciot_config.h"
+#include "ciot_http_server.h"
+
+#if CIOT_CONFIG_FEATURE_HTTP_SERVER
+
 #include "mongoose.h"
 
 #include "ciot_app.h"
 #include "ciot_data_io.h"
-#include "ciot_http_server.h"
 
 typedef struct ciot_http_server
 {
@@ -77,7 +81,7 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
         {
             char err_msg[64];
             err = CIOT_ERR_INVALID_TYPE;
-            sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG, err, "Content-Type not supported");
+            sprintf(err_msg, CIOT_ERROR_MASK_WITH_MSG, err, "Content-Type not supported");
             mg_http_reply(c, 400, NULL, err_msg);
         }
 
@@ -91,7 +95,7 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
         if (err != CIOT_ERR_OK)
         {
             char err_msg[28];
-            sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
+            sprintf(err_msg, CIOT_ERROR_MASK, err);
             mg_http_reply(c, 400, NULL, err_msg);
         }
         else
@@ -108,12 +112,12 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
                 if (err != CIOT_ERR_OK)
                 {
                     char err_msg[28];
-                    sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK, err);
+                    sprintf(err_msg, CIOT_ERROR_MASK, err);
                     mg_http_reply(c, 400, NULL, err_msg);
                 }
                 else
                 {
-                    int status_code = resp.err_code == CIOT_ERR_OK ? 200 : 500;
+                    int status_code = resp.err == CIOT_ERR_OK ? 200 : 500;
                     mg_http_reply(c, status_code, NULL, resp_data.buffer.content);
                     free(resp_data.buffer.content);
                 }
@@ -123,7 +127,7 @@ static void ciot_http_server_on_post(struct mg_connection *c, struct mg_http_mes
     else
     {
         char err_msg[64];
-        sprintf(err_msg, CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG, CIOT_ERR_INVALID_REQUEST, "Missing Content-Type");
+        sprintf(err_msg, CIOT_ERROR_MASK_WITH_MSG, CIOT_ERR_INVALID_REQUEST, "Missing Content-Type");
         mg_http_reply(c, 400, NULL, err_msg);
     }
 }
@@ -144,7 +148,7 @@ static void ciot_http_server_event_handle(struct mg_connection *c, int ev, void 
         else
         {
             char error_msg[64];
-            sprintf(error_msg, CIOT_HTTP_SERVER_ERROR_MASK_WITH_MSG, CIOT_ERR_NOT_FOUND, "Not Found");
+            sprintf(error_msg, CIOT_ERROR_MASK_WITH_MSG, CIOT_ERR_NOT_FOUND, "Not Found");
             mg_http_reply(c, 404, NULL, error_msg);
         }
         break;
@@ -154,3 +158,5 @@ static void ciot_http_server_event_handle(struct mg_connection *c, int ev, void 
     }
     (void)fn_data;
 }
+
+#endif

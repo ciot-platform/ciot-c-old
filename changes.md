@@ -1,6 +1,6 @@
 # CIOT
 
-## [0.1.0] - 2023-07-02
+## [0.2.0] - 2023-07-11
 
 ### Changed
- - First release
+ - Added support to MQTT

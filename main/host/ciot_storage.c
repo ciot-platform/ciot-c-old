@@ -9,6 +9,10 @@
  *
  */
 
+#include "ciot_config.h"
+
+#if CIOT_CONFIG_FEATURE_STORAGE
+
 #include <stddef.h>
 #include <stdio.h>
 #include <wchar.h>
@@ -124,4 +128,6 @@ size_t ciot_storage_get_size()
 
     return 0;
 }
+#endif
+
 #endif
