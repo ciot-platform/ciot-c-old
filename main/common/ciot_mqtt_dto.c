@@ -20,8 +20,8 @@
 #include "ciot_msg_dto.h"
 #include "ciot_app.h"
 
-static ciot_err_t ciot_mqtt_config_data_union_from_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config_type);
-static ciot_err_t ciot_mqtt_config_data_union_to_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config_type);
+static ciot_err_t ciot_mqtt_config_data_union_from_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config);
+static ciot_err_t ciot_mqtt_config_data_union_to_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config);
 
 static ciot_err_t ciot_mqtt_config_data_from_json(CJSON_PARAMETERS(ciot_mqtt_config_data_t));
 static ciot_err_t ciot_mqtt_config_data_to_json(CJSON_PARAMETERS(ciot_mqtt_config_data_t));
@@ -37,11 +37,11 @@ static ciot_err_t ciot_mqtt_set_config_topics(ciot_mqtt_t *mqtt, ciot_mqtt_confi
 
 ciot_err_t ciot_mqtt_set_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *conf)
 {
-    switch (conf->config_type)
+    switch (conf->config)
     {
     case CIOT_MQTT_CONFIG_CONNECTION:
         return ciot_mqtt_set_config_connection(mqtt, &conf->data.connection);
-    case CIOT_MQTT_CONFIG_TOPICS:
+    case CIOT_MQTT_CONFIG_API_TOPICS:
         return ciot_mqtt_set_config_topics(mqtt, &conf->data.topics);
     case CIOT_MQTT_CONFIG_ALL:
         CIOT_ERROR_RETURN(ciot_mqtt_set_config_connection(mqtt, &conf->data.config.connection));
@@ -53,7 +53,7 @@ ciot_err_t ciot_mqtt_set_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *conf)
 
 ciot_err_t ciot_mqtt_get_config(ciot_mqtt_t *mqtt, ciot_mqtt_config_t *config)
 {
-    config->config_type = CIOT_MQTT_CONFIG_ALL;
+    config->config = CIOT_MQTT_CONFIG_ALL;
     config->data.config = mqtt->config;
     return CIOT_ERR_OK;
 }
@@ -127,16 +127,16 @@ ciot_err_t ciot_mqtt_handle_data(ciot_mqtt_t *mqtt, void *data)
 ciot_err_t ciot_mqtt_config_from_json(CJSON_PARAMETERS(ciot_mqtt_config_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_NUMBER(config_type);
-    CJSON_GET_UNION(data, ciot_mqtt_config_data_union_from_json, config_type);
+    CJSON_GET_NUMBER(config);
+    CJSON_GET_UNION(data, ciot_mqtt_config_data_union_from_json, config);
     return CIOT_ERR_OK;
 }
 
 ciot_err_t ciot_mqtt_config_to_json(CJSON_PARAMETERS(ciot_mqtt_config_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(config_type);
-    CJSON_ADD_UNION(data, ciot_mqtt_config_data_union_to_json, config_type);
+    CJSON_ADD_NUMBER(config);
+    CJSON_ADD_UNION_TO_ROOT(data, ciot_mqtt_config_data_union_to_json, config);
     return CIOT_ERR_OK;
 }
 
@@ -170,21 +170,21 @@ ciot_err_t ciot_mqtt_status_to_json(CJSON_PARAMETERS(ciot_mqtt_status_t))
     return CIOT_ERR_OK;
 }
 
-static ciot_err_t ciot_mqtt_config_data_union_from_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config_type)
+static ciot_err_t ciot_mqtt_config_data_union_from_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config)
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_GET_OBJ_UNION_CHILD(connection, ciot_mqtt_config_connection_from_json, config_type, CIOT_MQTT_CONFIG_CONNECTION);
-    CJSON_GET_OBJ_UNION_CHILD(topics, ciot_mqtt_config_topics_from_json, config_type, CIOT_MQTT_CONFIG_TOPICS);
-    CJSON_GET_OBJ_UNION_CHILD(config, ciot_mqtt_config_data_from_json, config_type, CIOT_MQTT_CONFIG_ALL);
+    CJSON_GET_OBJ_UNION_CHILD(connection, ciot_mqtt_config_connection_from_json, config, CIOT_MQTT_CONFIG_CONNECTION);
+    CJSON_GET_OBJ_UNION_CHILD(topics, ciot_mqtt_config_topics_from_json, config, CIOT_MQTT_CONFIG_API_TOPICS);
+    CJSON_GET_OBJ_UNION_CHILD(config, ciot_mqtt_config_data_from_json, config, CIOT_MQTT_CONFIG_ALL);
     return CIOT_ERR_OK;
 }
 
-static ciot_err_t ciot_mqtt_config_data_union_to_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config_type)
+static ciot_err_t ciot_mqtt_config_data_union_to_json(CJSON_PARAMETERS(ciot_mqtt_config_data_u), ciot_mqtt_config_type_t config)
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_OBJ_UNION_CHILD(connection, ciot_mqtt_config_connection_to_json, config_type, CIOT_MQTT_CONFIG_CONNECTION);
-    CJSON_ADD_OBJ_UNION_CHILD(topics, ciot_mqtt_config_topics_to_json, config_type, CIOT_MQTT_CONFIG_TOPICS);
-    if (config_type == CIOT_MQTT_CONFIG_ALL)
+    CJSON_ADD_OBJ_UNION_CHILD(connection, ciot_mqtt_config_connection_to_json, config, CIOT_MQTT_CONFIG_CONNECTION);
+    CJSON_ADD_OBJ_UNION_CHILD(topics, ciot_mqtt_config_topics_to_json, config, CIOT_MQTT_CONFIG_API_TOPICS);
+    if (config == CIOT_MQTT_CONFIG_ALL)
     {
         int err = ciot_mqtt_config_data_to_json(json, &ptr->config);
         if (err != CIOT_ERR_OK)

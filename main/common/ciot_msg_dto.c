@@ -39,7 +39,8 @@ ciot_err_t ciot_msg_request_from_json(CJSON_PARAMETERS(ciot_msg_request_t))
 ciot_err_t ciot_msg_request_to_json(CJSON_PARAMETERS(ciot_msg_request_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(request);
+    if(ptr->request != CIOT_MSG_REQUEST_NONE)
+        CJSON_ADD_NUMBER(request);
     CJSON_ADD_NUMBER(interface);
     return CIOT_ERR_OK;
 }
