@@ -18,7 +18,7 @@
 #include "ciot_config_linux.h"
 #else
 #include "ciot_config_idf.h"
-#endif  // ESP_PLATFORM
+#endif
 
 #define CIOT_CONFIG_WIFI_AP_FILENAME "wifi_ap.dat"
 #define CIOT_CONFIG_WIFI_STA_FILENAME "wifi_sta.dat"
@@ -31,8 +31,8 @@
 #define CIOT_CONFIG_HTTP_SERVER_PORT 8000
 #define CIOT_CONFIG_HTTP_SERVER_ENDPOINT "/v1/ciot"
 
-#define CIOT_CONFIG_VERSION { 0, 2, 0, 0 }
-#define CIOT_CONFIG_DATE { 23, 07, 15 }
+#define CIOT_CONFIG_VERSION { 0, 3, 0, 0 }
+#define CIOT_CONFIG_DATE { 23, 07, 26 }
 #define CIOT_CONFIG_DEFAULT_TIMEZONE "<-03>3"
 
 #define CIOT_CONFIG_API_ERROR_MESSAGES 1

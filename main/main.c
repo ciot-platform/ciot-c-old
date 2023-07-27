@@ -36,7 +36,7 @@ void app_main(void)
 int	main(int argc, char **argv)
 {
     app_main();
-    return 0;
+    return ciot_system_get_err_code();
 }
 
 #endif  //_WIN32

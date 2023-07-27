@@ -39,7 +39,8 @@ ciot_err_t ciot_msg_request_from_json(CJSON_PARAMETERS(ciot_msg_request_t))
 ciot_err_t ciot_msg_request_to_json(CJSON_PARAMETERS(ciot_msg_request_t))
 {
     CJSON_CHECK_PARAMETERS();
-    CJSON_ADD_NUMBER(request);
+    if(ptr->request != CIOT_MSG_REQUEST_NONE)
+        CJSON_ADD_NUMBER(request);
     CJSON_ADD_NUMBER(interface);
     return CIOT_ERR_OK;
 }
@@ -66,6 +67,9 @@ ciot_err_t ciot_msg_config_data_from_json(CJSON_PARAMETERS(ciot_msg_config_data_
 #endif
 #if CIOT_CONFIG_FEATURE_MQTT
     CJSON_GET_OBJ_UNION_CHILD(mqtt, ciot_mqtt_config_from_json, interface, CIOT_MSG_IF_MQTT);
+#endif
+#if CIOT_CONFIG_FEATURE_OTA
+    CJSON_GET_OBJ_UNION_CHILD(ota, ciot_ota_config_from_json, interface, CIOT_MSG_IF_OTA);
 #endif
     return CIOT_ERR_OK;
 }
@@ -132,6 +136,9 @@ ciot_err_t ciot_msg_info_data_to_json(CJSON_PARAMETERS(ciot_msg_info_data_t), ci
 #if CIOT_CONFIG_FEATURE_MQTT
     CJSON_ADD_OBJ_UNION_CHILD(mqtt, ciot_mqtt_info_to_json, interface, CIOT_MSG_IF_MQTT);
 #endif
+#if CIOT_CONFIG_FEATURE_OTA
+    CJSON_ADD_OBJ_UNION_CHILD(ota, ciot_ota_info_to_json, interface, CIOT_MSG_IF_OTA);
+#endif
     return CIOT_ERR_OK;
 }
 
@@ -158,6 +165,9 @@ ciot_err_t ciot_msg_status_data_to_json(CJSON_PARAMETERS(ciot_msg_status_data_t)
 #if CIOT_CONFIG_FEATURE_MQTT
     CJSON_ADD_OBJ_UNION_CHILD(mqtt, ciot_mqtt_status_to_json, interface, CIOT_MSG_IF_MQTT);
 #endif
+#if CIOT_CONFIG_FEATURE_OTA
+    CJSON_ADD_OBJ_UNION_CHILD(ota, ciot_ota_status_to_json, interface, CIOT_MSG_IF_OTA);
+#endif
     return CIOT_ERR_OK;
 }
 
@@ -183,6 +193,9 @@ ciot_err_t ciot_msg_config_data_to_json(CJSON_PARAMETERS(ciot_msg_config_data_t)
 #endif
 #if CIOT_CONFIG_FEATURE_MQTT
     CJSON_ADD_OBJ_UNION_CHILD(mqtt, ciot_mqtt_config_to_json, interface, CIOT_MSG_IF_MQTT);
+#endif
+#if CIOT_CONFIG_FEATURE_OTA
+    CJSON_ADD_OBJ_UNION_CHILD(ota, ciot_ota_config_to_json, interface, CIOT_MSG_IF_OTA);
 #endif
     return CIOT_ERR_OK;
 }

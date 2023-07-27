@@ -155,6 +155,10 @@ static ciot_err_t ciot_app_config_handle(ciot_msg_config_t *config)
     case CIOT_MSG_IF_MQTT:
         return ciot_mqtt_set_config(&this.mqtt, &config->data.mqtt);
 #endif
+#if CIOT_CONFIG_FEATURE_OTA
+    case CIOT_MSG_IF_OTA:
+        return ciot_ota_set_config(&this.ota, &config->data.ota);
+#endif
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -179,6 +183,10 @@ static ciot_err_t ciot_app_get_config_handle(ciot_msg_interface_t interface)
 #if CIOT_CONFIG_FEATURE_MQTT
     case CIOT_MSG_IF_MQTT:
         return ciot_mqtt_get_config(&this.mqtt, &this.result.data.config.mqtt);
+#endif
+#if CIOT_CONFIG_FEATURE_OTA
+    case CIOT_MSG_IF_OTA:
+        return ciot_ota_get_config(&this.ota, &this.result.data.config.ota);
 #endif
     default:
         return CIOT_ERR_INVALID_INTERFACE;
@@ -205,6 +213,10 @@ static ciot_err_t ciot_app_get_info_handle(ciot_msg_interface_t interface)
     case CIOT_MSG_IF_MQTT:
         return ciot_mqtt_get_info(&this.mqtt, &this.result.data.info.mqtt);
 #endif
+#if CIOT_CONFIG_FEATURE_OTA
+    case CIOT_MSG_IF_OTA:
+        return ciot_ota_get_info(&this.ota, &this.result.data.info.ota);
+#endif
     default:
         return CIOT_ERR_INVALID_INTERFACE;
     }
@@ -229,6 +241,10 @@ static ciot_err_t ciot_app_get_status_handle(ciot_msg_interface_t interface)
 #if CIOT_CONFIG_FEATURE_MQTT
     case CIOT_MSG_IF_MQTT:
         return ciot_mqtt_get_status(&this.mqtt, &this.result.data.status.mqtt);
+#endif
+#if CIOT_CONFIG_FEATURE_OTA
+    case CIOT_MSG_IF_OTA:
+        return ciot_ota_get_status(&this.ota, &this.result.data.status.ota);
 #endif
     default:
         return CIOT_ERR_INVALID_INTERFACE;

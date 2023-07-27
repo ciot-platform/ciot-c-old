@@ -43,7 +43,12 @@ typedef struct ciot_app
     bool data_received;
     ciot_app_data_t data;
     ciot_msg_response_t result;
+#if CIOT_CONFIG_FEATURE_MQTT
     ciot_mqtt_t mqtt;
+#endif
+#if CIOT_CONFIG_FEATURE_OTA
+    ciot_ota_t ota;
+#endif
 } ciot_app_t;
 
 ciot_err_t ciot_app_init(ciot_app_config_t *conf);

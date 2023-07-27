@@ -37,7 +37,7 @@ typedef enum
 {
     CIOT_MQTT_CONFIG_UNKNOWN,
     CIOT_MQTT_CONFIG_CONNECTION,
-    CIOT_MQTT_CONFIG_TOPICS,
+    CIOT_MQTT_CONFIG_API_TOPICS,
     CIOT_MQTT_CONFIG_ALL
 } ciot_mqtt_config_type_t;
 
@@ -73,7 +73,7 @@ typedef union ciot_mqtt_config_data_union
 
 typedef struct ciot_mqtt_config
 {
-    ciot_mqtt_config_type_t config_type;
+    ciot_mqtt_config_type_t config;
     ciot_mqtt_config_data_u data;
 } ciot_mqtt_config_t;
 

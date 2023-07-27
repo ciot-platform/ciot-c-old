@@ -19,6 +19,7 @@
 #include "ciot_system.h"
 #include "ciot_ntp.h"
 #include "ciot_mqtt.h"
+#include "ciot_ota.h"
 
 typedef enum ciot_msg_type
 {
@@ -44,6 +45,7 @@ typedef enum ciot_msg_interface
     CIOT_MSG_IF_SYSTEM = 64,
     CIOT_MSG_IF_NTP,
     CIOT_MSG_IF_MQTT,
+    CIOT_MSG_IF_OTA,
 } ciot_msg_interface_t;
 
 typedef struct ciot_msg_request
@@ -58,6 +60,7 @@ typedef union ciot_msg_config_data
     ciot_system_config_t system;
     ciot_ntp_config_t ntp;
     ciot_mqtt_config_t mqtt;
+    ciot_ota_config_t ota;
 } ciot_msg_config_data_t;
 
 typedef struct ciot_msg_config
@@ -72,6 +75,7 @@ typedef union ciot_msg_info_data
     ciot_system_info_t system;
     ciot_ntp_info_t ntp;
     ciot_mqtt_info_t mqtt;
+    ciot_ota_info_t ota;
 } ciot_msg_info_data_t;
 
 typedef struct ciot_msg_info
@@ -86,6 +90,7 @@ typedef union ciot_msg_status_data
     ciot_system_status_t system;
     ciot_ntp_status_t ntp;
     ciot_mqtt_status_t mqtt;
+    ciot_ota_status_t ota;
 } ciot_msg_status_data_t;
 
 typedef struct ciot_msg_status

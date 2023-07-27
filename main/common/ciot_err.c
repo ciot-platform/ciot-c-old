@@ -50,12 +50,22 @@ const char *ciot_err_to_message(ciot_err_t err)
         return "Invalid Request";
     case CIOT_ERR_INVALID_STATE:
         return "Invalid State";
+    case CIOT_ERR_INVALID_VERSION:
+        return "Invalid Version";
+    case CIOT_ERR_SAME_VERSION:
+        return "Same Version";
+    case CIOT_ERR_INVALID_SIZE:
+        return "Invalid Size";
     case CIOT_ERR_MEMORY_ALLOCATION:
         return "Memory Allocation Error";
     case CIOT_ERR_MEMORY_OVERFLOW:
         return "Memory Overflow Error";
     case CIOT_ERR_NULL_REFERENCE:
         return "Null Reference";
+    case CIOT_ERR_INIT:
+        return "Initialization Error";
+    case CIOT_ERR_READ:
+        return "Read Operation Error";
     default:
 #ifdef IDF_VER
     return esp_err_to_name(err);
