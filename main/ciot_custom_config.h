@@ -18,7 +18,7 @@
 #include "ciot_config_linux.h"
 #else
 #include "ciot_config_idf.h"
-#endif  // ESP_PLATFORM
+#endif
 
 #define CIOT_CONFIG_WIFI_AP_FILENAME "wifi_ap.dat"
 #define CIOT_CONFIG_WIFI_STA_FILENAME "wifi_sta.dat"
