@@ -1,6 +1,6 @@
 # CIOT
 
-## [0.2.0] - 2023-07-11
+## [0.3.0] - 2023-07-26
 
 ### Changed
- - Added support to MQTT
+ - Added support to OTA (esp-idf)
