@@ -15,19 +15,29 @@ Table of contents:
       - [Get Status](#get-status)
       - [Scan](#scan)
       - [Set Configuration](#set-configuration)
-	- [System](#system)
-      - [Get Configuration](#get-configuration-1)
-      - [Get Information](#get-information-1)
-      - [Get Status](#get-status-1)
-      - [Restart](#restart)
-      - [Save Settings](#save-settings)
-      - [Clear Settings](#clear-settings)
-      - [Set Configuration](#set-configuration-1)
-	- [NTP](#ntp)
-      - [Get Configuration](#get-configuration-2)
-      - [Get Information](#get-information-2)
-      - [Get Status](#get-status-2)
-      - [Set Configuration](#set-configuration-2)
+    - [System](#system)
+        - [Get Configuration](#get-configuration-1)
+        - [Get Information](#get-information-1)
+        - [Get Status](#get-status-1)
+        - [Restart](#restart)
+        - [Save Settings](#save-settings)
+        - [Clear Settings](#clear-settings)
+        - [Set Configuration](#set-configuration-1)
+    - [NTP](#ntp)
+        - [Get Configuration](#get-configuration-2)
+        - [Get Information](#get-information-2)
+        - [Get Status](#get-status-2)
+        - [Set Configuration](#set-configuration-2)
+    - [MQTT](#mqtt)
+        - [Get Configuration](#get-configuration-3)
+        - [Get Information](#get-information-3)
+        - [Get Status](#get-status-3)
+        - [Set Configuration](#set-configuration-3)
+    - [OTA](#ota)
+        - [Get Configuration](#get-configuration-4)
+        - [Get Information](#get-information-4)
+        - [Get Status](#get-status-4)
+        - [Set Configuration](#set-configuration-4)
  - [Roadmap](#roadmap)
    - [v0.1.0](#v010-handle-wifi-and-ntp-interfaces-accepting-raw-and-json)
    - [v0.2.0](#v020-handle-mqtt-interface-accepting-raw-and-json)
@@ -107,7 +117,7 @@ int main(int argc, char **argv)
       .endpoint = "/v1/ciot"
     }
   };
-  ciot_app_start(&app);
+  return ciot_app_start(&app);
 }
 
 ```
@@ -122,9 +132,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,          /// Message Type   1:request
-  "interface": 1,    /// Interface Type 1:wifi
-  "request": 1       /// Request Type   1:getConfiguration
+  "msg": 1,
+  "interface": 1,
+  "request": 1
 }
 ```
 
@@ -134,20 +144,20 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,                         /// Message Type   2:Response
-  "request": 1,                     /// Request Type   1:getConfiguration
-  "interface": 1,                   /// Interface Type 1:wifi
-  "mode": 0,                        /// Wifi Mode      0:station, 1:accessPoint
-  "ssid": "MY SSID",                /// Wifi SSID
-  "password": "mypassword",         /// Wifi password
-  "ip": {                           /// IP Configuration (Optional)
-    "dhcp": 3,                      /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
-    "address": [192,168,1,16],      /// Device Address
-    "gateway": [192,168,1,254],     /// Network Gateway
-    "mask": [255,255,255,0],        /// Network Mask
-    "dns": [192,168,1,254]          /// Netwokr DNS
+  "msg": 2,
+  "request": 1,
+  "interface": 1,
+  "mode": 0,
+  "ssid": "MY SSID",
+  "password": "mypassword",
+  "ip": {
+    "dhcp": 3,
+    "address": [192,168,1,16],
+    "gateway": [192,168,1,254],
+    "mask": [255,255,255,0],
+    "dns": [192,168,1,254]
   },
-  "timeout": 10000                  /// Connection timeout
+  "timeout": 10000
 }
 ```
 
@@ -159,9 +169,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,          /// Message Type   1:request
-  "interface": 1,    /// Interface Type 1:wifi
-  "request": 2       /// Request Type   2:getInformation
+  "msg": 1,
+  "interface": 1,
+  "request": 2
 }
 ```
 
@@ -171,11 +181,11 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,                       /// Message Type   2:Response
-  "request": 2,                   /// Request Type   2:getInformation
-  "interface": 1,                 /// Interface Type 1:wifi
-  "available": true,              /// Interface is Available
-  "mac": [15,47,53,44,55,77],     /// Device MAC
+  "msg": 2,
+  "request": 2,
+  "interface": 1,
+  "available": true,
+  "mac": [15,47,53,44,55,77],
 }
 ```
 
@@ -187,9 +197,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,           /// Message Type   1:request
-  "request": 3,       /// Request Type   3:getStatus
-  "interface": 1      /// Interface Type 1:wifi
+  "msg": 1,
+  "request": 3,
+  "interface": 1
 }
 ```
 
@@ -199,25 +209,25 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,                           /// Message Type   2:response
-  "request": 3,                       /// Request Type   3:getStatus
-  "interface": 1,                     /// Interface Type 1:wifi
-  "sta": {                            /// Connected Station Status
-    "ssid": "MY-SSID",                /// STA SSID
-    "rssi": -51,                      /// STA rssi
-    "authmode": 3,                    /// STA auth => 1:open, 2:wep, 3:wpaPsk, 4:wpa2Psk, 5:wpaWpa2Psk, 6:wpa2Enterprise, 7:wpa3Psk, 8:wpa2Wpa3Psk, 9:wapiPsk, 10:owe
-    "bssid": [44,55,56,123,222,123]   /// STA bssid (MAC)
+  "msg": 2,
+  "request": 3,
+  "interface": 1,
+  "sta": {
+    "ssid": "MY-SSID",
+    "rssi": -51,
+    "authmode": 3,
+    "bssid": [44,55,56,123,222,123]
   },
-  "tcp": {                            /// Connected TCP Status
-    "state": 3,                       /// TCP State => -1:error, 0:stopped, 1:started, 2:connecting, 3:connected
-    "connection": 2,                  /// TCP Connections Counter
-    "ip": [192,168,1,16],             /// TCP IP Address
-    "dhcp": {                         /// TCP DHCP Status
-      "client": 2,                    /// TCP DHCP Client Status => 0:init, 1:started, 2:stopped
-      "server": 2                     /// TCP DHCP Server Status => 0:init, 1:started, 2:stopped
+  "tcp": {
+    "state": 3,
+    "connection": 2,
+    "ip": [192,168,1,16],
+    "dhcp": {
+      "client": 2,
+      "server": 2
     }
   },
-  "scan": 0                           /// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
+  "scan": 0
 }
 ```
 
@@ -229,9 +239,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,         /// Message Type   1:request
-  "interface": 1,   /// Interface Type 1:wifi
-  "request": 4      /// Request Type   4:scan
+  "msg": 1,
+  "interface": 1,
+  "request": 4
 }
 ```
 
@@ -241,72 +251,72 @@ int main(int argc, char **argv)
 
 ```json
 {
-	"msg": 2,         /// Message Type   1:request
-	"request": 4,     /// Interface Type 1:wifi
-	"interface": 1,   /// Request Type   4:scan
-	"state": 0,       /// Wifi Scanner Status => -1:error, 0:idle, 1:scanning, 2:scanned
-	"result": [
-		{
-			"ssid": "CABO CANAVERAL 3",
-			"rssi": -6,
-			"authmode": 4,
-			"bssid": [40,59,130,108,154,68]
-		},
-		{
-			"ssid": "CABO CANAVERAL 2",
-			"rssi": -23,
-			"authmode": 4,
-			"bssid": [128,143,232,41,30,97]
-		},
-		{
-			"ssid": "CABO CANAVERAL",
-			"rssi": -43,
-			"authmode": 3,
-			"bssid": [16,71,56,232,157,249]
-		},
-		{
-			"ssid": "OMELHOR",
-			"rssi": -69,
-			"authmode": 3,
-			"bssid": [144,117,188,70,37,9]
-		},
-		{
-			"ssid": "Solar-WiFi196W0039",
-			"rssi": -74,
-			"authmode": 3,
-			"bssid": [152,216,99,95,150,255]
-		},
-		{
-			"ssid": "Rosana Salgados 2.4G",
-			"rssi": -80,
-			"authmode": 3,
-			"bssid": [80,27,50,183,145,249]
-		},
-		{
-			"ssid": "Falcao 2g",
-			"rssi": -83,
-			"authmode": 4,
-			"bssid": [48,223,141,5,3,217]
-		},
-		{
-			"ssid": "Geraldo OI FIBRA 2g",
-			"rssi": -87,
-			"authmode": 3,
-			"bssid": [240,104,101,67,127,121]
-		},
-		{
-			"ssid": "Home network",
-			"rssi": -87,
-			"authmode": 3,
-			"bssid": [28,59,243,55,78,130]
-		},
-		{
-			"ssid": "JoaoMiguel",
-			"rssi": -90,
-			"authmode": 3,
-			"bssid": [160,28,141,45,249,128]
-		}
-	]
+  "msg": 2,
+  "request": 4,
+  "interface": 1,
+  "state": 0,
+  "result": [
+    {
+      "ssid": "CABO CANAVERAL 3",
+      "rssi": -6,
+      "authmode": 4,
+      "bssid": [40,59,130,108,154,68]
+    },
+    {
+      "ssid": "CABO CANAVERAL 2",
+      "rssi": -23,
+      "authmode": 4,
+      "bssid": [128,143,232,41,30,97]
+    },
+    {
+      "ssid": "CABO CANAVERAL",
+      "rssi": -43,
+      "authmode": 3,
+      "bssid": [16,71,56,232,157,249]
+    },
+    {
+      "ssid": "OMELHOR",
+      "rssi": -69,
+      "authmode": 3,
+      "bssid": [144,117,188,70,37,9]
+    },
+    {
+      "ssid": "Solar-WiFi196W0039",
+      "rssi": -74,
+      "authmode": 3,
+      "bssid": [152,216,99,95,150,255]
+    },
+    {
+      "ssid": "Rosana Salgados 2.4G",
+      "rssi": -80,
+      "authmode": 3,
+      "bssid": [80,27,50,183,145,249]
+    },
+    {
+      "ssid": "Falcao 2g",
+      "rssi": -83,
+      "authmode": 4,
+      "bssid": [48,223,141,5,3,217]
+    },
+    {
+      "ssid": "Geraldo OI FIBRA 2g",
+      "rssi": -87,
+      "authmode": 3,
+      "bssid": [240,104,101,67,127,121]
+    },
+    {
+      "ssid": "Home network",
+      "rssi": -87,
+      "authmode": 3,
+      "bssid": [28,59,243,55,78,130]
+    },
+    {
+      "ssid": "JoaoMiguel",
+      "rssi": -90,
+      "authmode": 3,
+      "bssid": [160,28,141,45,249,128]
+    }
+  ]
 }
 ```
 
@@ -318,19 +328,19 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 3,                       /// Message Type  	3:setConfiguration
-  "interface": 1,                 /// Interface Type 	1:wifi
-  "ssid": "MY-SSID",              /// Wifi SSID
-  "password": "my-password",      /// Wifi Password
-  "mode": 0,                      /// Wifi Mode => 0:station, 1:accessPoint
-  "ip": {                         /// IP Configuration (Optional)
-    "dhcp": 3,                    /// DHCP Mode => 0:default, 1:client, 2:server, 3:disabled
-    "address": [192,168,1,16],    /// Device Address
-    "gateway": [192,168,1,254],   /// Network Gateway
-    "mask": [255,255,255,0],      /// Network Mask
-    "dns": [192,168,1,254]        /// Netwokr DNS
+  "msg": 3,
+  "interface": 1,
+  "ssid": "MY-SSID",
+  "password": "my-password",
+  "mode": 0,
+  "ip": {
+    "dhcp": 3,
+    "address": [192,168,1,16],
+    "gateway": [192,168,1,254],
+    "mask": [255,255,255,0],
+    "dns": [192,168,1,254]
   },
-  "timeout": 10000                /// Connection timeout
+  "timeout": 10000
 }
 ```
 
@@ -340,9 +350,8 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,       /// Message Type    2:response	
-  "request": 0,   /// Request Type    0:none
-  "interface": 1, /// Interface Type 	1:wifi
+  "msg": 2,
+  "interface": 1
 }
 ```
 
@@ -356,9 +365,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,          /// Message Type   1:request
-  "interface": 64,   /// Interface Type 64:system
-  "request": 1       /// Request Type   1:getConfiguration
+  "msg": 1,
+  "interface": 64,
+  "request": 1
 }
 ```
 
@@ -368,9 +377,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,         /// Message Type    2:response	
-  "request": 1,     /// Request Type    1:getConfiguration
-  "interface": 64,  /// Interface Type 	64:system
+  "msg": 2,
+  "request": 1,
+  "interface": 64,
 }
 ```
 
@@ -382,9 +391,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,          /// Message Type   1:request
-  "interface": 64,   /// Interface Type 64:system
-  "request": 2       /// Request Type   2:getInformation
+  "msg": 1,
+  "interface": 64,
+  "request": 2
 }
 ```
 
@@ -394,17 +403,17 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,                 /// Message Type   1:request
-  "request": 2,             /// Request Type   2:getInformation
-  "interface": 64,          /// Interface Type 64:system
-  "device": 1,              /// Device Type => 0:unknown, 1:generic, 2:sensor, 3:gateway, 4:datalogger, 5:hmi          
-  "os": 2,                  /// Operating System => 0:unknown, 1:bareMetal, 2:freeRTOS, 3:linux, 4:windows, 5:mac
-  "version": [0,0,0,1,0],   /// Software Version: 0.0.0.1-alpha
-  "date": [19,6,23],        /// Built Date: 19 Jun 2023
-  "board": "ESP32 Devkit",  /// Board Name
-  "mcu": "ESP32",           /// MCU Name
-  "storage": 24576,         /// Storage Size in Bytes
-  "features": 8295          /// Fatures Bits Mask
+  "msg": 2,
+  "request": 2,
+  "interface": 64,
+  "device": 1,
+  "os": 2,
+  "version": [0,0,0,1,0],
+  "date": [19,6,23],
+  "board": "ESP32 Devkit",
+  "mcu": "ESP32",
+  "storage": 24576,
+  "features": 8295
 }
 ```
 
@@ -416,9 +425,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,           /// Message Type   1:request
-  "request": 3,       /// Request Type   3:getStatus
-  "interface": 64     /// Interface Type 64:system
+  "msg": 1,
+  "request": 3,
+  "interface": 64
 }
 ```
 
@@ -428,14 +437,14 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,         /// Message Type      1:request
-  "request": 3,     /// Request Type      3:getStatus
-  "interface": 64,  /// Interface Type    64:system
-  "time": 254,      /// Internal Clock Timestamp in Seconds
-  "memory": 218844, /// Free Heap Memory
-  "err": 0,         /// System error code
-  "status": 0,      /// System status code
-  "lifetime": 254   /// Device Lifetime in Seconds
+  "msg": 2,
+  "request": 3,
+  "interface": 64,
+  "time": 254,
+  "memory": 218844
+  "err": 0,
+  "status": 0,
+  "lifetime": 254
 }
 ```
 
@@ -447,9 +456,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,         /// Message Type   1:request
-  "interface": 1,   /// Interface Type 64:system
-  "request": 4      /// Request Type   4:restart
+  "msg": 1,
+  "interface": 1,
+  "request": 4
 }
 ```
 
@@ -459,9 +468,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,         /// Message Type   1:request
-  "request": 4,     /// Request Type   4:restart
-  "interface": 64   /// Interface Type 64:system
+  "msg": 2,
+  "request": 4,
+  "interface": 64
 }
 ```
 
@@ -473,9 +482,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,         /// Message Type   1:request
-  "interface": 1,   /// Interface Type 64:system
-  "request": 5      /// Request Type   5:saveSettings
+  "msg": 1,
+  "interface": 1,
+  "request": 5
 }
 ```
 
@@ -485,9 +494,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,         /// Message Type   2:response
-  "request": 5,     /// Request Type   5:saveSettings
-  "interface": 64   /// Interface Type 64:system
+  "msg": 2,
+  "request": 5,
+  "interface": 64
 }
 ```
 
@@ -499,9 +508,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,         /// Message Type   1:request
-  "interface": 1,   /// Interface Type 64:system
-  "request": 6      /// Request Type   6:clearSettings
+  "msg": 1,
+  "interface": 1,
+  "request": 6
 }
 ```
 
@@ -511,9 +520,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,         /// Message Type   2:response
-  "request": 6,     /// Request Type   6:clearSettings
-  "interface": 64   /// Interface Type 64:system
+  "msg": 2,
+  "request": 6,
+  "interface": 64
 }
 ```
 
@@ -525,8 +534,8 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 3,         /// Message Type   3:setConfiguration
-  "interface": 1,   /// Interface Type 64:system
+  "msg": 3,
+  "interface": 1,
 }
 ```
 
@@ -536,9 +545,8 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,         /// Message Type   2:response
-  "request": 0,     /// Request Type   0:none
-  "interface": 64   /// Interface Type 64:system
+  "msg": 2,
+  "interface": 64
 }
 ```
 
@@ -552,9 +560,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,          /// Message Type   1:request
-  "interface": 65,   /// Interface Type 65:ntp
-  "request": 1       /// Request Type   1:getConfiguration
+  "msg": 1,
+  "interface": 65,
+  "request": 1
 }
 ```
 
@@ -564,14 +572,14 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,                   /// Message Type   1:response
-  "request": 1,               /// Request Type   1:getConfiguration          
-  "interface": 65,            /// Interface Type 65:ntp
-  "op_mode": 0,               /// Operation Mode => 0:pool, 1:listenOnly
-  "sync_mode": 0,             /// Sync Mode => 0:immediatly, 1:smooth
-  "sync_interval": 3600000,   /// Sync Interval in seconds
-  "timezone": "<-03>3",       /// Unix Timezone
-  "timeout": 10000            /// Connection timeout                
+  "msg": 2,
+  "request": 1,
+  "interface": 65,
+  "op_mode": 0,
+  "sync_mode": 0,
+  "sync_interval": 3600000,
+  "timezone": "<-03>3",
+  "timeout": 10000
 }
 ```
 
@@ -583,9 +591,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,         /// Message Type   1:request
-  "interface": 65,  /// Interface Type 65:ntp
-  "request": 2      /// Request Type   2:getInformation
+  "msg": 1,
+  "interface": 65,
+  "request": 2
 }
 ```
 
@@ -595,10 +603,10 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,           /// Message Type   1:request
-  "request": 2,       /// Request Type   2:getInformation
-  "interface": 65,    /// Interface Type 65:ntp
-  "available": true   /// Interface is Available
+  "msg": 2,
+  "request": 2,
+  "interface": 65,
+  "available": true
 }
 ```
 
@@ -610,9 +618,9 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 1,           /// Message Type   1:request
-  "request": 3,       /// Request Type   3:getStatus
-  "interface": 65     /// Interface Type 65:ntp
+  "msg": 1,
+  "request": 3,
+  "interface": 65
 }
 ```
 
@@ -622,14 +630,14 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 2,           /// Message Type   1:request
-  "request": 3,       /// Request Type   3:getStatus
-  "interface": 65,    /// Interface Type 65:ntp
-  "init": true,       /// Initialized
-  "sync": false,      /// Syncronized
-  "state": 0,         /// NTP Sync State 0:reseted, 1:completed, 2:inProgress
-  "sync_count": 0,    /// Sync counter
-  "last_sync": 0      /// Last sync timestamp
+  "msg": 2,
+  "request": 3,
+  "interface": 65,
+  "init": true,
+  "sync": false,
+  "state": 0,
+  "sync_count": 0,
+  "last_sync": 0
 }
 ```
 
@@ -641,16 +649,216 @@ int main(int argc, char **argv)
 
 ```json
 {
-  "msg": 3,                       /// Message Type   3:setConfiguration
-  "interface": 65,                /// Interface Type 65:ntp
-  "op_mode": 0,                   /// Operation Mode => 0:pool, 1:listenOnly
-  "sync_mode": 0,                 /// Sync Mode => 0:immediatly, 1:smooth
-  "sync_interval": 3600000,       /// Sync Interval in seconds
-  "timezone": "<-03>3",           /// Unix Timezone (Optional)
-  "server1": "pool.ntp.org",      /// Main ntp server
-  "server2": "time.google.com",   /// Backup ntp server (Optional)
-  "server3": "gps.ntp.br",        /// Backup ntp server (Optional)
-  "timeout": 10000                /// Connection timeout                
+  "msg": 3,
+  "interface": 65,
+  "op_mode": 0,
+  "sync_mode": 0,
+  "sync_interval": 3600000,
+  "timezone": "<-03>3",
+  "server1": "pool.ntp.org",
+  "server2": "time.google.com",
+  "server3": "gps.ntp.br",
+  "timeout": 10000
+}
+```
+
+## MQTT
+
+### Get Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 1,
+  "interface": 66,
+  "request": 1
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "msg": 2,
+  "request": 1,
+  "interface": 66,
+  "config": 3,
+  "connection": {
+    "url": "mqtt://test.mosquitto.org",
+    "port": 1883,
+    "qos": 1
+  },
+  "topics": {
+    "message": "CIOT/message",
+    "response": "CIOT/response",
+    "data_type": 2
+  }
+}
+```
+
+### Get Information
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 1,
+  "interface": 66,
+  "request": 2
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "msg": 2,
+  "request": 2,
+  "interface": 66,
+  "version": 0
+}
+```
+
+### Get Status
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 1,
+  "request": 3,
+  "interface": 66
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "msg": 2,
+  "request": 3,
+  "interface": 66,
+  "state": 2,
+  "connection": 1
+}
+```
+
+## OTA
+
+### Get Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 1,
+  "interface": 67,
+  "request": 1
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "msg": 2,
+  "request": 1,
+  "interface": 67,
+  "url": "https://github.com/ciot-platform/ciot-c/raw/feat/ota/bin/esp32/ciot.bin",
+  "force": false,
+  "encrypted": false,
+  "timeout": 0,
+  "restart": false
+}
+```
+
+### Get Information
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 1,
+  "interface": 67,
+  "request": 2
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "msg": 2,
+  "request": 2,
+  "interface": 67
+}
+```
+
+### Get Status
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 1,
+  "request": 3,
+  "interface": 67
+}
+```
+
+#### Response
+
+`HTTP 200 OK`
+
+```json
+{
+  "msg": 2,
+  "request": 3,
+  "interface": 67,
+  "state": 9,
+  "image_size": 1032336,
+  "image_read": 1033360
+}
+```
+
+### Set Configuration
+
+#### Request
+
+`POST /v1/ciot`
+
+```json
+{
+  "msg": 2,
+  "interface": 67,
+  "url": "https://github.com/ciot-platform/ciot-c/raw/feat/ota/bin/esp32/ciot.bin",
+  "force": false,
+  "encrypted": false,
+  "timeout": 0,
+  "restart": false
 }
 ```
 
