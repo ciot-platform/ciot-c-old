@@ -1,4 +1,4 @@
-CIOT 0.2.0-alpha
+CIOT 0.3.0-alpha
 ===
 
 > **Advise:** This is an work in progress. Don't use it on production environments.
