@@ -1,0 +1,44 @@
+[
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/ciot.c.obj -c E:/ciot/libs/ciot-c/src/ciot.c",
+  "file": "E:/ciot/libs/ciot-c/src/ciot.c",
+  "output": "CMakeFiles/ciot_c.dir/src/ciot.c.obj"
+},
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/infra/ciot_httpc.c.obj -c E:/ciot/libs/ciot-c/src/infra/ciot_httpc.c",
+  "file": "E:/ciot/libs/ciot-c/src/infra/ciot_httpc.c",
+  "output": "CMakeFiles/ciot_c.dir/src/infra/ciot_httpc.c.obj"
+},
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/infra/ciot_https.c.obj -c E:/ciot/libs/ciot-c/src/infra/ciot_https.c",
+  "file": "E:/ciot/libs/ciot-c/src/infra/ciot_https.c",
+  "output": "CMakeFiles/ciot_c.dir/src/infra/ciot_https.c.obj"
+},
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/infra/ciot_mqttc.c.obj -c E:/ciot/libs/ciot-c/src/infra/ciot_mqttc.c",
+  "file": "E:/ciot/libs/ciot-c/src/infra/ciot_mqttc.c",
+  "output": "CMakeFiles/ciot_c.dir/src/infra/ciot_mqttc.c.obj"
+},
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/interfaces/ciot_iface.c.obj -c E:/ciot/libs/ciot-c/src/interfaces/ciot_iface.c",
+  "file": "E:/ciot/libs/ciot-c/src/interfaces/ciot_iface.c",
+  "output": "CMakeFiles/ciot_c.dir/src/interfaces/ciot_iface.c.obj"
+},
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/main.c.obj -c E:/ciot/libs/ciot-c/src/main.c",
+  "file": "E:/ciot/libs/ciot-c/src/main.c",
+  "output": "CMakeFiles/ciot_c.dir/src/main.c.obj"
+},
+{
+  "directory": "E:/ciot/libs/ciot-c/build",
+  "command": "C:/ProgramData/chocolatey/bin/gcc.exe  @CMakeFiles/ciot_c.dir/includes_C.rsp -g -o CMakeFiles/ciot_c.dir/src/mongoose/mongoose.c.obj -c E:/ciot/libs/ciot-c/src/mongoose/mongoose.c",
+  "file": "E:/ciot/libs/ciot-c/src/mongoose/mongoose.c",
+  "output": "CMakeFiles/ciot_c.dir/src/mongoose/mongoose.c.obj"
+}
+]
