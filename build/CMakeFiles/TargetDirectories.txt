@@ -1,3 +1,0 @@
-E:/ciot/libs/ciot-c/build/CMakeFiles/ciot_c.dir
-E:/ciot/libs/ciot-c/build/CMakeFiles/edit_cache.dir
-E:/ciot/libs/ciot-c/build/CMakeFiles/rebuild_cache.dir
